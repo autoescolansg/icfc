@@ -261,3 +261,11 @@ function updateCharts(data){
     chartCategorias = new Chart(ctxC, { type:'doughnut', data:{ labels:['A','B','AB'], datasets:[{ data:cats, backgroundColor:[indigo, emerald, amber] }]}, options:{ responsive:true }});
   } else { chartCategorias.data.datasets[0].data = cats; chartCategorias.update(); }
 }
+
+// --- realtime: permite o refresco imediato vindo do Supabase ---
+export function renderAlunosFromList(list) {
+  if (Array.isArray(list)) alunos = list.slice();
+  renderTabela();
+  refreshDashboard();
+}
+window.renderAlunosFromList = renderAlunosFromList;
