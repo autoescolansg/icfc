@@ -1,3 +1,8 @@
+// assets/js/main.js
+// Mantém a sua estrutura (theme, navigation, alunos, io, seller),
+// mas agora mostra/oculta Login/App com base no evento "auth:ready"
+// emitido por assets/js/modules/auth.js (Supabase Auth).
+
 import { initTheme } from './modules/theme.js';
 import { initAuth } from './modules/auth.js';
 import { initNavigation } from './modules/navigation.js';
@@ -5,43 +10,38 @@ import { initAlunos } from './modules/alunos.js';
 import { initIO } from './modules/io.js';
 import { initSellerCfg } from './modules/seller.js';
 
-function applySessionUI() {
-  const hasSession = !!localStorage.getItem("app.session");
+function applySessionUI(isLogged) {
   const login = document.getElementById("login");
   const app   = document.getElementById("app");
   if (login && app) {
-    login.style.display = hasSession ? "none" : "flex";
-    app.style.display   = hasSession ? "block" : "none";
+    login.style.display = isLogged ? "none" : "flex";
+    app.style.display   = isLogged ? "block" : "none";
   }
 }
 
-// deixa uma função global para o módulo de auth chamar quando login for bem-sucedido
-window.appLoginSuccess = (user = "user") => {
-  localStorage.setItem("app.session", JSON.stringify({ user, ts: Date.now() }));
-  applySessionUI();
-};
-
 document.addEventListener('DOMContentLoaded', () => {
-  // 1) aplica estado salvo (mantém logado após F5)
-  applySessionUI();
-
-  // 2) inicializações existentes
+  // Inicializações do seu app
   initTheme();
-  initAuth();
   initNavigation();
   initAlunos();
   initIO();
   initSellerCfg();
 
-  // 3) listeners simples (fallback) caso seu auth.js não chame appLoginSuccess()
-  document.getElementById('btnLogin')?.addEventListener('click', () => {
-    const u = document.getElementById('loginUser')?.value?.trim() || 'user';
-    // dá tempo do auth validar; se for inválido, seu auth pode limpar depois
-    setTimeout(() => window.appLoginSuccess(u), 200);
+  // Começa escondendo o app até sabermos a sessão
+  applySessionUI(false);
+
+  // Inicializa a autenticação (auth.js disparará "auth:ready" ao resolver/mudar sessão)
+  initAuth();
+
+  // Quando a sessão estiver pronta (ou mudar), atualiza a UI
+  window.addEventListener('auth:ready', (e) => {
+    const user = e.detail; // { id, email, role, seller } ou null
+    applySessionUI(!!user);
   });
 
-  document.getElementById('btnLogout')?.addEventListener('click', () => {
-    localStorage.removeItem("app.session");
-    applySessionUI();
-  });
+  // Compat: se algum código antigo chamar appLoginSuccess, apenas loga (auth.js já cuida da sessão)
+  window.appLoginSuccess = (email) => {
+    console.debug('appLoginSuccess (compat):', email);
+    // Nada a fazer aqui; auth.js já dispara 'auth:ready' quando a sessão muda.
+  };
 });
