@@ -1,9 +1,13 @@
-// assets/js/modules/auth.js (fix: exporta currentUser + carrega perfil)
+
+// assets/js/modules/auth.js
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 export const supa = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
 
-// export esperado por outros módulos
+// expõe a mesma instância para outros módulos + evento de pronto
+window.__supa = supa;
+window.dispatchEvent(new Event("supa:ready"));
+
 export let currentUser = null;
 
 function applyUI(logged) {
@@ -22,22 +26,18 @@ async function setSessionUser(session) {
     window.dispatchEvent(new CustomEvent("auth:ready", { detail: null }));
     return;
   }
-  // tenta carregar perfil (role/seller) com RLS (self select)
   let role = "colaborador", seller = null, email = session.user?.email || null;
   try {
-    const { data: prof } = await supa
-      .from("profiles")
-      .select("role,seller,email")
-      .single();
-    if (prof) {
+    const { data: prof, error } = await supa.from("profiles").select("role,seller,email").single();
+    if (!error && prof) {
       role = prof.role || role;
       seller = prof.seller ?? null;
       email = prof.email || email;
     }
-  } catch {}
+  } catch (_) { /* segue com defaults se falhar */ }
+
   currentUser = { id: session.user.id, email, role, seller };
   applyUI(true);
-  // avisa módulos que dependem do usuário
   window.dispatchEvent(new CustomEvent("auth:ready", { detail: currentUser }));
 }
 
@@ -55,21 +55,16 @@ export async function initAuth() {
     const { error, data } = await supa.auth.signInWithPassword({ email, password: pass });
     if (error) { alert(error.message); return; }
     await setSessionUser(data.session);
-    // compat: se o app expõe hook
     window.appLoginSuccess?.(email);
   });
 
   btnLogout?.addEventListener("click", async () => {
-    await supa.auth.signOut();
+    try { await supa.auth.signOut({ scope: "local" }); } catch (e) { console.debug("signOut:", e?.message||e); }
     await setSessionUser(null);
     sessionStorage.removeItem("alunos.etag");
   });
 
-  // reaja a mudanças (outra aba, refresh de token, etc.)
   supa.auth.onAuthStateChange(async (_event, session) => {
     await setSessionUser(session);
   });
-
-  // expõe global opcional
-  window.__supa = supa;
 }
