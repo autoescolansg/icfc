@@ -1,9 +1,9 @@
 {
-  "name": "autoescola-nsg-netlify-api",
-  "version": "1.0.0",
-  "type": "module",
+  "name": "autoescola-site",
   "private": true,
+  "type": "module",
   "dependencies": {
-    "@supabase/supabase-js": "^2.45.0"
+    "@supabase/supabase-js": "^2.45.0",
+    "jsonwebtoken": "^9.0.2"
   }
 }
