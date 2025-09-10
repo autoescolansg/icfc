@@ -1,3 +1,4 @@
+
 // netlify/functions/backup-alunos.mjs
 export const config = { schedule: "@daily" };
 import { createClient } from "@supabase/supabase-js";
