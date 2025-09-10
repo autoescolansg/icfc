@@ -1,3 +1,4 @@
+
 // netlify/functions/alunos.mjs
 import { createClient } from "@supabase/supabase-js";
 import { requireAuth } from "./utils/authGuard.mjs";
@@ -60,6 +61,7 @@ async function handleHEAD(_event) {
 }
 
 async function handlePUT(event) {
+  // Requer auth + role
   const user = requireAuth(event);
   const prof = await getUserProfile(user.userId);
   const allowed = prof.role === "admin" || prof.role === "colaborador";
@@ -74,7 +76,7 @@ async function handlePUT(event) {
   const rows = [];
   for (const a of payload) {
     const cpf = String(a?.cpf || a?.data?.cpf || "").trim();
-    if (!/^\d{11}$/.test(cpf)) continue;
+    if (!/^[0-9]{11}$/.test(cpf)) continue;
     const data = { ...a }; delete data.cpf;
     rows.push({ cpf, data, updated_at: now });
   }
