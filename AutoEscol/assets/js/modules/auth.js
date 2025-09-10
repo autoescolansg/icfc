@@ -1,7 +1,10 @@
-// assets/js/modules/auth.js (Supabase Auth)
+// assets/js/modules/auth.js (fix: exporta currentUser + carrega perfil)
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const supa = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+export const supa = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+
+// export esperado por outros módulos
+export let currentUser = null;
 
 function applyUI(logged) {
   const login = document.getElementById("login");
@@ -12,9 +15,35 @@ function applyUI(logged) {
   }
 }
 
+async function setSessionUser(session) {
+  if (!session) {
+    currentUser = null;
+    applyUI(false);
+    window.dispatchEvent(new CustomEvent("auth:ready", { detail: null }));
+    return;
+  }
+  // tenta carregar perfil (role/seller) com RLS (self select)
+  let role = "colaborador", seller = null, email = session.user?.email || null;
+  try {
+    const { data: prof } = await supa
+      .from("profiles")
+      .select("role,seller,email")
+      .single();
+    if (prof) {
+      role = prof.role || role;
+      seller = prof.seller ?? null;
+      email = prof.email || email;
+    }
+  } catch {}
+  currentUser = { id: session.user.id, email, role, seller };
+  applyUI(true);
+  // avisa módulos que dependem do usuário
+  window.dispatchEvent(new CustomEvent("auth:ready", { detail: currentUser }));
+}
+
 export async function initAuth() {
   const { data: { session } } = await supa.auth.getSession();
-  applyUI(Boolean(session));
+  await setSessionUser(session);
 
   const btnLogin  = document.getElementById("btnLogin");
   const btnLogout = document.getElementById("btnLogout");
@@ -23,21 +52,24 @@ export async function initAuth() {
     const email = document.getElementById("loginUser")?.value?.trim();
     const pass  = document.getElementById("loginPass")?.value?.trim();
     if (!email || !pass) { alert("Informe usuário e senha"); return; }
-    const { error } = await supa.auth.signInWithPassword({ email, password: pass });
+    const { error, data } = await supa.auth.signInWithPassword({ email, password: pass });
     if (error) { alert(error.message); return; }
-    applyUI(true);
+    await setSessionUser(data.session);
+    // compat: se o app expõe hook
     window.appLoginSuccess?.(email);
   });
 
   btnLogout?.addEventListener("click", async () => {
     await supa.auth.signOut();
-    applyUI(false);
+    await setSessionUser(null);
     sessionStorage.removeItem("alunos.etag");
   });
 
-  supa.auth.onAuthStateChange((_event, session) => {
-    applyUI(Boolean(session));
+  // reaja a mudanças (outra aba, refresh de token, etc.)
+  supa.auth.onAuthStateChange(async (_event, session) => {
+    await setSessionUser(session);
   });
 
+  // expõe global opcional
   window.__supa = supa;
 }
