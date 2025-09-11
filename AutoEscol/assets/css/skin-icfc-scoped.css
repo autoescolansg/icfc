@@ -236,3 +236,45 @@
     margin-left: 20px !important;
   }
 }
+
+
+/* ===== Hard width/layout fix ===== */
+#app.theme-icfc .content,
+#app.theme-icfc .main,
+#app.theme-icfc .content-wrapper,
+#app.theme-icfc .dashboard-content{
+  margin-left: var(--sidebar-w) !important;
+  width: calc(100% - var(--sidebar-w)) !important;
+  max-width: none !important;
+  display: block !important;
+}
+
+#app.theme-icfc .section,
+#app.theme-icfc .section.active{
+  width: 100% !important;
+}
+
+/* Stretch all common containers/cards inside sections */
+#app.theme-icfc .section > .card,
+#app.theme-icfc .section .card,
+#app.theme-icfc .section .panel,
+#app.theme-icfc .section .box,
+#app.theme-icfc .section .container,
+#app.theme-icfc .section .container-fluid,
+#app.theme-icfc .section .wrapper{
+  width: 100% !important;
+  max-width: none !important;
+  flex: 1 1 auto !important;
+  display: block !important;
+}
+
+/* Inputs and form groups fill horizontal space */
+#app.theme-icfc .section .form-group,
+#app.theme-icfc .section .form-control{
+  width: 100% !important;
+}
+
+/* Remove any unintended scaling/transform that could compress content */
+#app.theme-icfc .section *{
+  transform: none !important;
+}
