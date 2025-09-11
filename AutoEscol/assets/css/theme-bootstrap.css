@@ -1,9 +1,7 @@
-
 /* assets/css/theme-bootstrap.css */
 
-/* Tipografia e spacing base */
+/* Tipografia base */
 body { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
-.section-title { font-weight: 600; margin-bottom: .5rem; }
 
 /* Mapear badges de status para cores Bootstrap */
 .status-badge { font-size: 0.75rem; }
@@ -21,24 +19,7 @@ body { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helveti
   line-height: 1;
 }
 
-/* Login card (genérico) */
-.login-container { min-height: 100vh; }
-.login-card {
-  max-width: 420px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 1.5rem;
-  background: #fff;
-  border: 1px solid #e9ecef;
-  border-radius: .75rem;
-  box-shadow: 0 6px 24px rgba(0,0,0,.06);
-}
-
-/* Botões utilitários, caso o JS não mapeie */
-.btn-outline { border: 1px solid rgba(0,0,0,.175); color: #495057; }
-.btn-danger { color: #fff; }
-
-/* Tabela */
+/* Tabela: cabeçalho clicável p/ sort (se você usa data-sort) */
 .table thead th[data-sort] { cursor: pointer; user-select: none; }
 .table thead th[data-sort]::after {
   content: ' ⬍';
