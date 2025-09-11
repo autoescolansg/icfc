@@ -7,40 +7,291 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <style>
-    /* ... (mantive exatamente o seu CSS daqui pra baixo) ... */
+    :root{
+      --bg:#0e0f13; --card:#12141a; --card-2:#161923; --text:#E6E9EF; --muted:#A1A6B3;
+      --primary:#7C3AED; --secondary:#06B6D4; --accent:#22C55E; --warning:#F59E0B; --danger:#EF4444;
+      --border:#1f2430; --chip:#151827; --shadow:0 16px 44px rgba(0,0,0,.45); --radius:14px;
+    }
+    .theme-light{
+      --bg:#F6F7FB; --card:#FFFFFF; --card-2:#F2F5FB; --text:#10131A; --muted:#55607A;
+      --primary:#6D28D9; --secondary:#0891B2; --accent:#16A34A; --warning:#D97706; --danger:#DC2626;
+      --border:#E4E7EE; --chip:#EEF2FF; --shadow:0 10px 28px rgba(12,18,28,.12); --radius:12px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0; font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial; background:var(--bg); color:var(--text)}
+    a{color:inherit; text-decoration:none}
+    header{position:sticky; top:0; z-index:5; background:linear-gradient(90deg, rgba(15,23,42,.92), rgba(2,6,23,.92)); border-bottom:1px solid var(--border)}
+    .container{max-width:1150px; margin:0 auto; padding:0 16px}
+    .header-content{display:flex; align-items:center; gap:12px; padding:12px 0; justify-content:space-between}
+    .logo{display:flex; align-items:center; gap:.6rem; font-weight:700}
+    .logo i{color:var(--primary)}
+    .theme-toggle{display:inline-flex; align-items:center; gap:.5rem; background:transparent; border:1px solid var(--border); padding:.4rem .7rem; border-radius:999px; cursor:pointer}
+    .layout{display:grid; grid-template-columns:240px 1fr; gap:16px; padding:16px}
+    .sidebar{background:var(--card-2); border-right:1px solid var(--border); border-radius:var(--radius); padding:10px}
+    .sidebar-menu a{display:block; padding:10px 12px; color:var(--muted); border-radius:10px; margin:4px 0}
+    .sidebar-menu a.active, .sidebar-menu a:hover{background:rgba(124,58,237,.14); color:var(--text)}
+    .card{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden}
+    .card-header{display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:1px solid var(--border)}
+    .card-title{margin:0; font-size:1.05rem}
+    .stat-grid{display:grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap:12px}
+    .stat-card{display:flex; gap:12px; align-items:center; padding:16px}
+    .stat-card i{padding:10px; border-radius:10px; background:rgba(124,58,237,.15); color:var(--primary)}
+    .content{display:grid; gap:16px}
+    .toolbar{display:grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap:10px; padding:12px}
+    .form-group{display:flex; flex-direction:column; gap:6px}
+    .form-control{background:#0f121a; color:var(--text); border:1px solid var(--border); border-radius:12px; height:44px; line-height:44px; padding:0 12px}
+    .form-control:focus{outline:2px solid transparent; box-shadow:0 0 0 3px rgba(124,58,237,.45)}
+    select.form-control{padding-right:36px; -webkit-appearance:none; appearance:none}
+    select.form-control option{background:var(--card); color:var(--text)}
+    input[type="date"].form-control{ color-scheme: dark }
+    .btn{background:var(--primary); color:#fff; border:0; border-radius:12px; padding:.55rem .9rem; cursor:pointer}
+    .btn-outline{background:transparent; border:1px solid var(--border); color:var(--text)}
+    .btn-sm{padding:.35rem .55rem; border-radius:10px}
+    .table{width:100%; border-collapse:separate; border-spacing:0}
+    .table thead th{position:sticky; top:0; z-index:3; background:var(--card-2); color:var(--muted); text-align:left; padding:12px; border-bottom:1px solid var(--border)}
+    .table tbody td{padding:12px; border-bottom:1px solid var(--border)}
+    .table tbody tr:nth-child(odd){background:rgba(124,58,237,.04)}
+    .table tbody tr:hover{background:rgba(124,58,237,.09)}
+    .section{display:none}
+    .section.active{display:block}
+    .status-badge{padding:.24rem .55rem; border-radius:999px; font-size:.78rem; background:rgba(148,163,184,.12); border:1px solid rgba(148,163,184,.18)}
+    .status-concluido{background:rgba(34,197,94,.15); color:#22C55E; border-color:rgba(34,197,94,.25)}
+    .status-andamento{background:rgba(6,182,212,.15); color:#06B6D4; border-color:rgba(6,182,212,.25)}
+    .status-pendente{background:rgba(239,68,68,.15); color:#EF4444; border-color:rgba(239,68,68,.25)}
+    .chip{display:inline-flex; align-items:center; gap:.35rem; padding:.24rem .5rem; border-radius:999px; font-size:.76rem; background:rgba(148,163,184,.12); border:1px solid rgba(148,163,184,.18)}
+    /* Login */
+    .login-container{min-height:100vh; display:flex; align-items:center; justify-content:center;
+      background:radial-gradient(1200px 600px at 20% -10%, rgba(124,58,237,.25), transparent 60%),
+               radial-gradient(1000px 600px at 120% 10%, rgba(6,182,212,.18), transparent 60%),
+               linear-gradient(180deg, #0e0f13, #0b0d12);}
+    .login-card{width:100%; max-width:420px; background:linear-gradient(180deg, rgba(18,20,26,.88), rgba(18,20,26,.72));
+      border:1px solid var(--border); border-radius:18px; box-shadow:var(--shadow); padding:22px}
+    .login-card h1{margin:0 0 6px 0}
+    .login-card p{margin:6px 0 16px 0; color:var(--muted)}
+    .login-grid{display:grid; gap:10px}
+    .toast{position:fixed; right:20px; bottom:20px; background:var(--card); color:var(--text); padding:12px 16px; border-radius:12px; border:1px solid var(--border); box-shadow:var(--shadow); opacity:0; transform:translateY(10px); transition:all .28s}
+    .toast.show{opacity:1; transform:translateY(0)}
+    /* Modal */
+    .modal{position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.45); z-index:20}
+    .modal .modal-content{width:100%; max-width:900px; background:var(--card); border:1px solid var(--border); border-radius:16px; box-shadow:var(--shadow)}
+    .modal .modal-header{display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-bottom:1px solid var(--border)}
+    .modal .modal-body{padding:12px 16px}
+    .form-grid{display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:10px}
+    /* Hotfix panels */
+    .card .panel, .card .box, .card .content, .card .inner, .card .body, .card .form-slab{ background:var(--card-2); color:var(--text); border-radius: var(--radius); }
   </style>
 </head>
 <body>
-  <!-- ======= LOGIN ======= -->
   <div id="login" class="login-container">
-    <!-- ... seu conteúdo de login inalterado ... -->
+    <div class="login-card">
+      <div style="display:flex;align-items:center;gap:.6rem;">
+        <i class="fa-solid fa-car-side" style="color:var(--primary);font-size:22px"></i>
+        <h1>Autoescola NSG</h1>
+      </div>
+      <p>Bem-vindo! Faça login para continuar.</p>
+      <div class="login-grid">
+        <div class="form-group"><label>Usuário</label><input id="loginUser" class="form-control" placeholder="admin, ewerton, darlan"></div>
+        <div class="form-group"><label>Senha</label><input id="loginPass" type="password" class="form-control" placeholder="•••••••"></div>
+        <button id="btnLogin" class="btn">Entrar</button>
+        <small style="color:var(--muted)"></small>
+      </div>
+    </div>
   </div>
 
-  <!-- ======= APP ======= -->
   <div id="app" style="display:none">
-    <!-- ... todo seu conteúdo (header, sidebar, sections, modal, etc.) inalterado ... -->
+    <header>
+      <div class="container header-content">
+        <div class="logo"><i class="fa-solid fa-car-side"></i><span>Autoescola NSG</span></div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="theme-toggle" id="btnTheme"><i class="fas fa-moon"></i><span>Modo</span></button>
+          <button class="btn btn-outline" id="btnLogout">Sair</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="container layout">
+      <aside class="sidebar">
+        <nav class="sidebar-menu">
+          <a href="#" data-section="dashboard" class="active"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+          <a href="#" data-section="cadastro"><i class="fa-solid fa-user-plus"></i> Cadastro</a>
+          <a href="#" data-section="alunos"><i class="fa-solid fa-list"></i> Alunos</a>
+          <a href="#" data-section="relatorios"><i class="fa-solid fa-file-lines"></i> Relatórios</a>
+          <a href="#" data-section="config"><i class="fa-solid fa-gear"></i> Configurações</a>
+        </nav>
+      </aside>
+
+      <main class="content">
+        <!-- DASHBOARD -->
+        <section id="dashboard" class="section active">
+          <div class="card">
+            <div class="card-header"><h3 class="card-title">Visão Geral</h3></div>
+            <div class="stat-grid" style="padding:12px">
+              <div class="card stat-card"><i class="fa-solid fa-users"></i><div><div class="number" id="total-alunos">0</div><div>Total de Alunos</div></div></div>
+              <div class="card stat-card"><i class="fa-solid fa-check"></i><div><div class="number" id="concluidos">0</div><div>Concluídos</div></div></div>
+              <div class="card stat-card"><i class="fa-solid fa-hourglass-half"></i><div><div class="number" id="andamento">0</div><div>Em Andamento</div></div></div>
+              <div class="card stat-card"><i class="fa-solid fa-circle-exclamation"></i><div><div class="number" id="pendentes">0</div><div>Pendentes</div></div></div>
+            </div>
+            <div class="stat-grid" style="padding:12px">
+              <div class="card stat-card"><i class="fa-solid fa-user-tie"></i><div><div class="number" id="ewerton-count">0</div><div>Alunos Ewerton</div><div class="muted" id="ewerton-meta" style="font-size:.8rem;opacity:.85"></div></div></div>
+              <div class="card stat-card"><i class="fa-solid fa-user-tie"></i><div><div class="number" id="darlan-count">0</div><div>Alunos Darlan</div><div class="muted" id="darlan-meta" style="font-size:.8rem;opacity:.85"></div></div></div>
+              <div class="card" style="padding:14px">
+                <canvas id="chartVendedores" height="120"></canvas>
+              </div>
+              <div class="card" style="padding:14px">
+                <canvas id="chartCategorias" height="120"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- CADASTRO -->
+        <section id="cadastro" class="section">
+          <div class="card">
+            <div class="card-header"><h3 class="card-title">Cadastrar Aluno</h3></div>
+            <div class="panel" style="padding:12px">
+              <form id="cadastro-form" class="form-grid">
+                <div class="form-group"><label>Nome</label><input id="nome" class="form-control" placeholder="Nome completo"></div>
+                <div class="form-group"><label>CPF</label><input id="cpf" class="form-control" placeholder="000.000.000-00"></div>
+                <div class="form-group"><label>Telefone</label><input id="telefone" class="form-control" placeholder="(81) 9 9999-9999"></div>
+                <div class="form-group"><label>Categoria</label>
+                  <select id="categoria" class="form-control">
+                    <option value="A">A</option><option value="B" selected>B</option><option value="AB">AB</option>
+                  </select>
+                </div>
+                <div class="form-group"><label>Data de Cadastro</label><input id="data-cadastro" type="date" class="form-control"></div>
+                <div class="form-group"><label>Vendedor</label>
+                  <select id="vendedor" class="form-control">
+                    <option value="Ewerton" selected>Ewerton</option><option value="Darlan">Darlan</option>
+                  </select>
+                </div>
+                <div style="grid-column:1/-1; text-align:right">
+                  <button class="btn" type="submit"><i class="fa-solid fa-plus"></i> Adicionar</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- ALUNOS -->
+        <section id="alunos" class="section">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Lista de Alunos</h3>
+            </div>
+            <div class="toolbar">
+              <input id="searchInput" class="form-control" placeholder="Buscar por nome ou CPF">
+              <select id="sellerFilter" class="form-control"><option value="todos" selected>Todos vendedores</option><option value="Ewerton">Ewerton</option><option value="Darlan">Darlan</option></select>
+              <select id="catFilter" class="form-control"><option value="todas" selected>Todas categorias</option><option value="A">A</option><option value="B">B</option><option value="AB">AB</option></select>
+              <input id="dateStart" type="date" class="form-control">
+              <input id="dateEnd" type="date" class="form-control">
+              <div><button class="btn btn-outline" id="btnRefresh"><i class="fa-solid fa-rotate"></i> Atualizar</button></div>
+            </div>
+            <div class="panel" style="padding:0">
+              <table class="table" id="alunosTable">
+                <thead><tr><th>Nome</th><th>CPF</th><th>Telefone</th><th>Data</th><th>Vendedor</th><th>Status/Etapas</th><th>Ações</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- RELATÓRIOS -->
+        <section id="relatorios" class="section">
+          <div class="card">
+            <div class="card-header"><h3 class="card-title">Relatórios</h3>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-outline" id="btnExport"><i class="fa-solid fa-file-export"></i> JSON</button>
+                <button class="btn btn-outline" id="btnExportCSV"><i class="fa-solid fa-file-csv"></i> CSV</button>
+                <button class="btn" id="btnPDF"><i class="fa-solid fa-file-pdf"></i> PDF (relatório atual)</button>
+              </div>
+            </div>
+            <div class="panel" id="relatorio-estatisticas" style="padding:12px">
+              <small style="color:var(--muted)">Use os filtros da lista para definir o recorte dos relatórios.</small>
+            </div>
+          </div>
+        </section>
+
+        <!-- CONFIG -->
+        <section id="config" class="section">
+          <div class="card">
+            <div class="card-header"><h3 class="card-title">Configurações</h3></div>
+            <div class="panel" style="padding:12px">
+              <h3 style="margin-top:0">Configuração de Vendedores</h3>
+              <p>Defina <strong>Meta mensal</strong> e <strong>Comissão (%)</strong> por vendedor.</p>
+              <form id="sellerCfgForm" class="form-grid" style="max-width:720px">
+                <div class="form-group"><label>Vendedor</label>
+                  <select id="cfgVend" class="form-control"><option value="Ewerton">Ewerton</option><option value="Darlan">Darlan</option></select></div>
+                <div class="form-group"><label>Meta mensal (alunos)</label><input id="cfgMeta" type="number" min="0" class="form-control" placeholder="ex. 30"></div>
+                <div class="form-group"><label>Comissão (%)</label><input id="cfgComissao" type="number" min="0" class="form-control" placeholder="ex. 5"></div>
+                <div style="grid-column:1/-1"><button type="button" class="btn" id="btnSaveSellerCfg">Salvar</button></div>
+              </form>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL EDIÇÃO -->
+  <div class="modal" id="editModal">
+    <div class="modal-content">
+      <div class="modal-header"><strong>Editar aluno</strong>
+        <div><button class="btn btn-sm btn-outline" id="btnCloseModal">Fechar</button></div>
+      </div>
+      <div class="modal-body">
+        <form id="editForm" class="form-grid">
+          <div class="form-group"><label>Nome</label><input id="edNome" class="form-control"></div>
+          <div class="form-group"><label>Telefone</label><input id="edTelefone" class="form-control"></div>
+          <div class="form-group"><label>Categoria</label>
+            <select id="edCategoria" class="form-control"><option value="A">A</option><option value="B">B</option><option value="AB">AB</option></select>
+          </div>
+          <div class="form-group"><label>Vendedor</label>
+            <select id="edVendedor" class="form-control"><option value="Ewerton">Ewerton</option><option value="Darlan">Darlan</option></select>
+          </div>
+
+          <div class="form-group" style="grid-column:1/-1">
+            <label>Etapas</label>
+            <div class="form-grid" style="grid-template-columns: repeat(3, minmax(0,1fr)); gap:10px">
+              <div><small>Foto</small><div style="display:flex; gap:8px"><input id="edFotoIni" type="date" class="form-control"><input id="edFotoFim" type="date" class="form-control"></div></div>
+              <div><small>Teóricas</small><div style="display:flex; gap:8px"><input id="edTeoIni" type="date" class="form-control"><input id="edTeoFim" type="date" class="form-control"></div></div>
+              <div><small>Prova Teórica</small><div style="display:flex; gap:8px"><input id="edProvaIni" type="date" class="form-control"><input id="edProvaFim" type="date" class="form-control"></div></div>
+              <div><small>Práticas</small><div style="display:flex; gap:8px"><input id="edPraIni" type="date" class="form-control"><input id="edPraFim" type="date" class="form-control"></div></div>
+              <div><small>Baliza Carro</small><div style="display:flex; gap:8px"><input id="edCarIni" type="date" class="form-control"><input id="edCarFim" type="date" class="form-control"></div></div>
+              <div><small>Baliza Moto</small><div style="display:flex; gap:8px"><input id="edMotoIni" type="date" class="form-control"><input id="edMotoFim" type="date" class="form-control"></div></div>
+            </div>
+          </div>
+
+          <div style="grid-column:1/-1; text-align:right">
+            <button class="btn btn-outline" type="button" id="btnCancelEdit">Cancelar</button>
+            <button class="btn" type="submit">Salvar</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 
   <div class="toast" id="toast"></div>
+<script>
+  // API via Netlify Functions
+  window.API_BASE = "/api";
 
-  <!-- Variáveis globais (ANTES dos módulos) -->
-  <script>
-    // API via Netlify Functions
-    window.API_BASE = "/api";
+  // >>> preencha com SEUS valores (ok expor anon no front):
+  window.SUPABASE_URL = "https://pimyqqunvcwoqzqwqpvf.supabase.co";
+  window.SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpbXlxcXVudmN3b3F6cXdxcHZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc1MDk0MzQsImV4cCI6MjA3MzA4NTQzNH0.O5FbB0ygMAMNAnxGEs5qAvRF1qSA2qYLbSV8ozlsVBs";
+</script>
+<!-- Chart.js (global 'Chart') -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" integrity="sha384-3g1+u0wQ0H7tqteGJg2JvWc7L8Q3t1aIlM2Lkq2gQh9wKQ0bQW1mS2vN1GmO7u7F" crossorigin="anonymous"></script>
 
-    // >>> seus valores REAIS do Supabase (ok expor a anon no front)
-    window.SUPABASE_URL = "https://pimyqqunvcwoqzqwqpvf.supabase.co";
-    window.SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpbXlxcXVudmN3b3F6cXdxcHZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc1MDk0MzQsImV4cCI6MjA3MzA4NTQzNH0.O5FbB0ygMAMNAnxGEs5qAvRF1qSA2qYLbSV8ozlsVBs";
-  </script>
+<!-- App principal (inicializa tudo e emite auth:ready) -->
 
-  <!-- Bibliotecas globais usadas no front -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" crossorigin="anonymous"></script>
+<script type="module" src="assets/js/main.js"></script>
 
-  <!-- Módulos do app -->
-  <script type="module" src="assets/js/main.js"></script>
-  <script type="module" src="assets/js/realtime.js"></script>
+<!-- Realtime (assina após login e re-assina quando sessão mudar) -->
+<script type="module" src="assets/js/realtime.js"></script>
 </body>
 </html>
