@@ -1,0 +1,17 @@
+
+/* === ICFC visual (scoped) — aplica só dentro do app, não mexe no login === */
+#app.theme-icfc { --bg:#0b0d12; --card:#10131a; --card-2:#141826; --text:#e8ecf2; --muted:#9aa3b2;
+  --primary:#7C3AED; --secondary:#06B6D4; --accent:#22C55E; --warning:#F59E0B; --danger:#EF4444;
+  --border:#1f2430; --chip:#151827; --radius:14px; }
+#app.theme-icfc .sidebar{ background:var(--card-2); border:1px solid var(--border); border-radius:14px; }
+#app.theme-icfc .sidebar a{ color:var(--muted) }
+#app.theme-icfc .sidebar a.active, 
+#app.theme-icfc .sidebar a:hover{ background:rgba(124,58,237,.14); color:var(--text) }
+#app.theme-icfc .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; color:var(--text) }
+#app.theme-icfc .card-header{ border-bottom:1px solid var(--border) }
+#app.theme-icfc .form-control{ background:#0f121a; color:var(--text); border:1px solid var(--border); border-radius:12px }
+#app.theme-icfc .btn{ background:var(--primary); border:0; border-radius:12px }
+#app.theme-icfc .table thead th{ background:var(--card-2); color:var(--muted); border-bottom:1px solid var(--border) }
+#app.theme-icfc .table tbody td{ border-bottom:1px solid var(--border) }
+#app.theme-icfc .amount-income{ color:#22C55E }
+#app.theme-icfc .amount-expense{ color:#EF4444 }
