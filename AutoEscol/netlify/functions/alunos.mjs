@@ -1,4 +1,3 @@
-
 // netlify/functions/alunos.mjs
 import { createClient } from "@supabase/supabase-js";
 import { requireAuth } from "./utils/authGuard.mjs";
