@@ -177,3 +177,62 @@
   #app.theme-icfc .dashboard-content{ padding:1rem !important; }
   #app.theme-icfc .stats-grid{ grid-template-columns: 1fr !important; }
 }
+
+
+/* --- Layout fixes: largura útil e centralização dos cards/paineis --- */
+#app.theme-icfc .dashboard-content,
+#app.theme-icfc .content,
+#app.theme-icfc .main,
+#app.theme-icfc .content-wrapper{
+  max-width: 1200px !important;
+  margin-left: calc(var(--sidebar-w) + 20px) !important;
+  margin-right: 20px !important;
+}
+
+#app.theme-icfc #dashboard .card,
+#app.theme-icfc #cadastro .card,
+#app.theme-icfc #alunos .card,
+#app.theme-icfc #relatorios .card,
+#app.theme-icfc #config .card,
+#app.theme-icfc .table-container,
+#app.theme-icfc .chart-container,
+#app.theme-icfc .recent-container,
+#app.theme-icfc .form-container{
+  width: 100% !important;
+  max-width: 1100px !important;
+  margin: 0 auto 20px auto !important;
+}
+
+/* --- Toolbar / filtros em grid responsivo --- */
+#app.theme-icfc .toolbar,
+#app.theme-icfc .filters,
+#app.theme-icfc .filter-bar{
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important;
+  gap: 12px !important;
+  padding: 8px 0 !important;
+}
+
+/* --- Inputs sempre largura total nas fichas/formulários --- */
+#app.theme-icfc form .form-control,
+#app.theme-icfc .card form .form-control,
+#app.theme-icfc .card .form-control{
+  width: 100% !important;
+}
+
+/* --- Corrige cards minúsculos: não permitir width herdada pequena --- */
+#app.theme-icfc .card,
+#app.theme-icfc .panel,
+#app.theme-icfc .box{
+  min-width: min(100%, 1024px) !important;
+}
+
+/* --- Mobile/Tablet: remover margem extra da esquerda --- */
+@media (max-width: 1024px){
+  #app.theme-icfc .dashboard-content,
+  #app.theme-icfc .content,
+  #app.theme-icfc .main,
+  #app.theme-icfc .content-wrapper{
+    margin-left: 20px !important;
+  }
+}
