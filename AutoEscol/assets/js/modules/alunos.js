@@ -237,29 +237,57 @@ export async function refreshDashboard(){
   el('total-alunos', total); el('concluidos', concluidos); el('andamento', andamento); el('pendentes', pendentes);
   el('ewerton-count', ew); el('darlan-count', da);
 
-  const cfg = await loadSellerCfg();  // vem da API/local
-  const em = document.getElementById('ewerton-meta'); if (em) em.textContent = `Meta: ${cfg.Ewerton?.meta||0} | Comissão: ${cfg.Ewerton?.comissao||0}%`;
-  const dm = document.getElementById('darlan-meta'); if (dm) dm.textContent = `Meta: ${cfg.Darlan?.meta||0} | Comissão: ${cfg.Darlan?.comissao||0}%`;
+  try{
+    const cfg = await loadSellerCfg();  // vem da API/local
+    const em = document.getElementById('ewerton-meta'); if (em) em.textContent = `Meta: ${cfg.Ewerton?.meta||0} | Comissão: ${cfg.Ewerton?.comissao||0}%`;
+    const dm = document.getElementById('darlan-meta'); if (dm) dm.textContent = `Meta: ${cfg.Darlan?.meta||0} | Comissão: ${cfg.Darlan?.comissao||0}%`;
+  }catch(e){
+    console.warn("Falha ao carregar seller cfg:", e);
+  }
 
   updateCharts(data);
 }
 
 function updateCharts(data){
-  const ctxV = document.getElementById('chartVendedores');
-  const ctxC = document.getElementById('chartCategorias');
+  // Proteção: só desenha se Chart existir e os canvas estiverem presentes
+  if (!window.Chart) {
+    console.warn("Chart.js não carregado; pulando gráficos.");
+    return;
+  }
+  const cv = document.getElementById('chartVendedores');
+  const cc = document.getElementById('chartCategorias');
+  if (!cv || !cc) return;
+
+  const ctxV = cv.getContext('2d');
+  const ctxC = cc.getContext('2d');
   if (!ctxV || !ctxC) return;
 
   const byVend = ['Ewerton','Darlan'].map(s => data.filter(a=>a.vendedor===s).length);
   const cats = ['A','B','AB'].map(c => data.filter(a=>a.categoria===c).length);
 
   const indigo = '#6366F1', emerald='#22C55E', amber='#F59E0B';
+
   if (!chartVendedores){
-    chartVendedores = new Chart(ctxV, { type:'bar', data:{ labels:['Ewerton','Darlan'], datasets:[{ label:'Alunos', data:byVend, backgroundColor:[indigo, emerald] }]}, options:{ responsive:true, plugins:{ legend:{display:false}}}});
-  } else { chartVendedores.data.datasets[0].data = byVend; chartVendedores.update(); }
+    chartVendedores = new Chart(ctxV, {
+      type:'bar',
+      data:{ labels:['Ewerton','Darlan'], datasets:[{ label:'Alunos', data:byVend, backgroundColor:[indigo, emerald] }]},
+      options:{ responsive:true, plugins:{ legend:{display:false}}}
+    });
+  } else {
+    chartVendedores.data.datasets[0].data = byVend;
+    chartVendedores.update();
+  }
 
   if (!chartCategorias){
-    chartCategorias = new Chart(ctxC, { type:'doughnut', data:{ labels:['A','B','AB'], datasets:[{ data:cats, backgroundColor:[indigo, emerald, amber] }]}, options:{ responsive:true }});
-  } else { chartCategorias.data.datasets[0].data = cats; chartCategorias.update(); }
+    chartCategorias = new Chart(ctxC, {
+      type:'doughnut',
+      data:{ labels:['A','B','AB'], datasets:[{ data:cats, backgroundColor:[indigo, emerald, amber] }]},
+      options:{ responsive:true }
+    });
+  } else {
+    chartCategorias.data.datasets[0].data = cats;
+    chartCategorias.update();
+  }
 }
 
 // --- realtime: permite o refresco imediato vindo do Supabase ---
