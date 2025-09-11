@@ -1,106 +1,179 @@
 
-/* === ICFC visual (SCOPED) — aplica só dentro do app, não mexe no login === */
-#app.theme-icfc{
-  --bg:#0b0d12; --card:#10131a; --card-2:#141826; --text:#e8ecf2; --muted:#9aa3b2;
-  --primary:#7C3AED; --secondary:#06B6D4; --accent:#22C55E; --warning:#F59E0B; --danger:#EF4444;
-  --border:#1f2430; --chip:#151827; --radius:14px; --shadow:0 16px 44px rgba(0,0,0,.45);
-  --sidebar-w:240px;
+/* =====================================================================
+   ICFC THEME (SCOPED) — baseado exatamente no style enviado pelo usuário.
+   Escopo: SOMENTE dentro de #app.theme-icfc (não afeta login).
+   Mapeado para sua estrutura atual (.content/.main/.content-wrapper).
+   Dica: deixe este <link> como o ÚLTIMO CSS no <head>.
+   ===================================================================== */
+#app.theme-icfc {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --secondary: #059669;
+  --light-bg: #f8f9fa;
+  --dark-bg: #1f2937;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --sidebar-w: 280px;
 }
-
-/* Fundo do app */
-#app.theme-icfc { background:var(--bg); color:var(--text); min-height:100vh; }
-
-/* === Sidebar fixa (apenas dentro do app) === */
-#app.theme-icfc .sidebar, 
-#app.theme-icfc nav.sidebar, 
-#app.theme-icfc .left-sidebar{
-  position: fixed; top:0; left:0; bottom:0;
-  width: var(--sidebar-w); overflow-y:auto;
-  background: var(--card-2); color: var(--text);
-  padding: 12px 10px; border-right:1px solid var(--border); z-index: 1000;
-  border-radius: 0;
+#app.theme-icfc { 
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+  background-color: var(--light-bg) !important;
+  color: var(--text-primary) !important;
+  min-height: 100vh !important;
 }
-#app.theme-icfc .sidebar .sidebar-menu a,
-#app.theme-icfc .sidebar a, 
-#app.theme-icfc .left-sidebar a, 
-#app.theme-icfc .sidebar .nav-link{
-  display:block; color:var(--muted); text-decoration:none;
-  padding:10px 12px; border-radius:10px; margin:4px 0; white-space:nowrap;
+/* SIDEBAR */
+#app.theme-icfc .sidebar,
+#app.theme-icfc nav.sidebar,
+#app.theme-icfc .left-sidebar {
+  width: var(--sidebar-w) !important;
+  background: var(--dark-bg) !important;
+  color: #fff !important;
+  transition: all 0.3s;
+  position: fixed !important;
+  height: 100vh !important;
+  left: 0; top: 0; z-index: 1000;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  overflow-y: auto;
 }
+#app.theme-icfc .sidebar-header{
+  padding: 1.5rem 1rem !important;
+  border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+}
+#app.theme-icfc .sidebar-brand{
+  font-weight: 700 !important; font-size: 1.5rem !important;
+  color: #fff !important; text-decoration: none !important;
+  display: flex !important; align-items: center !important; gap: 10px !important;
+}
+#app.theme-icfc .sidebar-brand i{ color: var(--primary) !important; font-size: 1.8rem !important; }
+#app.theme-icfc .sidebar-nav{ padding: 1rem 0 !important; height: calc(100vh - 100px) !important; overflow-y: auto !important; }
+#app.theme-icfc .nav-item{ margin-bottom: .3rem !important; }
+#app.theme-icfc .nav-link, 
+#app.theme-icfc .sidebar .nav-link, 
+#app.theme-icfc .sidebar .sidebar-menu a {
+  color: rgba(255,255,255,0.8) !important;
+  padding: 0.8rem 1.5rem !important;
+  border-left: 3px solid transparent !important;
+  transition: all 0.2s !important;
+  display: flex !important; align-items: center !important; gap: 12px !important;
+  text-decoration: none !important; cursor: pointer !important;
+}
+#app.theme-icfc .nav-link:hover, 
+#app.theme-icfc .nav-link.active,
 #app.theme-icfc .sidebar .sidebar-menu a:hover,
-#app.theme-icfc .sidebar a:hover,
-#app.theme-icfc .sidebar .nav-link:hover{ background:rgba(124,58,237,.14); color:var(--text); }
-#app.theme-icfc .sidebar .sidebar-menu a.active,
-#app.theme-icfc .sidebar .nav-link.active{ background:rgba(124,58,237,.22); color:#fff; }
-
-/* === Área principal deslocada pela sidebar === */
+#app.theme-icfc .sidebar .sidebar-menu a.active {
+  background: rgba(255,255,255,0.05) !important;
+  color: #fff !important; border-left-color: var(--primary) !important;
+}
+#app.theme-icfc .nav-link i{ font-size: 1.2rem !important; width: 24px !important; }
+/* MAIN CONTENT (mapeado para suas classes atuais) */
+#app.theme-icfc .main-content,
 #app.theme-icfc .content,
 #app.theme-icfc .main,
-#app.theme-icfc .content-wrapper{
-  margin-left: var(--sidebar-w);
-  padding: 18px;
+#app.theme-icfc .content-wrapper {
+  margin-left: var(--sidebar-w) !important;
+  transition: all 0.3s !important;
+  min-height: 100vh !important;
 }
-
-/* Topbar opcional */
-#app.theme-icfc .topbar{
-  position: sticky; top:0; z-index: 900;
-  background: #0e1118; border-bottom:1px solid var(--border);
-  margin:-18px -18px 16px -18px; padding:10px 14px;
+/* TOP HEADER */
+#app.theme-icfc .top-header{
+  background: #fff !important; padding: 1rem 2rem !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important;
+  display: flex !important; justify-content: space-between !important; align-items: center !important;
 }
-
-/* === Cards, headings, grids === */
-#app.theme-icfc .card{ background:var(--card); border:1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); color: var(--text); overflow:hidden }
-#app.theme-icfc .card-header{ background:transparent; border-bottom:1px solid var(--border) }
-#app.theme-icfc h1, 
-#app.theme-icfc h2, 
-#app.theme-icfc h3, 
-#app.theme-icfc .page-title{ color:var(--text) }
-#app.theme-icfc .stat-grid{ display:grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap:12px }
-#app.theme-icfc .stat-card{ display:flex; gap:12px; align-items:center; padding:16px; background:var(--card-2); border:1px solid var(--border); border-radius:14px }
-#app.theme-icfc .stat-card i{ padding:10px; border-radius:10px; background:rgba(124,58,237,.15); color:var(--primary) }
-
-/* === Formulários e botões === */
-#app.theme-icfc .form-control{ background:#0f121a; color:var(--text); border:1px solid var(--border); border-radius:12px; height:44px; line-height:44px; padding:0 12px }
-#app.theme-icfc .form-control:focus{ outline:2px solid transparent; box-shadow:0 0 0 3px rgba(124,58,237,.45) }
-#app.theme-icfc select.form-control{ padding-right:36px; -webkit-appearance:none; appearance:none }
-#app.theme-icfc select.form-control option{ background:var(--card); color:var(--text) }
-#app.theme-icfc input[type="date"].form-control{ color-scheme: dark }
-#app.theme-icfc .btn{ background:var(--primary); color:#fff; border:0; border-radius:12px; padding:.55rem .9rem; cursor:pointer }
-#app.theme-icfc .btn.btn-outline, 
-#app.theme-icfc .btn-outline{ background:transparent; border:1px solid var(--border); color:var(--text) }
-#app.theme-icfc .btn-sm{ padding:.35rem .55rem; border-radius:10px }
-
-/* === Tabelas === */
-#app.theme-icfc .table{ width:100%; border-collapse:separate; border-spacing:0 }
-#app.theme-icfc .table thead th{ position:sticky; top:0; z-index:3; background:var(--card-2); color:var(--muted); text-align:left; padding:12px; border-bottom:1px solid var(--border) }
-#app.theme-icfc .table tbody td{ padding:12px; border-bottom:1px solid var(--border) }
-#app.theme-icfc .table tbody tr:nth-child(odd){ background:rgba(124,58,237,.04) }
-#app.theme-icfc .table tbody tr:hover{ background:rgba(124,58,237,.09) }
-
-/* === Badges e valores === */
-#app.theme-icfc .amount-income{ color:#22C55E }
-#app.theme-icfc .amount-expense{ color:#EF4444 }
-#app.theme-icfc .status-badge{ padding:.24rem .55rem; border-radius:999px; font-size:.78rem; background:rgba(148,163,184,.12); border:1px solid rgba(148,163,184,.18) }
-#app.theme-icfc .status-concluido{ background:rgba(34,197,94,.15); color:#22C55E; border-color:rgba(34,197,94,.25) }
-#app.theme-icfc .status-andamento{ background:rgba(6,182,212,.15); color:#06B6D4; border-color:rgba(6,182,212,.25) }
-#app.theme-icfc .status-pendente{ background:rgba(239,68,68,.15); color:#EF4444; border-color:rgba(239,68,68,.25) }
-
-/* === Seções SPA preservadas === */
-#app.theme-icfc .section{ display:none }
-#app.theme-icfc .section.active{ display:block }
-
-/* === Modal dentro do app === */
-#app.theme-icfc .modal{ background:rgba(0,0,0,.45) }
-#app.theme-icfc .modal .modal-content{ background:var(--card); border:1px solid var(--border); border-radius:16px; box-shadow: var(--shadow) }
-#app.theme-icfc .modal .modal-header{ border-bottom:1px solid var(--border) }
-
-/* === Responsivo === */
-@media (max-width: 1024px){
-  #app.theme-icfc{ --sidebar-w: 78px; }
-  #app.theme-icfc .sidebar .sidebar-menu a span{ display:none; }
+#app.theme-icfc .search-bar{ width: 300px !important; position: relative !important; }
+#app.theme-icfc .search-bar input{ padding-left: 40px !important; border-radius: 50px !important; border: 1px solid #e5e7eb !important; }
+#app.theme-icfc .search-bar i{ position: absolute !important; left: 15px !important; top: 10px !important; color: var(--text-secondary) !important; }
+#app.theme-icfc .user-menu{ display: flex !important; align-items: center !important; gap: 15px !important; }
+#app.theme-icfc .user-info{ text-align: right !important; }
+#app.theme-icfc .user-name{ font-weight: 600 !important; margin-bottom: 0 !important; }
+#app.theme-icfc .user-role{ font-size: 0.85rem !important; color: var(--text-secondary) !important; }
+#app.theme-icfc .user-avatar{ width: 45px !important; height: 45px !important; border-radius: 50% !important; background: var(--primary) !important; color: #fff !important; display:flex !important; align-items:center !important; justify-content:center !important; font-weight: 600 !important; font-size: 1.2rem !important; }
+/* DASHBOARD WRAPPER */
+#app.theme-icfc .dashboard-content{ padding: 2rem !important; }
+#app.theme-icfc .page-title{ font-weight: 600 !important; margin-bottom: 1.5rem !important; display:flex !important; align-items:center !important; gap:12px !important; }
+#app.theme-icfc .page-title i{ color: var(--primary) !important; font-size: 1.8rem !important; }
+/* CONTENT SECTIONS */
+#app.theme-icfc .content-section{ display:none !important; animation: icfcFadeIn .5s !important; }
+#app.theme-icfc .content-section.active{ display:block !important; }
+@keyframes icfcFadeIn{ from{ opacity:0 } to{ opacity:1 } }
+/* STATS CARDS */
+#app.theme-icfc .stats-grid{ display:grid !important; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important; gap:1.5rem !important; margin-bottom:2rem !important; }
+#app.theme-icfc .stat-card{ background:#fff !important; border-radius:12px !important; padding:1.5rem !important; box-shadow:0 4px 6px rgba(0,0,0,0.04) !important; transition: transform .2s !important; }
+#app.theme-icfc .stat-card:hover{ transform: translateY(-5px) !important; }
+#app.theme-icfc .stat-header{ display:flex !important; justify-content:space-between !important; align-items:center !important; margin-bottom:1rem !important; }
+#app.theme-icfc .stat-title{ color: var(--text-secondary) !important; font-weight:500 !important; font-size:.95rem !important; }
+#app.theme-icfc .stat-icon{ width:50px !important; height:50px !important; border-radius:12px !important; display:flex !important; align-items:center !important; justify-content:center !important; font-size:1.5rem !important; }
+#app.theme-icfc .bg-primary-light{ background: rgba(37,99,235,0.1) !important; color: var(--primary) !important; }
+#app.theme-icfc .bg-success-light{ background: rgba(16,185,129,0.1) !important; color: var(--success) !important; }
+#app.theme-icfc .bg-danger-light{ background: rgba(239,68,68,0.1) !important; color: var(--danger) !important; }
+#app.theme-icfc .bg-warning-light{ background: rgba(245,158,11,0.1) !important; color: var(--warning) !important; }
+#app.theme-icfc .stat-value{ font-size:1.8rem !important; font-weight:700 !important; margin-bottom:.5rem !important; }
+#app.theme-icfc .stat-change{ display:flex !important; align-items:center !important; gap:5px !important; font-size:.9rem !important; }
+#app.theme-icfc .change-positive{ color: var(--success) !important; }
+#app.theme-icfc .change-negative{ color: var(--danger) !important; }
+/* CHARTS & TABLES WRAPPERS */
+#app.theme-icfc .content-grid{ display:grid !important; grid-template-columns: 2fr 1fr !important; gap:1.5rem !important; }
+#app.theme-icfc .chart-container, 
+#app.theme-icfc .recent-container, 
+#app.theme-icfc .form-container, 
+#app.theme-icfc .table-container{
+  background:#fff !important; border-radius:12px !important; padding:1.5rem !important; box-shadow:0 4px 6px rgba(0,0,0,0.04) !important;
+}
+#app.theme-icfc .section-header{ display:flex !important; justify-content:space-between !important; align-items:center !important; margin-bottom:1.5rem !important; }
+#app.theme-icfc .section-title{ font-weight:600 !important; font-size:1.2rem !important; }
+#app.theme-icfc .view-all{ color: var(--primary) !important; text-decoration:none !important; font-weight:500 !important; font-size:.9rem !important; }
+/* FORMS */
+#app.theme-icfc .form-group{ margin-bottom:1.5rem !important; }
+#app.theme-icfc .form-label{ font-weight:500 !important; margin-bottom:.5rem !important; display:block !important; }
+#app.theme-icfc .form-control{ padding:.75rem 1rem !important; border-radius:8px !important; border:1px solid #e5e7eb !important; width:100% !important; transition: border-color .2s !important; background:#fff !important; color: var(--text-primary) !important; }
+#app.theme-icfc .form-control:focus{ border-color: var(--primary) !important; outline:none !important; box-shadow: 0 0 0 3px rgba(37,99,235,.1) !important; }
+#app.theme-icfc .btn{ padding:.75rem 1.5rem !important; border-radius:8px !important; border:none !important; font-weight:500 !important; cursor:pointer !important; transition: all .2s !important; }
+#app.theme-icfc .btn-primary{ background: var(--primary) !important; color:#fff !important; }
+#app.theme-icfc .btn-primary:hover{ background: var(--primary-dark) !important; }
+#app.theme-icfc .btn-outline{ background:transparent !important; border:1px solid #e5e7eb !important; color: var(--text-primary) !important; }
+#app.theme-icfc .btn-outline:hover{ background:#f9fafb !important; }
+/* TABLES */
+#app.theme-icfc .table{ width:100% !important; border-collapse: collapse !important; background:transparent !important; }
+#app.theme-icfc .table th{ text-align:left !important; padding:1rem !important; border-bottom:1px solid #e5e7eb !important; font-weight:600 !important; color: var(--text-secondary) !important; }
+#app.theme-icfc .table td{ padding:1rem !important; border-bottom:1px solid #f3f4f6 !important; color: var(--text-primary) !important; }
+#app.theme-icfc .table tr:last-child td{ border-bottom:none !important; }
+#app.theme-icfc .table tr:hover{ background:#f9fafb !important; }
+/* RECENT TRANSACTIONS */
+#app.theme-icfc .transaction-item{ display:flex !important; justify-content:space-between !important; align-items:center !important; padding:1rem 0 !important; border-bottom:1px solid #f3f4f6 !important; }
+#app.theme-icfc .transaction-item:last-child{ border-bottom:none !important; }
+#app.theme-icfc .transaction-info{ display:flex !important; align-items:center !important; gap:12px !important; }
+#app.theme-icfc .transaction-icon{ width:40px !important; height:40px !important; border-radius:10px !important; display:flex !important; align-items:center !important; justify-content:center !important; }
+#app.theme-icfc .transaction-details h4{ font-weight:600 !important; font-size:1rem !important; margin-bottom:.2rem !important; }
+#app.theme-icfc .transaction-details p{ color: var(--text-secondary) !important; font-size:.85rem !important; margin-bottom:0 !important; }
+#app.theme-icfc .transaction-amount{ font-weight:600 !important; }
+#app.theme-icfc .amount-income{ color: var(--success) !important; }
+#app.theme-icfc .amount-expense{ color: var(--danger) !important; }
+/* RESPONSIVO */
+@media (max-width: 992px){
+  #app.theme-icfc .sidebar,
+  #app.theme-icfc nav.sidebar,
+  #app.theme-icfc .left-sidebar{ width: 80px !important; overflow: hidden !important; }
+  #app.theme-icfc .sidebar-brand span, 
+  #app.theme-icfc .nav-link span{ display:none !important; }
+  #app.theme-icfc .main-content,
+  #app.theme-icfc .content,
+  #app.theme-icfc .main,
+  #app.theme-icfc .content-wrapper { margin-left: 80px !important; }
+  #app.theme-icfc .content-grid { grid-template-columns: 1fr !important; }
 }
 @media (max-width: 768px){
-  #app.theme-icfc .sidebar{ position: fixed; transform: translateX(-100%); transition: transform .25s ease; }
-  #app.theme-icfc .sidebar.is-open{ transform: translateX(0); }
-  #app.theme-icfc .content, #app.theme-icfc .main, #app.theme-icfc .content-wrapper{ margin-left:0; }
+  #app.theme-icfc .sidebar,
+  #app.theme-icfc nav.sidebar,
+  #app.theme-icfc .left-sidebar{ width: 0 !important; display:none !important; }
+  #app.theme-icfc .main-content,
+  #app.theme-icfc .content,
+  #app.theme-icfc .main,
+  #app.theme-icfc .content-wrapper { margin-left: 0 !important; }
+  #app.theme-icfc .top-header{ flex-direction: column !important; gap:1rem !important; padding:1rem !important; }
+  #app.theme-icfc .search-bar{ width: 100% !important; }
+  #app.theme-icfc .dashboard-content{ padding:1rem !important; }
+  #app.theme-icfc .stats-grid{ grid-template-columns: 1fr !important; }
 }
