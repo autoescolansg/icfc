@@ -1,0 +1,55 @@
+
+/* === ICFC HOTFIX (carregar por ÚLTIMO) ==================================
+   Objetivo: corrigir cards estreitos e "tela branca" garantindo que:
+   - .section.active aparece;
+   - containers usam largura útil e não 0;
+   - não forçamos transforms/display estranhos.
+========================================================================== */
+#app.theme-icfc .section{ display:none !important; }
+#app.theme-icfc .section.active{ display:block !important; }
+
+/* Área principal com largura automática e margem por causa da sidebar */
+#app.theme-icfc .content,
+#app.theme-icfc .main,
+#app.theme-icfc .content-wrapper,
+#app.theme-icfc .dashboard-content{
+  display: block !important;
+  width: auto !important;
+  max-width: 1200px !important;
+  margin: 0 24px 48px calc(var(--sidebar-w) + 24px) !important;
+}
+
+/* Cards e painéis ocupam toda a largura disponível, mas não ficam "apertados" */
+#app.theme-icfc .section > .card,
+#app.theme-icfc .section .card,
+#app.theme-icfc .section .panel,
+#app.theme-icfc .section .box,
+#app.theme-icfc .section .container,
+#app.theme-icfc .section .container-fluid,
+#app.theme-icfc .section .wrapper{
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Inputs ocupam 100% no formulário */
+#app.theme-icfc .section .form-group,
+#app.theme-icfc .section .form-control{
+  width: 100% !important;
+}
+
+/* Não forçar transform global — mas também não zerar se o seu projeto usar */
+#app.theme-icfc .section *{
+  transform: none;
+}
+
+/* Em <=1024px, remove deslocamento da sidebar */
+@media (max-width: 1024px){
+  #app.theme-icfc .content,
+  #app.theme-icfc .main,
+  #app.theme-icfc .content-wrapper,
+  #app.theme-icfc .dashboard-content{
+    margin: 0 16px 32px 16px !important;
+  }
+}
