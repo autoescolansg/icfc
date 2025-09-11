@@ -1,0 +1,65 @@
+
+/* === ICFC LAYOUT NORMALIZER (scoped) ===================================
+   Use COM ESTE ORDEM no <head>:
+   1) seus CSS normais
+   2) skin-icfc-scoped.css
+   3) icfc-layout-normalizer.css  <-- último
+   -----------------------------------------------------------------------
+   Objetivo: garantir largura cheia das seções/cards/rows sem mexer no JS.
+   Escopo: apenas dentro de #app.theme-icfc
+========================================================================= */
+#app.theme-icfc, 
+#app.theme-icfc *,
+#app.theme-icfc *::before,
+#app.theme-icfc *::after { box-sizing: border-box !important; }
+
+/* Seções visíveis corretamente */
+#app.theme-icfc .section{ display:none !important; }
+#app.theme-icfc .section.active{ display:block !important; width:100% !important; }
+
+/* Área principal ocupa toda a largura livre (com a sidebar de 280px) */
+#app.theme-icfc .content,
+#app.theme-icfc .main,
+#app.theme-icfc .content-wrapper,
+#app.theme-icfc .dashboard-content{
+  margin-left: var(--sidebar-w, 280px) !important;
+  margin-right: 16px !important;
+  width: calc(100% - var(--sidebar-w, 280px) - 16px) !important;
+  max-width: none !important;
+}
+
+/* Containers comuns sempre 100% */
+#app.theme-icfc .container,
+#app.theme-icfc .container-fluid,
+#app.theme-icfc .wrapper{ width:100% !important; max-width:none !important; padding: 0 !important; }
+
+/* Rows (tipo bootstrap) se comportam como grid fluido */
+#app.theme-icfc .row{ display:flex !important; flex-wrap: wrap !important; gap: 12px !important; margin: 0 !important; width:100% !important; }
+#app.theme-icfc [class*="col-"]{ flex: 1 1 280px !important; max-width: 100% !important; }
+
+/* Cards/painéis ocupando largura total disponível */
+#app.theme-icfc .card,
+#app.theme-icfc .panel,
+#app.theme-icfc .box,
+#app.theme-icfc .table-container,
+#app.theme-icfc .chart-container,
+#app.theme-icfc .recent-container,
+#app.theme-icfc .form-container{
+  width:100% !important;
+  max-width:100% !important;
+  margin-left:0 !important; margin-right:0 !important;
+}
+
+/* Inputs e grupos: largura total */
+#app.theme-icfc .form-group,
+#app.theme-icfc .form-control{ width:100% !important; }
+
+/* Responsivo: remove deslocamento da esquerda em telas menores */
+@media (max-width: 1024px){
+  #app.theme-icfc .content,
+  #app.theme-icfc .main,
+  #app.theme-icfc .content-wrapper,
+  #app.theme-icfc .dashboard-content{
+    margin-left: 16px !important; width: calc(100% - 32px) !important;
+  }
+}
