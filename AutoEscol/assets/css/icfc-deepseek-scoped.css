@@ -1,0 +1,147 @@
+
+/* =====================================================================
+   ICFC • Deepseek UI (SCOPED)
+   - Aplica somente dentro de #app.theme-deepseek (não mexe no login).
+   - Mapeado para sua estrutura existente: .section/.active, .left-sidebar, etc.
+   - Use este CSS como o ÚLTIMO <link> do <head>.
+   ===================================================================== */
+#app.theme-deepseek{
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --secondary: #059669;
+  --light-bg: #f8f9fa;
+  --dark-bg: #1f2937;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --sidebar-w: 280px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--light-bg);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+/* ----- SIDEBAR (mapeia suas classes comuns) ----- */
+#app.theme-deepseek .left-sidebar,
+#app.theme-deepseek .sidebar,
+#app.theme-deepseek nav.sidebar{
+  position: fixed; inset: 0 auto 0 0;
+  width: var(--sidebar-w);
+  background: var(--dark-bg); color: #fff;
+  z-index: 1000; overflow-y:auto;
+  box-shadow: 0 0 15px rgba(0,0,0,.1);
+}
+#app.theme-deepseek .sidebar-header{ padding: 1.5rem 1rem; border-bottom:1px solid rgba(255,255,255,.1) }
+#app.theme-deepseek .sidebar-brand{ display:flex; gap:10px; align-items:center; font-weight:700; font-size:1.5rem; color:#fff; text-decoration:none }
+#app.theme-deepseek .sidebar-brand i{ color: var(--primary); font-size:1.8rem }
+#app.theme-deepseek .sidebar-nav{ padding: 1rem 0 }
+#app.theme-deepseek .sidebar .nav-item{ margin-bottom:.3rem }
+#app.theme-deepseek .sidebar .nav-link,
+#app.theme-deepseek .left-sidebar a{
+  color: rgba(255,255,255,.8);
+  padding:.8rem 1.5rem; display:flex; gap:12px; align-items:center;
+  border-left:3px solid transparent; text-decoration:none; cursor:pointer;
+}
+#app.theme-deepseek .sidebar .nav-link:hover,
+#app.theme-deepseek .left-sidebar a:hover,
+#app.theme-deepseek .sidebar .nav-link.active{ background:rgba(255,255,255,.05); color:#fff; border-left-color: var(--primary) }
+#app.theme-deepseek .sidebar .nav-link i{ width:24px; font-size:1.2rem }
+
+/* ----- TOPBAR (mapeia seu header existente) ----- */
+#app.theme-deepseek .top-header{
+  position: sticky; top:0; z-index:900;
+  background:#fff; padding:1rem 2rem; margin-left: var(--sidebar-w);
+  box-shadow: 0 2px 10px rgba(0,0,0,.05);
+  display:flex; justify-content:space-between; align-items:center;
+}
+#app.theme-deepseek .top-header .search-bar{ width:300px; position:relative }
+#app.theme-deepseek .top-header .search-bar input{ padding-left:40px; border-radius:50px; border:1px solid #e5e7eb }
+#app.theme-deepseek .top-header .search-bar i{ position:absolute; left:15px; top:10px; color:var(--text-secondary) }
+#app.theme-deepseek .user-menu{ display:flex; gap:15px; align-items:center }
+#app.theme-deepseek .user-avatar{ width:45px; height:45px; border-radius:50%; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:600 }
+
+/* ----- ÁREA PRINCIPAL ----- */
+#app.theme-deepseek .content,
+#app.theme-deepseek .main,
+#app.theme-deepseek .content-wrapper,
+#app.theme-deepseek .dashboard-content{
+  margin-left: var(--sidebar-w);
+  padding: 2rem;
+  min-height: calc(100vh - 64px);
+}
+/* Suas seções SPA */
+#app.theme-deepseek .section{ display:none }
+#app.theme-deepseek .section.active{ display:block }
+/* Também aceite .content-section se já existir */
+#app.theme-deepseek .content-section{ display:none }
+#app.theme-deepseek .content-section.active{ display:block }
+
+/* ----- TÍTULOS & GRIDS ----- */
+#app.theme-deepseek .page-title{ display:flex; gap:12px; align-items:center; font-weight:600; margin-bottom:1.5rem }
+#app.theme-deepseek .page-title i{ color: var(--primary); font-size:1.8rem }
+#app.theme-deepseek .stats-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1.5rem; margin-bottom:2rem }
+#app.theme-deepseek .content-grid{ display:grid; grid-template-columns: 2fr 1fr; gap:1.5rem }
+@media (max-width: 992px){ #app.theme-deepseek .content-grid{ grid-template-columns:1fr } }
+
+/* ----- CARDS / CONTAINERS ----- */
+#app.theme-deepseek .card, 
+#app.theme-deepseek .table-container,
+#app.theme-deepseek .form-container,
+#app.theme-deepseek .chart-container,
+#app.theme-deepseek .recent-container{
+  background:#fff; border-radius:12px; padding:1.5rem;
+  box-shadow:0 4px 6px rgba(0,0,0,.04);
+  width:100%;
+}
+#app.theme-deepseek .stat-card{ background:#fff; border-radius:12px; padding:1.5rem; box-shadow:0 4px 6px rgba(0,0,0,.04); transition:transform .2s }
+#app.theme-deepseek .stat-card:hover{ transform: translateY(-5px) }
+#app.theme-deepseek .stat-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem }
+#app.theme-deepseek .stat-title{ color: var(--text-secondary); font-weight:500; font-size:.95rem }
+#app.theme-deepseek .stat-icon{ width:50px; height:50px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.5rem }
+#app.theme-deepseek .bg-primary-light{ background: rgba(37,99,235,.1); color: var(--primary) }
+#app.theme-deepseek .bg-success-light{ background: rgba(16,185,129,.1); color: var(--success) }
+#app.theme-deepseek .bg-danger-light{ background: rgba(239,68,68,.1); color: var(--danger) }
+#app.theme-deepseek .bg-warning-light{ background: rgba(245,158,11,.1); color: var(--warning) }
+#app.theme-deepseek .stat-value{ font-size:1.8rem; font-weight:700; margin-bottom:.5rem }
+#app.theme-deepseek .change-positive{ color: var(--success) }
+#app.theme-deepseek .change-negative{ color: var(--danger) }
+
+/* ----- FORMULÁRIOS / BOTÕES ----- */
+#app.theme-deepseek .form-group{ margin-bottom:1.5rem }
+#app.theme-deepseek .form-label{ font-weight:500; margin-bottom:.5rem; display:block }
+#app.theme-deepseek .form-control{ padding:.75rem 1rem; border-radius:8px; border:1px solid #e5e7eb; width:100% }
+#app.theme-deepseek .form-control:focus{ border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(37,99,235,.1) }
+#app.theme-deepseek .btn{ padding:.75rem 1.5rem; border-radius:8px; border:none; font-weight:500; cursor:pointer }
+#app.theme-deepseek .btn-primary{ background: var(--primary); color:#fff }
+#app.theme-deepseek .btn-primary:hover{ background: var(--primary-dark) }
+#app.theme-deepseek .btn-outline{ background: transparent; border:1px solid #e5e7eb; color: var(--text-primary) }
+#app.theme-deepseek .btn-outline:hover{ background:#f9fafb }
+
+/* ----- TABELAS ----- */
+#app.theme-deepseek .table{ width:100%; border-collapse: collapse }
+#app.theme-deepseek .table th{ text-align:left; padding:1rem; border-bottom:1px solid #e5e7eb; font-weight:600; color: var(--text-secondary) }
+#app.theme-deepseek .table td{ padding:1rem; border-bottom:1px solid #f3f4f6 }
+#app.theme-deepseek .table tr:last-child td{ border-bottom:none }
+#app.theme-deepseek .table tr:hover{ background:#f9fafb }
+
+/* ----- RESPONSIVO: colapsa sidebar ----- */
+@media (max-width: 992px){
+  #app.theme-deepseek .left-sidebar,
+  #app.theme-deepseek .sidebar{ width:80px; overflow:hidden }
+  #app.theme-deepseek .sidebar-brand span,
+  #app.theme-deepseek .sidebar .nav-link span{ display:none }
+  #app.theme-deepseek .top-header{ margin-left:80px }
+  #app.theme-deepseek .content,
+  #app.theme-deepseek .main,
+  #app.theme-deepseek .content-wrapper{ margin-left:80px }
+}
+@media (max-width: 768px){
+  #app.theme-deepseek .left-sidebar,
+  #app.theme-deepseek .sidebar{ width:0; display:none }
+  #app.theme-deepseek .top-header{ margin-left:0 }
+  #app.theme-deepseek .content,
+  #app.theme-deepseek .main,
+  #app.theme-deepseek .content-wrapper{ margin-left:0 }
+}
