@@ -1,81 +1,90 @@
 // assets/js/modules/storage.js
 import { authFetch } from "../utils/authFetch.js";
 
-const KEY = 'autoescolaAlunosV8';
-const SELLER_KEY = 'autoescolaSellerCfgV1';
-const API = window.API_BASE || null;
-
-async function apiGet(path) {
-  const r = await fetch(`${API}${path}`, { cache: "no-store" });
-  if (!r.ok) throw new Error(`GET ${path} ${r.status}`);
-  return r.json();
+// Normaliza e valida CPF (11 dígitos)
+function normalizeCPF(v) {
+  const cpf = String(v || "").replace(/\D/g, "");
+  return /^\d{11}$/.test(cpf) ? cpf : null;
 }
-async function apiPut(path, body) {
-  // Usa authFetch para enviar Authorization: Bearer <token>
-  const r = await authFetch(`${API}${path}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+
+export async function apiPut(alunosArray) {
+  const rows = [];
+  const descartados = [];
+
+  for (const a of (alunosArray || [])) {
+    const cpf = normalizeCPF(a?.cpf ?? a?.CPF ?? a?.data?.cpf);
+    if (!cpf) {
+      descartados.push(a);
+      continue;
+    }
+    // remove duplicatas de campo CPF
+    const { cpf: _1, CPF: _2, ...rest } = a || {};
+    rows.push({ cpf, ...rest });
+  }
+
+  if (!rows.length) {
+    throw new Error("Nenhum CPF válido para enviar (precisa ter 11 dígitos).");
+  }
+
+  const res = await authFetch(`${window.API_BASE}/alunos`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(rows),
   });
-  if (!r.ok) {
-    const t = await r.text().catch(()=> '');
-    console.error('PUT fail', r.status, t);
-    throw new Error(`PUT ${path} ${r.status}`);
+
+  const text = await res.text();
+  let json;
+  try {
+    json = JSON.parse(text);
+  } catch {}
+
+  if (!res.ok) {
+    console.error("PUT fail", res.status, text);
+    throw new Error(json?.error || `PUT /alunos ${res.status}`);
   }
-  return r.json();
+
+  if (descartados.length) {
+    console.warn(`Registros ignorados por CPF inválido: ${descartados.length}`);
+  }
+  return json;
 }
 
-export async function loadAlunos(){
-  if (API) {
-    try {
-      const list = await apiGet('/alunos');
-      try { localStorage.setItem(KEY, JSON.stringify(list)); } catch {}
-      return list;
-    } catch (e) {
-      console.warn('API offline, usando local', e);
-    }
-  }
+export async function saveAlunos(alunosArray) {
   try {
-    const raw = localStorage.getItem(KEY);
+    await apiPut(alunosArray); // envia para API
+    localStorage.setItem("alunos", JSON.stringify(alunosArray)); // mantém cópia local
+  } catch (e) {
+    console.warn("API offline, salvando local", e);
+    localStorage.setItem("alunos", JSON.stringify(alunosArray));
+  }
+}
+
+export async function loadAlunos() {
+  try {
+    const res = await authFetch(`${window.API_BASE}/alunos`, {
+      method: "GET",
+      cache: "no-store",
+    });
+    if (!res.ok) throw new Error("GET falhou");
+    return await res.json();
+  } catch (e) {
+    console.warn("Falha ao carregar da API, usando local", e);
+    const raw = localStorage.getItem("alunos");
     return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
   }
 }
 
-export async function saveAlunos(list){
-  if (API) {
-    try {
-      await apiPut('/alunos', list);
-      try { localStorage.setItem(KEY, JSON.stringify(list)); } catch {}
-      return;
-    } catch (e) {
-      console.warn('API offline, salvando local', e);
-    }
-  }
-  try { localStorage.setItem(KEY, JSON.stringify(list)); } catch {}
-}
-
-export async function loadSellerCfg(){
-  if (API) {
-    try { 
-      return await apiGet('/seller'); 
-    } catch (e) { 
-      console.warn('API offline, usando local', e); 
-    }
-  }
+// Config de vendedores
+export async function loadSellerCfg() {
   try {
-    const raw = localStorage.getItem(SELLER_KEY);
-    return raw ? JSON.parse(raw) : { Ewerton:{meta:0, comissao:0}, Darlan:{meta:0, comissao:0} };
-  } catch {
-    return { Ewerton:{meta:0, comissao:0}, Darlan:{meta:0, comissao:0} };
+    const res = await authFetch(`${window.API_BASE}/seller`, {
+      method: "GET",
+      cache: "no-store",
+    });
+    if (!res.ok) throw new Error("GET seller falhou");
+    return await res.json();
+  } catch (e) {
+    console.warn("Falha seller cfg, usando padrão", e);
+    return { Ewerton: { meta: 0, comissao: 0 }, Darlan: { meta: 0, comissao: 0 } };
   }
-}
-
-export async function saveSellerCfg(cfg){
-  if (API) {
-    try { await apiPut('/seller', cfg); return; }
-    catch (e) { console.warn('API offline, salvando local', e); }
-  }
-  try { localStorage.setItem(SELLER_KEY, JSON.stringify(cfg)); } catch {}
 }
