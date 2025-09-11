@@ -7,8 +7,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <scriptt src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <scriptt src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <style>
     :root{
       --bg:#0e0f13; --card:#12141a; --card-2:#161923; --text:#E6E9EF; --muted:#A1A6B3;
@@ -274,7 +274,7 @@
   </div>
 
   <div class="toast" id="toast"></div>
-<script>
+<scriptt>
   // API via Netlify Functions
   window.API_BASE = "/api";
 
@@ -283,10 +283,10 @@
   window.SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpbXlxcXVudmN3b3F6cXdxcHZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc1MDk0MzQsImV4cCI6MjA3MzA4NTQzNH0.O5FbB0ygMAMNAnxGEs5qAvRF1qSA2qYLbSV8ozlsVBs";
 </script>
 
-<!-- Realtime: precisa vir antes do main para já ouvir eventos -->
+<!-- App principal (inicializa tudo e emite auth:ready) -->
 <script type="module" src="assets/js/main.js"></script>
 
-<!-- App principal -->
+<!-- Realtime (assina após login e re-assina quando sessão mudar) -->
 <script type="module" src="assets/js/realtime.js"></script>
 </body>
 </html>
