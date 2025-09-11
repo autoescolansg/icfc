@@ -1,17 +1,106 @@
 
-/* === ICFC visual (scoped) — aplica só dentro do app, não mexe no login === */
-#app.theme-icfc { --bg:#0b0d12; --card:#10131a; --card-2:#141826; --text:#e8ecf2; --muted:#9aa3b2;
+/* === ICFC visual (SCOPED) — aplica só dentro do app, não mexe no login === */
+#app.theme-icfc{
+  --bg:#0b0d12; --card:#10131a; --card-2:#141826; --text:#e8ecf2; --muted:#9aa3b2;
   --primary:#7C3AED; --secondary:#06B6D4; --accent:#22C55E; --warning:#F59E0B; --danger:#EF4444;
-  --border:#1f2430; --chip:#151827; --radius:14px; }
-#app.theme-icfc .sidebar{ background:var(--card-2); border:1px solid var(--border); border-radius:14px; }
-#app.theme-icfc .sidebar a{ color:var(--muted) }
-#app.theme-icfc .sidebar a.active, 
-#app.theme-icfc .sidebar a:hover{ background:rgba(124,58,237,.14); color:var(--text) }
-#app.theme-icfc .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; color:var(--text) }
-#app.theme-icfc .card-header{ border-bottom:1px solid var(--border) }
-#app.theme-icfc .form-control{ background:#0f121a; color:var(--text); border:1px solid var(--border); border-radius:12px }
-#app.theme-icfc .btn{ background:var(--primary); border:0; border-radius:12px }
-#app.theme-icfc .table thead th{ background:var(--card-2); color:var(--muted); border-bottom:1px solid var(--border) }
-#app.theme-icfc .table tbody td{ border-bottom:1px solid var(--border) }
+  --border:#1f2430; --chip:#151827; --radius:14px; --shadow:0 16px 44px rgba(0,0,0,.45);
+  --sidebar-w:240px;
+}
+
+/* Fundo do app */
+#app.theme-icfc { background:var(--bg); color:var(--text); min-height:100vh; }
+
+/* === Sidebar fixa (apenas dentro do app) === */
+#app.theme-icfc .sidebar, 
+#app.theme-icfc nav.sidebar, 
+#app.theme-icfc .left-sidebar{
+  position: fixed; top:0; left:0; bottom:0;
+  width: var(--sidebar-w); overflow-y:auto;
+  background: var(--card-2); color: var(--text);
+  padding: 12px 10px; border-right:1px solid var(--border); z-index: 1000;
+  border-radius: 0;
+}
+#app.theme-icfc .sidebar .sidebar-menu a,
+#app.theme-icfc .sidebar a, 
+#app.theme-icfc .left-sidebar a, 
+#app.theme-icfc .sidebar .nav-link{
+  display:block; color:var(--muted); text-decoration:none;
+  padding:10px 12px; border-radius:10px; margin:4px 0; white-space:nowrap;
+}
+#app.theme-icfc .sidebar .sidebar-menu a:hover,
+#app.theme-icfc .sidebar a:hover,
+#app.theme-icfc .sidebar .nav-link:hover{ background:rgba(124,58,237,.14); color:var(--text); }
+#app.theme-icfc .sidebar .sidebar-menu a.active,
+#app.theme-icfc .sidebar .nav-link.active{ background:rgba(124,58,237,.22); color:#fff; }
+
+/* === Área principal deslocada pela sidebar === */
+#app.theme-icfc .content,
+#app.theme-icfc .main,
+#app.theme-icfc .content-wrapper{
+  margin-left: var(--sidebar-w);
+  padding: 18px;
+}
+
+/* Topbar opcional */
+#app.theme-icfc .topbar{
+  position: sticky; top:0; z-index: 900;
+  background: #0e1118; border-bottom:1px solid var(--border);
+  margin:-18px -18px 16px -18px; padding:10px 14px;
+}
+
+/* === Cards, headings, grids === */
+#app.theme-icfc .card{ background:var(--card); border:1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); color: var(--text); overflow:hidden }
+#app.theme-icfc .card-header{ background:transparent; border-bottom:1px solid var(--border) }
+#app.theme-icfc h1, 
+#app.theme-icfc h2, 
+#app.theme-icfc h3, 
+#app.theme-icfc .page-title{ color:var(--text) }
+#app.theme-icfc .stat-grid{ display:grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap:12px }
+#app.theme-icfc .stat-card{ display:flex; gap:12px; align-items:center; padding:16px; background:var(--card-2); border:1px solid var(--border); border-radius:14px }
+#app.theme-icfc .stat-card i{ padding:10px; border-radius:10px; background:rgba(124,58,237,.15); color:var(--primary) }
+
+/* === Formulários e botões === */
+#app.theme-icfc .form-control{ background:#0f121a; color:var(--text); border:1px solid var(--border); border-radius:12px; height:44px; line-height:44px; padding:0 12px }
+#app.theme-icfc .form-control:focus{ outline:2px solid transparent; box-shadow:0 0 0 3px rgba(124,58,237,.45) }
+#app.theme-icfc select.form-control{ padding-right:36px; -webkit-appearance:none; appearance:none }
+#app.theme-icfc select.form-control option{ background:var(--card); color:var(--text) }
+#app.theme-icfc input[type="date"].form-control{ color-scheme: dark }
+#app.theme-icfc .btn{ background:var(--primary); color:#fff; border:0; border-radius:12px; padding:.55rem .9rem; cursor:pointer }
+#app.theme-icfc .btn.btn-outline, 
+#app.theme-icfc .btn-outline{ background:transparent; border:1px solid var(--border); color:var(--text) }
+#app.theme-icfc .btn-sm{ padding:.35rem .55rem; border-radius:10px }
+
+/* === Tabelas === */
+#app.theme-icfc .table{ width:100%; border-collapse:separate; border-spacing:0 }
+#app.theme-icfc .table thead th{ position:sticky; top:0; z-index:3; background:var(--card-2); color:var(--muted); text-align:left; padding:12px; border-bottom:1px solid var(--border) }
+#app.theme-icfc .table tbody td{ padding:12px; border-bottom:1px solid var(--border) }
+#app.theme-icfc .table tbody tr:nth-child(odd){ background:rgba(124,58,237,.04) }
+#app.theme-icfc .table tbody tr:hover{ background:rgba(124,58,237,.09) }
+
+/* === Badges e valores === */
 #app.theme-icfc .amount-income{ color:#22C55E }
 #app.theme-icfc .amount-expense{ color:#EF4444 }
+#app.theme-icfc .status-badge{ padding:.24rem .55rem; border-radius:999px; font-size:.78rem; background:rgba(148,163,184,.12); border:1px solid rgba(148,163,184,.18) }
+#app.theme-icfc .status-concluido{ background:rgba(34,197,94,.15); color:#22C55E; border-color:rgba(34,197,94,.25) }
+#app.theme-icfc .status-andamento{ background:rgba(6,182,212,.15); color:#06B6D4; border-color:rgba(6,182,212,.25) }
+#app.theme-icfc .status-pendente{ background:rgba(239,68,68,.15); color:#EF4444; border-color:rgba(239,68,68,.25) }
+
+/* === Seções SPA preservadas === */
+#app.theme-icfc .section{ display:none }
+#app.theme-icfc .section.active{ display:block }
+
+/* === Modal dentro do app === */
+#app.theme-icfc .modal{ background:rgba(0,0,0,.45) }
+#app.theme-icfc .modal .modal-content{ background:var(--card); border:1px solid var(--border); border-radius:16px; box-shadow: var(--shadow) }
+#app.theme-icfc .modal .modal-header{ border-bottom:1px solid var(--border) }
+
+/* === Responsivo === */
+@media (max-width: 1024px){
+  #app.theme-icfc{ --sidebar-w: 78px; }
+  #app.theme-icfc .sidebar .sidebar-menu a span{ display:none; }
+}
+@media (max-width: 768px){
+  #app.theme-icfc .sidebar{ position: fixed; transform: translateX(-100%); transition: transform .25s ease; }
+  #app.theme-icfc .sidebar.is-open{ transform: translateX(0); }
+  #app.theme-icfc .content, #app.theme-icfc .main, #app.theme-icfc .content-wrapper{ margin-left:0; }
+}
