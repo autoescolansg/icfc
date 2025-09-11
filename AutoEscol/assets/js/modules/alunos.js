@@ -3,14 +3,15 @@ import { loadAlunos, saveAlunos, loadSellerCfg } from './storage.js';
 import { currentUser } from './auth.js';
 import { pushLog } from './logs.js';
 import { showToast } from './ux.js';
+import { authFetch } from '../utils/authFetch.js';
 
-let alunos = []; // carrega depois (await)
+let alunos = [];
 let chartVendedores = null, chartCategorias = null;
 let editingCPF = null;
 
 const STEPS = ['foto','aulas_teoricas','prova_teorica','aulas_praticas','baliza_carro','baliza_moto'];
 
-/* ---------- Helpers / formatação ---------- */
+/* ---------- helpers ---------- */
 function ensureEtapas(a){
   a.etapas = a.etapas || {
     foto:{inicio:null,fim:null},
@@ -36,17 +37,15 @@ function renderEtapas(a){
   });
 }
 
-/* ---------- Init ---------- */
+/* ---------- init ---------- */
 export async function initAlunos(){
   alunos = await loadAlunos();
   if (!Array.isArray(alunos)) alunos = [];
 
-  // Cadastro
   document.getElementById('cadastro-form')?.addEventListener('submit', async (e)=>{
     e.preventDefault(); await cadastrarAluno();
   });
 
-  // Filtros
   document.getElementById('searchInput')?.addEventListener('input', onFiltersChange);
   document.getElementById('sellerFilter')?.addEventListener('change', onFiltersChange);
   document.getElementById('dateStart')?.addEventListener('change', onFiltersChange);
@@ -54,7 +53,6 @@ export async function initAlunos(){
   document.getElementById('catFilter')?.addEventListener('change', onFiltersChange);
   document.getElementById('btnRefresh')?.addEventListener('click', ()=>{ renderTabela(); refreshDashboard(); });
 
-  // Ações da tabela
   const tbody = document.querySelector('#alunosTable tbody');
   tbody?.addEventListener('click', (e)=>{
     const btn = e.target.closest('button');
@@ -63,7 +61,6 @@ export async function initAlunos(){
     if (btn.dataset.edit) openEdit(btn.dataset.cpf);
   });
 
-  // Modal edição
   document.getElementById('btnCloseModal')?.addEventListener('click', closeModal);
   document.getElementById('btnCancelEdit')?.addEventListener('click', closeModal);
   document.getElementById('editForm')?.addEventListener('submit', onSaveEdit);
@@ -105,17 +102,29 @@ async function cadastrarAluno(){
   renderTabela(); refreshDashboard(); showToast('Aluno cadastrado!', 'success');
 }
 
-function deletarAluno(cpf){
+async function deletarAluno(cpf){
   const aluno = alunos.find(a => a.cpf === cpf);
   if (!aluno) return;
+
   if (currentUser?.role==='colaborador' && currentUser?.seller !== aluno.vendedor){
-    alert('Você só pode excluir/altera alunos do seu vendedor.'); return;
+    alert('Você só pode excluir alunos do seu vendedor.');
+    return;
   }
-  if (!confirm('Excluir aluno?')) return;
+
+  if (!confirm(`Excluir aluno ${aluno.nome} (${formatCPF(aluno.cpf)})?`)) return;
+
+  // Chama API DELETE (com token via authFetch)
+  const res = await authFetch(`${window.API_BASE}/alunos?cpf=${cpf}`, { method: 'DELETE' });
+  const body = await res.json().catch(()=> ({}));
+  if (!res.ok) {
+    alert(body?.error || `Falha ao excluir (${res.status})`);
+    return;
+  }
+
   alunos = alunos.filter(a => a.cpf !== cpf);
-  saveAlunos(alunos);
+  renderTabela(); refreshDashboard();
   pushLog(`Excluir aluno ${cpf}`);
-  renderTabela(); refreshDashboard(); showToast('Aluno excluído.', 'warn');
+  showToast('Aluno excluído.', 'warn');
 }
 
 /* ---------- Modal edição ---------- */
@@ -174,7 +183,7 @@ async function onSaveEdit(e){
   closeModal(); renderTabela(); refreshDashboard(); showToast('Aluno atualizado!', 'success');
 }
 
-/* ---------- Filtro & Render ---------- */
+/* ---------- filtros/render ---------- */
 export function getFiltered(){
   const q=(document.getElementById('searchInput')?.value||'').toLowerCase();
   const sellerFilter=document.getElementById('sellerFilter')?.value||'todos';
@@ -238,22 +247,16 @@ export async function refreshDashboard(){
   el('ewerton-count', ew); el('darlan-count', da);
 
   try{
-    const cfg = await loadSellerCfg();  // vem da API/local
+    const cfg = await loadSellerCfg();
     const em = document.getElementById('ewerton-meta'); if (em) em.textContent = `Meta: ${cfg.Ewerton?.meta||0} | Comissão: ${cfg.Ewerton?.comissao||0}%`;
     const dm = document.getElementById('darlan-meta'); if (dm) dm.textContent = `Meta: ${cfg.Darlan?.meta||0} | Comissão: ${cfg.Darlan?.comissao||0}%`;
-  }catch(e){
-    console.warn("Falha ao carregar seller cfg:", e);
-  }
+  }catch(e){ console.warn("Falha ao carregar seller cfg:", e); }
 
   updateCharts(data);
 }
 
 function updateCharts(data){
-  // Proteção: só desenha se Chart existir e os canvas estiverem presentes
-  if (!window.Chart) {
-    console.warn("Chart.js não carregado; pulando gráficos.");
-    return;
-  }
+  if (!window.Chart) { console.warn("Chart.js não carregado; pulando gráficos."); return; }
   const cv = document.getElementById('chartVendedores');
   const cc = document.getElementById('chartCategorias');
   if (!cv || !cc) return;
@@ -290,7 +293,7 @@ function updateCharts(data){
   }
 }
 
-// --- realtime: permite o refresco imediato vindo do Supabase ---
+/* ---------- hook para realtime.js ---------- */
 export function renderAlunosFromList(list) {
   if (Array.isArray(list)) alunos = list.slice();
   renderTabela();
