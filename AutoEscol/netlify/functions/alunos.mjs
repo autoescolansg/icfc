@@ -18,7 +18,13 @@ export const handler = async (event) => {
     if (method === "PUT")  return await handlePUT(event);
     return json(405, { error: "Method not allowed" });
   } catch (err) {
-    return json(500, { error: String(err?.message || err) });
+    const msg = String(err?.message || err);
+    const isAuth = /bearer token|jwt|signature|token|SUPABASE_JWT_SECRET/i.test(msg);
+    return {
+      statusCode: isAuth ? 401 : 500,
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ error: msg })
+    };
   }
 };
 
