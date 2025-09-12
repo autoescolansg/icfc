@@ -15,12 +15,6 @@
   <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-  
-  <!-- jsPDF -->
-  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-
   <style>
     :root {
       --primary: #2563eb;
@@ -44,18 +38,15 @@
       min-height: 100vh;
     }
 
-    /* Layout Principal */
     .app-container {
       display: flex;
       min-height: 100vh;
     }
 
-    /* Sidebar */
     .sidebar {
       width: 280px;
       background: var(--dark-bg);
       color: white;
-      transition: all 0.3s;
       position: fixed;
       height: 100vh;
       left: 0;
@@ -117,14 +108,11 @@
       width: 24px;
     }
 
-    /* Main Content */
     .main-content {
       flex: 1;
       margin-left: 280px;
-      transition: all 0.3s;
     }
 
-    /* Top Header */
     .top-header {
       background: white;
       padding: 1rem 2rem;
@@ -185,7 +173,6 @@
       font-size: 1.2rem;
     }
 
-    /* Dashboard Content */
     .dashboard-content {
       padding: 2rem;
     }
@@ -203,7 +190,6 @@
       font-size: 1.8rem;
     }
 
-    /* Stats Cards */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -216,11 +202,6 @@
       border-radius: 12px;
       padding: 1.5rem;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
-      transition: transform 0.2s;
-    }
-
-    .stat-card:hover {
-      transform: translateY(-5px);
     }
 
     .stat-header {
@@ -272,55 +253,6 @@
       margin-bottom: 0.5rem;
     }
 
-    .stat-change {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 0.9rem;
-    }
-
-    .change-positive {
-      color: var(--success);
-    }
-
-    .change-negative {
-      color: var(--danger);
-    }
-
-    /* Content Grid */
-    .content-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 1.5rem;
-    }
-
-    .chart-container, .recent-container, .form-container, .table-container {
-      background: white;
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
-    }
-
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
-    }
-
-    .section-title {
-      font-weight: 600;
-      font-size: 1.2rem;
-    }
-
-    .view-all {
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 500;
-      font-size: 0.9rem;
-    }
-
-    /* Forms */
     .form-group {
       margin-bottom: 1.5rem;
     }
@@ -336,13 +268,6 @@
       border-radius: 8px;
       border: 1px solid var(--border);
       width: 100%;
-      transition: border-color 0.2s;
-    }
-
-    .form-control:focus {
-      border-color: var(--primary);
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
 
     .btn {
@@ -351,16 +276,11 @@
       border: none;
       font-weight: 500;
       cursor: pointer;
-      transition: all 0.2s;
     }
 
     .btn-primary {
       background: var(--primary);
       color: white;
-    }
-
-    .btn-primary:hover {
-      background: var(--primary-dark);
     }
 
     .btn-outline {
@@ -369,11 +289,6 @@
       color: var(--text-primary);
     }
 
-    .btn-outline:hover {
-      background: #f9fafb;
-    }
-
-    /* Tables */
     .table {
       width: 100%;
       border-collapse: collapse;
@@ -392,15 +307,6 @@
       border-bottom: 1px solid #f3f4f6;
     }
 
-    .table tr:last-child td {
-      border-bottom: none;
-    }
-
-    .table tr:hover {
-      background: #f9fafb;
-    }
-
-    /* Login Page */
     .login-container {
       min-height: 100vh;
       display: flex;
@@ -411,7 +317,7 @@
 
     .login-card {
       width: 100%;
-      max-width: 420px;
+      max-width: 500px;
       background: white;
       border-radius: 16px;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
@@ -429,152 +335,40 @@
       margin-bottom: 1rem;
     }
 
-    .login-header h1 {
-      margin: 0;
-      font-weight: 700;
+    .config-section {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
     }
 
-    .login-header p {
-      color: var(--text-secondary);
-      margin: 0.5rem 0 0 0;
+    .config-section h3 {
+      color: #856404;
+      margin-top: 0;
     }
 
-    /* Responsive */
-    @media (max-width: 992px) {
-      .sidebar {
-        width: 80px;
-        overflow: hidden;
-      }
-      
-      .sidebar-brand span, .nav-link span {
-        display: none;
-      }
-      
-      .main-content {
-        margin-left: 80px;
-      }
-      
-      .content-grid {
-        grid-template-columns: 1fr;
-      }
+    .config-section ol {
+      padding-left: 1.5rem;
     }
 
-    @media (max-width: 768px) {
-      .sidebar {
-        width: 0;
-        display: none;
-      }
-      
-      .main-content {
-        margin-left: 0;
-      }
-      
-      .top-header {
-        flex-direction: column;
-        gap: 1rem;
-        padding: 1rem;
-      }
-      
-      .search-bar {
-        width: 100%;
-      }
-      
-      .dashboard-content {
-        padding: 1rem;
-      }
-      
-      .stats-grid {
-        grid-template-columns: 1fr;
-      }
+    .config-section li {
+      margin-bottom: 0.5rem;
     }
 
-    /* Status badges */
-    .status-badge {
-      padding: 0.25rem 0.75rem;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      font-weight: 500;
+    .api-key-form {
+      background: #e8f5e9;
+      border: 1px solid #c8e6c9;
+      border-radius: 8px;
+      padding: 1.5rem;
     }
 
-    .status-concluido {
-      background: rgba(34, 197, 94, 0.15);
-      color: #16a34a;
-    }
-
-    .status-andamento {
-      background: rgba(6, 182, 212, 0.15);
-      color: #0891b2;
-    }
-
-    .status-pendente {
-      background: rgba(239, 68, 68, 0.15);
-      color: #dc2626;
-    }
-
-    /* Content Sections */
     .content-section {
       display: none;
     }
 
     .content-section.active {
       display: block;
-    }
-
-    /* Financeiro */
-    .transaction-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 0;
-      border-bottom: 1px solid #f3f4f6;
-    }
-
-    .transaction-item:last-child {
-      border-bottom: none;
-    }
-
-    .transaction-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .transaction-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .transaction-details h4 {
-      font-weight: 600;
-      font-size: 1rem;
-      margin-bottom: 0.2rem;
-    }
-
-    .transaction-details p {
-      color: var(--text-secondary);
-      font-size: 0.85rem;
-      margin-bottom: 0;
-    }
-
-    .transaction-amount {
-      font-weight: 600;
-    }
-
-    .amount-income {
-      color: var(--success);
-    }
-
-    .amount-expense {
-      color: var(--danger);
-    }
-
-    .loading {
-      opacity: 0.7;
-      pointer-events: none;
     }
   </style>
 </head>
@@ -585,10 +379,39 @@
       <div class="login-header">
         <i class="fa-solid fa-car-side"></i>
         <h1>Autoescola NSG</h1>
-        <p>Bem-vindo! Faça login para continuar.</p>
+        <p>Configure o sistema para começar</p>
       </div>
       
-      <div class="login-grid">
+      <div class="config-section">
+        <h3><i class="fa-solid fa-triangle-exclamation"></i> Configuração Necessária</h3>
+        <p>Para usar o sistema, você precisa configurar a conexão com o Supabase:</p>
+        <ol>
+          <li>Acesse <a href="https://app.supabase.com/" target="_blank">app.supabase.com</a></li>
+          <li>Selecione seu projeto</li>
+          <li>Vá em <strong>Settings → API</strong></li>
+          <li>Copie a <strong>URL</strong> e a <strong>anon key</strong></li>
+          <li>Cole abaixo e clique em Salvar</li>
+        </ol>
+      </div>
+
+      <div class="api-key-form">
+        <h3><i class="fa-solid fa-key"></i> Configuração da API</h3>
+        <div class="form-group">
+          <label class="form-label">URL do Supabase</label>
+          <input type="text" id="supabase-url" class="form-control" placeholder="https://pimyqqunvcwoqzqwqpvf.supabase.co">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Chave Pública (anon key)</label>
+          <input type="text" id="supabase-key" class="form-control" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpbXlxcXVudmN3b3F6cXdxcHZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc1MDk0MzQsImV4cCI6MjA3MzA4NTQzNH0.O5FbB0ygMAMNAnxGEs5qAvRF1qSA2qYLbSV8ozlsVBs">
+        </div>
+        
+        <button id="btnSaveConfig" class="btn btn-primary" style="width: 100%;">
+          <i class="fa-solid fa-save"></i> Salvar Configuração
+        </button>
+      </div>
+
+      <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #eee;">
         <div class="form-group">
           <label class="form-label">Usuário</label>
           <input id="loginUser" class="form-control" placeholder="admin, ewerton, darlan">
@@ -597,15 +420,17 @@
           <label class="form-label">Senha</label>
           <input id="loginPass" type="password" class="form-control" placeholder="•••••••">
         </div>
-        <button id="btnLogin" class="btn btn-primary" style="width: 100%;">Entrar</button>
+        <button id="btnLogin" class="btn btn-primary" style="width: 100%;">
+          <i class="fa-solid fa-sign-in"></i> Entrar
+        </button>
       </div>
     </div>
   </div>
 
   <!-- Main Application -->
   <div id="app" style="display:none">
+    <!-- O resto do seu aplicativo aqui -->
     <div class="app-container">
-      <!-- Sidebar Navigation -->
       <div class="sidebar">
         <div class="sidebar-header">
           <a href="#" class="sidebar-brand">
@@ -622,12 +447,6 @@
             </a>
           </div>
           <div class="nav-item">
-            <a href="#" data-section="financeiro-dashboard" class="nav-link">
-              <i class="fa-solid fa-chart-line"></i>
-              <span>Financeiro</span>
-            </a>
-          </div>
-          <div class="nav-item">
             <a href="#" data-section="cadastro" class="nav-link">
               <i class="fa-solid fa-user-plus"></i>
               <span>Cadastro</span>
@@ -639,18 +458,6 @@
               <span>Alunos</span>
             </a>
           </div>
-          <div class="nav-item">
-            <a href="#" data-section="relatorios" class="nav-link">
-              <i class="fa-solid fa-file-lines"></i>
-              <span>Relatórios</span>
-            </a>
-          </div>
-          <div class="nav-item">
-            <a href="#" data-section="config" class="nav-link">
-              <i class="fa-solid fa-gear"></i>
-              <span>Configurações</span>
-            </a>
-          </div>
           <div class="nav-item mt-4">
             <a href="#" id="btnLogout" class="nav-link">
               <i class="fa-solid fa-box-arrow-right"></i>
@@ -660,9 +467,7 @@
         </div>
       </div>
 
-      <!-- Main Content -->
       <div class="main-content">
-        <!-- Top Header -->
         <header class="top-header">
           <div class="search-bar">
             <i class="fa-solid fa-search"></i>
@@ -678,16 +483,13 @@
           </div>
         </header>
 
-        <!-- Dashboard Content -->
         <div class="dashboard-content">
-          <!-- Dashboard Section -->
           <section id="dashboard" class="content-section active">
             <h1 class="page-title">
               <i class="fa-solid fa-gauge"></i>
               Dashboard
             </h1>
 
-            <!-- Stats Grid -->
             <div class="stats-grid">
               <div class="stat-card">
                 <div class="stat-header">
@@ -697,57 +499,8 @@
                   </div>
                 </div>
                 <h2 class="stat-value" id="total-alunos">0</h2>
-                <div class="stat-change change-positive">
-                  <i class="fa-solid fa-arrow-up"></i>
-                  <span>Carregando...</span>
-                </div>
               </div>
 
-              <div class="stat-card">
-                <div class="stat-header">
-                  <h3 class="stat-title">Concluídos</h3>
-                  <div class="stat-icon bg-success-light">
-                    <i class="fa-solid fa-check"></i>
-                  </div>
-                </div>
-                <h2 class="stat-value" id="concluidos">0</h2>
-                <div class="stat-change change-positive">
-                  <i class="fa-solid fa-arrow-up"></i>
-                  <span>Carregando...</span>
-                </div>
-              </div>
-
-              <div class="stat-card">
-                <div class="stat-header">
-                  <h3 class="stat-title">Em Andamento</h3>
-                  <div class="stat-icon bg-warning-light">
-                    <i class="fa-solid fa-hourglass-half"></i>
-                  </div>
-                </div>
-                <h2 class="stat-value" id="andamento">0</h2>
-                <div class="stat-change change-positive">
-                  <i class="fa-solid fa-arrow-up"></i>
-                  <span>Carregando...</span>
-                </div>
-              </div>
-
-              <div class="stat-card">
-                <div class="stat-header">
-                  <h3 class="stat-title">Pendentes</h3>
-                  <div class="stat-icon bg-danger-light">
-                    <i class="fa-solid fa-circle-exclamation"></i>
-                  </div>
-                </div>
-                <h2 class="stat-value" id="pendentes">0</h2>
-                <div class="stat-change change-negative">
-                  <i class="fa-solid fa-arrow-down"></i>
-                  <span>Carregando...</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Second Stats Row -->
-            <div class="stats-grid">
               <div class="stat-card">
                 <div class="stat-header">
                   <h3 class="stat-title">Alunos Ewerton</h3>
@@ -756,9 +509,6 @@
                   </div>
                 </div>
                 <h2 class="stat-value" id="ewerton-count">0</h2>
-                <div class="stat-change" id="ewerton-meta">
-                  Meta: Carregando...
-                </div>
               </div>
 
               <div class="stat-card">
@@ -769,136 +519,19 @@
                   </div>
                 </div>
                 <h2 class="stat-value" id="darlan-count">0</h2>
-                <div class="stat-change" id="darlan-meta">
-                  Meta: Carregando...
-                </div>
-              </div>
-
-              <div class="chart-container">
-                <div class="section-header">
-                  <h2 class="section-title">Desempenho por Vendedor</h2>
-                </div>
-                <canvas id="chartVendedores" height="120"></canvas>
-              </div>
-
-              <div class="chart-container">
-                <div class="section-header">
-                  <h2 class="section-title">Distribuição por Categoria</h2>
-                </div>
-                <canvas id="chartCategorias" height="120"></canvas>
               </div>
             </div>
           </section>
 
-          <!-- Financeiro Dashboard Section -->
-          <section id="financeiro-dashboard" class="content-section">
-            <h1 class="page-title">
-              <i class="fa-solid fa-chart-line"></i>
-              Dashboard Financeiro
-            </h1>
-
-            <!-- Stats Grid -->
-            <div class="stats-grid">
-              <div class="stat-card">
-                <div class="stat-header">
-                  <h3 class="stat-title">Saldo Atual</h3>
-                  <div class="stat-icon bg-primary-light">
-                    <i class="fa-solid fa-wallet"></i>
-                  </div>
-                </div>
-                <h2 class="stat-value" id="saldo-atual">R$ 0,00</h2>
-                <div class="stat-change change-positive">
-                  <i class="fa-solid fa-arrow-up"></i>
-                  <span>Carregando...</span>
-                </div>
-              </div>
-
-              <div class="stat-card">
-                <div class="stat-header">
-                  <h3 class="stat-title">Receitas</h3>
-                  <div class="stat-icon bg-success-light">
-                    <i class="fa-solid fa-arrow-down"></i>
-                  </div>
-                </div>
-                <h2 class="stat-value" id="total-receitas">R$ 0,00</h2>
-                <div class="stat-change change-positive">
-                  <i class="fa-solid fa-arrow-up"></i>
-                  <span>Carregando...</span>
-                </div>
-              </div>
-
-              <div class="stat-card">
-                <div class="stat-header">
-                  <h3 class="stat-title">Despesas</h3>
-                  <div class="stat-icon bg-danger-light">
-                    <i class="fa-solid fa-arrow-up"></i>
-                  </div>
-                </div>
-                <h2 class="stat-value" id="total-despesas">R$ 0,00</h2>
-                <div class="stat-change change-negative">
-                  <i class="fa-solid fa-arrow-down"></i>
-                  <span>Carregando...</span>
-                </div>
-              </div>
-
-              <div class="stat-card">
-                <div class="stat-header">
-                  <h3 class="stat-title">Lucro Mensal</h3>
-                  <div class="stat-icon bg-success-light">
-                    <i class="fa-solid fa-chart-line"></i>
-                  </div>
-                </div>
-                <h2 class="stat-value" id="lucro-mensal">R$ 0,00</h2>
-                <div class="stat-change change-positive">
-                  <i class="fa-solid fa-arrow-up"></i>
-                  <span>Carregando...</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Content Grid -->
-            <div class="content-grid">
-              <div class="chart-container">
-                <div class="section-header">
-                  <h2 class="section-title">Fluxo de Caixa Mensal</h2>
-                </div>
-                <canvas id="chartFluxoCaixa" height="250"></canvas>
-              </div>
-
-              <div class="recent-container">
-                <div class="section-header">
-                  <h2 class="section-title">Últimas Transações</h2>
-                  <a href="#" class="view-all">Ver todas</a>
-                </div>
-
-                <div class="transactions-list" id="ultimas-transacoes">
-                  <div class="transaction-item">
-                    <div class="transaction-info">
-                      <div class="transaction-icon bg-success-light">
-                        <i class="fa-solid fa-arrow-down text-success"></i>
-                      </div>
-                      <div class="transaction-details">
-                        <h4>Carregando...</h4>
-                        <p>Carregando...</p>
-                      </div>
-                    </div>
-                    <div class="transaction-amount amount-income">+ R$ 0,00</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- Cadastro Section -->
           <section id="cadastro" class="content-section">
             <h1 class="page-title">
               <i class="fa-solid fa-user-plus"></i>
               Cadastro de Aluno
             </h1>
             
-            <div class="form-container">
+            <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);">
               <form id="cadastro-form">
-                <div class="content-grid">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
                   <div class="form-group">
                     <label class="form-label">Nome Completo</label>
                     <input type="text" id="nome-aluno" class="form-control" placeholder="Nome completo do aluno" required>
@@ -940,7 +573,7 @@
                 </div>
                 
                 <div class="form-group">
-                  <button type="submit" class="btn btn-primary" id="btn-cadastrar">
+                  <button type="submit" class="btn btn-primary">
                     <i class="fa-solid fa-save"></i> Cadastrar Aluno
                   </button>
                 </div>
@@ -948,16 +581,15 @@
             </div>
           </section>
 
-          <!-- Alunos Section -->
           <section id="alunos" class="content-section">
             <h1 class="page-title">
               <i class="fa-solid fa-list"></i>
               Lista de Alunos
             </h1>
             
-            <div class="table-container">
-              <div class="section-header">
-                <h2 class="section-title">Alunos Cadastrados</h2>
+            <div style="background: white; border-radius: 12px; padding: 0; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);">
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; border-bottom: 1px solid #f3f4f6;">
+                <h3 style="margin: 0; font-size: 1.2rem;">Alunos Cadastrados</h3>
                 <div class="search-bar">
                   <i class="fa-solid fa-search"></i>
                   <input type="text" class="form-control" placeholder="Buscar aluno..." id="search-aluno">
@@ -978,32 +610,12 @@
                 </thead>
                 <tbody id="tabela-alunos">
                   <tr>
-                    <td colspan="7" class="text-center">Nenhum aluno cadastrado</td>
+                    <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                      Nenhum aluno cadastrado. Configure o Supabase primeiro.
+                    </td>
                   </tr>
                 </tbody>
               </table>
-            </div>
-          </section>
-
-          <!-- Relatórios Section -->
-          <section id="relatorios" class="content-section">
-            <h1 class="page-title">
-              <i class="fa-solid fa-file-lines"></i>
-              Relatórios
-            </h1>
-            <div class="alert alert-info">
-              <i class="fa-solid fa-info-circle"></i> Módulo de relatórios em desenvolvimento
-            </div>
-          </section>
-
-          <!-- Configurações Section -->
-          <section id="config" class="content-section">
-            <h1 class="page-title">
-              <i class="fa-solid fa-gear"></i>
-              Configurações
-            </h1>
-            <div class="alert alert-info">
-              <i class="fa-solid fa-info-circle"></i> Módulo de configurações em desenvolvimento
             </div>
           </section>
         </div>
@@ -1013,29 +625,94 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // Configuração do Supabase
-    const SUPABASE_URL = "https://pimyqqunvcwoqzqwqpvf.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhbmFzZSIsInJlZiI6InBpbXlxcXVudmN3b3F6cXdxcHZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc1MDk0MzQsImV4cCI6MjA3MzA4NTQzNH0.O5FbB0ygMAMNAnxGEs5qAvRF1qSA2qYLbSV8ozlsVBs";
-    
-    // Inicializar o cliente Supabase
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    
-    // Dados em memória
+    // Variáveis globais
+    let supabase = null;
     let alunos = [];
-    let transacoes = [];
 
-    // Função de login simplificada
+    // Carregar configuração salva
+    function loadConfig() {
+      const savedUrl = localStorage.getItem('supabase_url');
+      const savedKey = localStorage.getItem('supabase_key');
+      
+      if (savedUrl && savedKey) {
+        document.getElementById('supabase-url').value = savedUrl;
+        document.getElementById('supabase-key').value = savedKey;
+      }
+    }
+
+    // Salvar configuração
+    document.getElementById('btnSaveConfig').addEventListener('click', function() {
+      const url = document.getElementById('supabase-url').value;
+      const key = document.getElementById('supabase-key').value;
+      
+      if (url && key) {
+        localStorage.setItem('supabase_url', url);
+        localStorage.setItem('supabase_key', key);
+        
+        // Testar a conexão
+        testConnection(url, key);
+      } else {
+        alert('Por favor, preencha ambos os campos.');
+      }
+    });
+
+    // Testar conexão com Supabase
+    async function testConnection(url, key) {
+      try {
+        const testSupabase = window.supabase.createClient(url, key);
+        
+        // Testar uma consulta simples
+        const { error } = await testSupabase
+          .from('alunos')
+          .select('count')
+          .limit(1);
+        
+        if (error && error.code === 'PGRST301') {
+          // Tabela não existe, mas a conexão está ok
+          alert('Conexão bem-sucedida! A tabela "alunos" não existe ainda, mas você pode criá-la.');
+          initSupabase(url, key);
+        } else if (error) {
+          throw error;
+        } else {
+          alert('Conexão bem-sucedida! Configuração salva.');
+          initSupabase(url, key);
+        }
+      } catch (error) {
+        console.error('Erro de conexão:', error);
+        alert('Erro na conexão: ' + error.message + '\n\nVerifique se a URL e a chave estão corretas.');
+      }
+    }
+
+    // Inicializar Supabase
+    function initSupabase(url, key) {
+      supabase = window.supabase.createClient(url, key);
+      alert('Supabase configurado com sucesso! Agora você pode fazer login.');
+    }
+
+    // Função de login
     document.getElementById('btnLogin').addEventListener('click', function() {
       const username = document.getElementById('loginUser').value;
       const password = document.getElementById('loginPass').value;
+      const url = localStorage.getItem('supabase_url');
+      const key = localStorage.getItem('supabase_key');
+      
+      if (!url || !key) {
+        alert('Por favor, configure o Supabase primeiro.');
+        return;
+      }
       
       if (username && password) {
+        // Inicializar Supabase se ainda não foi inicializado
+        if (!supabase) {
+          initSupabase(url, key);
+        }
+        
         document.getElementById('login').style.display = 'none';
         document.getElementById('app').style.display = 'block';
         document.getElementById('userDisplayName').textContent = username;
         document.getElementById('userAvatar').textContent = username.charAt(0).toUpperCase();
         
-        // Carregar dados iniciais do Supabase
+        // Carregar dados
         carregarDados();
       } else {
         alert('Por favor, preencha usuário e senha.');
@@ -1051,35 +728,30 @@
       document.getElementById('loginPass').value = '';
     });
 
-    // Navegação entre seções
+    // Navegação
     document.querySelectorAll('.nav-link').forEach(link => {
       link.addEventListener('click', function(e) {
         e.preventDefault();
-        
-        // Remover classe active de todos os links
         document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-        // Adicionar classe active ao link clicado
         this.classList.add('active');
         
-        // Ocultar todas as seções
         document.querySelectorAll('.content-section').forEach(section => {
           section.classList.remove('active');
         });
         
-        // Mostrar a seção correspondente
         const sectionId = this.getAttribute('data-section');
         document.getElementById(sectionId).classList.add('active');
-        
-        // Se for a seção financeira, carregar dados financeiros
-        if (sectionId === 'financeiro-dashboard') {
-          carregarDadosFinanceiros();
-        }
       });
     });
 
-    // Formulário de cadastro de aluno
+    // Formulário de cadastro
     document.getElementById('cadastro-form').addEventListener('submit', async function(e) {
       e.preventDefault();
+      
+      if (!supabase) {
+        alert('Supabase não configurado. Por favor, faça a configuração primeiro.');
+        return;
+      }
       
       const nome = document.getElementById('nome-aluno').value;
       const cpf = document.getElementById('cpf-aluno').value;
@@ -1089,146 +761,85 @@
       const vendedor = document.getElementById('vendedor-aluno').value;
       
       if (nome && cpf && telefone && categoria && dataMatricula && vendedor) {
-        // Adicionar loading state
-        const btnCadastrar = document.getElementById('btn-cadastrar');
-        btnCadastrar.disabled = true;
-        btnCadastrar.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Cadastrando...';
-        
         try {
-          // Primeiro, verificar se já existe um aluno com este CPF
-          const { data: alunoExistente, error: checkError } = await supabase
-            .from('alunos')
-            .select('id')
-            .eq('cpf', cpf)
-            .single();
-          
-          if (alunoExistente) {
-            throw new Error('Já existe um aluno cadastrado com este CPF');
-          }
-          
-          // Inserir aluno no Supabase
+          // Usando o formato de dados que o Supabase espera
           const { data, error } = await supabase
             .from('alunos')
             .insert([
               { 
-                nome, 
-                cpf, 
-                telefone, 
-                categoria, 
-                data_matricula: dataMatricula, 
-                vendedor,
+                nome: nome,
+                cpf: cpf,
+                telefone: telefone,
+                categoria: categoria,
+                data_matricula: dataMatricula,
+                vendedor: vendedor,
                 status: 'pendente'
               }
-            ])
-            .select();
+            ]);
           
           if (error) {
-            throw error;
-          }
-          
-          if (data && data.length > 0) {
-            // Limpar formulário
+            if (error.code === '42P01') {
+              // Tabela não existe
+              alert('A tabela "alunos" não existe. Por favor, crie-a no Supabase primeiro.');
+            } else {
+              throw error;
+            }
+          } else {
             document.getElementById('cadastro-form').reset();
-            
-            // Recarregar dados
-            await carregarAlunos();
-            
-            // Atualizar dashboard
-            atualizarDashboard();
-            
             alert('Aluno cadastrado com sucesso!');
+            carregarDados();
           }
         } catch (error) {
-          console.error('Erro ao cadastrar aluno:', error);
-          alert('Erro ao cadastrar aluno: ' + error.message);
-        } finally {
-          // Remover loading state
-          btnCadastrar.disabled = false;
-          btnCadastrar.innerHTML = '<i class="fa-solid fa-save"></i> Cadastrar Aluno';
+          console.error('Erro ao cadastrar:', error);
+          alert('Erro ao cadastrar: ' + error.message);
         }
       } else {
         alert('Por favor, preencha todos os campos.');
       }
     });
 
-    // Função para carregar dados iniciais
+    // Carregar dados
     async function carregarDados() {
+      if (!supabase) return;
+      
       try {
-        await carregarAlunos();
-        await carregarDadosFinanceiros();
-      } catch (error) {
-        console.error('Erro ao carregar dados:', error);
-        alert('Erro ao carregar dados: ' + error.message);
-      }
-    }
-
-    // Função para carregar alunos do Supabase
-    async function carregarAlunos() {
-      try {
-        // Primeiro, vamos verificar a estrutura da tabela alunos
         const { data, error } = await supabase
           .from('alunos')
           .select('*');
         
         if (error) {
-          console.error('Erro ao carregar alunos:', error);
-          // Vamos tentar uma consulta mais simples para diagnosticar o problema
-          const { data: simpleData, error: simpleError } = await supabase
-            .from('alunos')
-            .select('id, nome')
-            .limit(1);
-            
-          if (simpleError) {
-            throw new Error('Não foi possível acessar a tabela de alunos. Verifique se a tabela existe no Supabase.');
+          if (error.code === '42P01') {
+            // Tabela não existe ainda
+            alunos = [];
+          } else {
+            throw error;
           }
-          
-          throw error;
+        } else {
+          alunos = data || [];
         }
         
-        alunos = data || [];
         atualizarTabelaAlunos();
         atualizarDashboard();
       } catch (error) {
-        console.error('Erro ao carregar alunos:', error);
-        // Mostrar mensagem amigável para o usuário
-        alert('Erro ao carregar alunos. Verifique se a tabela "alunos" existe no Supabase.');
-        throw error;
+        console.error('Erro ao carregar dados:', error);
+        alunos = [];
+        atualizarTabelaAlunos();
+        atualizarDashboard();
       }
     }
 
-    // Função para carregar dados financeiros do Supabase
-    async function carregarDadosFinanceiros() {
-      try {
-        // Tentar carregar transações
-        try {
-          const { data: transacoesData, error: transacoesError } = await supabase
-            .from('transacoes')
-            .select('*')
-            .order('data', { ascending: false })
-            .limit(5);
-          
-          if (!transacoesError) {
-            transacoes = transacoesData || [];
-          }
-        } catch (e) {
-          console.log('Tabela de transações não encontrada, continuando sem dados financeiros');
-          transacoes = [];
-        }
-        
-        atualizarDashboardFinanceiro();
-      } catch (error) {
-        console.error('Erro ao carregar dados financeiros:', error);
-        // Não mostrar erro para o usuário pois a tabela pode não existir ainda
-      }
-    }
-
-    // Função para atualizar a tabela de alunos
     function atualizarTabelaAlunos() {
       const tbody = document.getElementById('tabela-alunos');
       tbody.innerHTML = '';
       
       if (alunos.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum aluno cadastrado</td></tr>';
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+              ${supabase ? 'Nenhum aluno cadastrado' : 'Supabase não configurado'}
+            </td>
+          </tr>
+        `;
         return;
       }
       
@@ -1242,10 +853,10 @@
           <td>${aluno.data_matricula ? new Date(aluno.data_matricula).toLocaleDateString('pt-BR') : 'N/A'}</td>
           <td>${aluno.vendedor || 'N/A'}</td>
           <td>
-            <button class="btn btn-sm btn-outline" onclick="editarAluno(${aluno.id})">
+            <button class="btn btn-sm btn-outline">
               <i class="fa-solid fa-edit"></i>
             </button>
-            <button class="btn btn-sm btn-outline" onclick="excluirAluno(${aluno.id})">
+            <button class="btn btn-sm btn-outline">
               <i class="fa-solid fa-trash"></i>
             </button>
           </td>
@@ -1254,112 +865,21 @@
       });
     }
 
-    // Função para atualizar o dashboard
     function atualizarDashboard() {
       document.getElementById('total-alunos').textContent = alunos.length;
-      
-      const concluidos = alunos.filter(a => a.status === 'concluido').length;
-      const andamento = alunos.filter(a => a.status === 'andamento').length;
-      const pendentes = alunos.filter(a => a.status === 'pendente' || !a.status).length;
-      
-      document.getElementById('concluidos').textContent = concluidos;
-      document.getElementById('andamento').textContent = andamento;
-      document.getElementById('pendentes').textContent = pendentes;
       
       const ewertonCount = alunos.filter(a => a.vendedor === 'Ewerton').length;
       const darlanCount = alunos.filter(a => a.vendedor === 'Darlan').length;
       
       document.getElementById('ewerton-count').textContent = ewertonCount;
       document.getElementById('darlan-count').textContent = darlanCount;
-      
-      document.getElementById('ewerton-meta').textContent = `Meta: ${ewertonCount}/30`;
-      document.getElementById('darlan-meta').textContent = `Meta: ${darlanCount}/30`;
     }
 
-    // Função para atualizar o dashboard financeiro
-    function atualizarDashboardFinanceiro() {
-      // Calcular totais
-      const totalReceitas = transacoes
-        .filter(t => t.tipo === 'entrada')
-        .reduce((sum, t) => sum + parseFloat(t.valor || 0), 0);
-      
-      const totalDespesas = transacoes
-        .filter(t => t.tipo === 'saida')
-        .reduce((sum, t) => sum + parseFloat(t.valor || 0), 0);
-      
-      const saldoAtual = totalReceitas - totalDespesas;
-      
-      document.getElementById('saldo-atual').textContent = `R$ ${saldoAtual.toFixed(2)}`;
-      document.getElementById('total-receitas').textContent = `R$ ${totalReceitas.toFixed(2)}`;
-      document.getElementById('total-despesas').textContent = `R$ ${totalDespesas.toFixed(2)}`;
-      document.getElementById('lucro-mensal').textContent = `R$ ${saldoAtual.toFixed(2)}`;
-      
-      // Atualizar lista de transações
-      const transacoesHtml = transacoes.map(trans => `
-        <div class="transaction-item">
-          <div class="transaction-info">
-            <div class="transaction-icon ${trans.tipo === 'entrada' ? 'bg-success-light' : 'bg-danger-light'}">
-              <i class="fa-solid fa-${trans.tipo === 'entrada' ? 'arrow-down text-success' : 'arrow-up text-danger'}"></i>
-            </div>
-            <div class="transaction-details">
-              <h4>${trans.descricao || 'Transação'}</h4>
-              <p>${trans.data ? new Date(trans.data).toLocaleDateString('pt-BR') : 'Data não informada'}</p>
-            </div>
-          </div>
-          <div class="transaction-amount amount-${trans.tipo === 'entrada' ? 'income' : 'expense'}">
-            ${trans.tipo === 'entrada' ? '+' : '-'} R$ ${parseFloat(trans.valor || 0).toFixed(2)}
-          </div>
-        </div>
-      `).join('');
-      
-      document.getElementById('ultimas-transacoes').innerHTML = transacoesHtml || `
-        <div class="transaction-item">
-          <div class="transaction-info">
-            <div class="transaction-icon bg-secondary">
-              <i class="fa-solid fa-info text-white"></i>
-            </div>
-            <div class="transaction-details">
-              <h4>Nenhuma transação encontrada</h4>
-              <p>Adicione transações para visualizar</p>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    // Funções para editar e excluir alunos
-    window.editarAluno = function(id) {
-      const aluno = alunos.find(a => a.id === id);
-      if (aluno) {
-        alert(`Editar aluno: ${aluno.nome}`);
-        // Implementar edição
-      }
-    };
-
-    window.excluirAluno = async function(id) {
-      if (confirm('Tem certeza que deseja excluir este aluno?')) {
-        try {
-          const { error } = await supabase
-            .from('alunos')
-            .delete()
-            .eq('id', id);
-          
-          if (error) {
-            throw error;
-          }
-          
-          // Recarregar alunos
-          await carregarAlunos();
-          alert('Aluno excluído com sucesso!');
-        } catch (error) {
-          console.error('Erro ao excluir aluno:', error);
-          alert('Erro ao excluir aluno: ' + error.message);
-        }
-      }
-    };
-
-    // Inicializar date inputs com data atual
-    document.getElementById('data-matricula').valueAsDate = new Date();
+    // Inicializar a página
+    document.addEventListener('DOMContentLoaded', function() {
+      loadConfig();
+      document.getElementById('data-matricula').valueAsDate = new Date();
+    });
   </script>
 </body>
 </html>
