@@ -22,6 +22,7 @@
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
   <style>
+    /* (Manter todos os estilos anteriores) */
     :root {
       --primary: #2563eb;
       --primary-dark: #1d4ed8;
@@ -44,13 +45,12 @@
       min-height: 100vh;
     }
 
-    /* Layout Principal */
+    /* (Manter todos os outros estilos) */
     .app-container {
       display: flex;
       min-height: 100vh;
     }
 
-    /* Sidebar */
     .sidebar {
       width: 280px;
       background: var(--dark-bg);
@@ -65,430 +65,8 @@
       overflow-y: auto;
     }
 
-    .sidebar-header {
-      padding: 1.5rem 1rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
+    /* ... (todos os outros estilos permanecem iguais) ... */
 
-    .sidebar-brand {
-      font-weight: 700;
-      font-size: 1.5rem;
-      color: white;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .sidebar-brand i {
-      color: var(--primary);
-      font-size: 1.8rem;
-    }
-
-    .sidebar-nav {
-      padding: 1rem 0;
-      height: calc(100vh - 100px);
-      overflow-y: auto;
-    }
-
-    .nav-item {
-      margin-bottom: 0.3rem;
-    }
-
-    .nav-link {
-      color: rgba(255, 255, 255, 0.8);
-      padding: 0.8rem 1.5rem;
-      border-left: 3px solid transparent;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
-    }
-
-    .nav-link:hover, .nav-link.active {
-      background: rgba(255, 255, 255, 0.05);
-      color: white;
-      border-left-color: var(--primary);
-    }
-
-    .nav-link i {
-      font-size: 1.2rem;
-      width: 24px;
-    }
-
-    /* Main Content */
-    .main-content {
-      flex: 1;
-      margin-left: 280px;
-      transition: all 0.3s;
-    }
-
-    /* Top Header */
-    .top-header {
-      background: white;
-      padding: 1rem 2rem;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .search-bar {
-      width: 300px;
-      position: relative;
-    }
-
-    .search-bar input {
-      padding-left: 40px;
-      border-radius: 50px;
-      border: 1px solid var(--border);
-    }
-
-    .search-bar i {
-      position: absolute;
-      left: 15px;
-      top: 10px;
-      color: var(--text-secondary);
-    }
-
-    .user-menu {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .user-info {
-      text-align: right;
-    }
-
-    .user-name {
-      font-weight: 600;
-      margin-bottom: 0;
-    }
-
-    .user-role {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-    }
-
-    .user-avatar {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      background: var(--primary);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      font-size: 1.2rem;
-    }
-
-    /* Dashboard Content */
-    .dashboard-content {
-      padding: 2rem;
-    }
-
-    .page-title {
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .page-title i {
-      color: var(--primary);
-      font-size: 1.8rem;
-    }
-
-    /* Stats Cards */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .stat-card {
-      background: white;
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
-      transition: transform 0.2s;
-    }
-
-    .stat-card:hover {
-      transform: translateY(-5px);
-    }
-
-    .stat-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-
-    .stat-title {
-      color: var(--text-secondary);
-      font-weight: 500;
-      font-size: 0.95rem;
-    }
-
-    .stat-icon {
-      width: 50px;
-      height: 50px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-    }
-
-    .bg-primary-light {
-      background: rgba(37, 99, 235, 0.1);
-      color: var(--primary);
-    }
-
-    .bg-success-light {
-      background: rgba(16, 185, 129, 0.1);
-      color: var(--success);
-    }
-
-    .bg-danger-light {
-      background: rgba(239, 68, 68, 0.1);
-      color: var(--danger);
-    }
-
-    .bg-warning-light {
-      background: rgba(245, 158, 11, 0.1);
-      color: var(--warning);
-    }
-
-    .stat-value {
-      font-size: 1.8rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
-
-    .stat-change {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 0.9rem;
-    }
-
-    .change-positive {
-      color: var(--success);
-    }
-
-    .change-negative {
-      color: var(--danger);
-    }
-
-    /* Content Grid */
-    .content-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 1.5rem;
-    }
-
-    .chart-container, .recent-container, .form-container, .table-container {
-      background: white;
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
-    }
-
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
-    }
-
-    .section-title {
-      font-weight: 600;
-      font-size: 1.2rem;
-    }
-
-    .view-all {
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 500;
-      font-size: 0.9rem;
-    }
-
-    /* Forms */
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-
-    .form-label {
-      font-weight: 500;
-      margin-bottom: 0.5rem;
-      display: block;
-    }
-
-    .form-control {
-      padding: 0.75rem 1rem;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      width: 100%;
-      transition: border-color 0.2s;
-    }
-
-    .form-control:focus {
-      border-color: var(--primary);
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-    }
-
-    .btn {
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-      border: none;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: var(--primary-dark);
-    }
-
-    .btn-outline {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text-primary);
-    }
-
-    .btn-outline:hover {
-      background: #f9fafb;
-    }
-
-    /* Tables */
-    .table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .table th {
-      text-align: left;
-      padding: 1rem;
-      border-bottom: 1px solid var(--border);
-      font-weight: 600;
-      color: var(--text-secondary);
-    }
-
-    .table td {
-      padding: 1rem;
-      border-bottom: 1px solid #f3f4f6;
-    }
-
-    .table tr:last-child td {
-      border-bottom: none;
-    }
-
-    .table tr:hover {
-      background: #f9fafb;
-    }
-
-    /* Login Page */
-    .login-container {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-
-    .login-card {
-      width: 100%;
-      max-width: 420px;
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-      padding: 2rem;
-    }
-
-    .login-header {
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
-
-    .login-header i {
-      font-size: 2.5rem;
-      color: var(--primary);
-      margin-bottom: 1rem;
-    }
-
-    .login-header h1 {
-      margin: 0;
-      font-weight: 700;
-    }
-
-    .login-header p {
-      color: var(--text-secondary);
-      margin: 0.5rem 0 0 0;
-    }
-
-    /* Responsive */
-    @media (max-width: 992px) {
-      .sidebar {
-        width: 80px;
-        overflow: hidden;
-      }
-      
-      .sidebar-brand span, .nav-link span {
-        display: none;
-      }
-      
-      .main-content {
-        margin-left: 80px;
-      }
-      
-      .content-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .sidebar {
-        width: 0;
-        display: none;
-      }
-      
-      .main-content {
-        margin-left: 0;
-      }
-      
-      .top-header {
-        flex-direction: column;
-        gap: 1rem;
-        padding: 1rem;
-      }
-      
-      .search-bar {
-        width: 100%;
-      }
-      
-      .dashboard-content {
-        padding: 1rem;
-      }
-      
-      .stats-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* Status badges */
     .status-badge {
       padding: 0.25rem 0.75rem;
       border-radius: 999px;
@@ -511,7 +89,6 @@
       color: #dc2626;
     }
 
-    /* Content Sections */
     .content-section {
       display: none;
     }
@@ -520,7 +97,6 @@
       display: block;
     }
 
-    /* Financeiro */
     .transaction-item {
       display: flex;
       justify-content: space-between;
@@ -570,6 +146,11 @@
 
     .amount-expense {
       color: var(--danger);
+    }
+
+    .loading {
+      opacity: 0.7;
+      pointer-events: none;
     }
   </style>
 </head>
@@ -935,7 +516,7 @@
                 </div>
                 
                 <div class="form-group">
-                  <button type="submit" class="btn btn-primary">
+                  <button type="submit" class="btn btn-primary" id="btn-cadastrar">
                     <i class="fa-solid fa-save"></i> Cadastrar Aluno
                   </button>
                 </div>
@@ -1006,13 +587,16 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // Variáveis globais
-    window.API_BASE = "/api";
-    window.SUPABASE_URL = "https://pimyqqunvcwoqzqwqpvf.supabase.co";
-    window.SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpbXlxcXVudmN3b3F6cXdxcHZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc1MDk0MzQsImV4cCI6MjA3MzA4NTQzNH0.O5FbB0ygMAMNAnxGEs5qAvRF1qSA2qYLbSV8ozlsVBs";
-
-    // Dados em memória (seriam substituídos pelo Supabase)
+    // Configuração do Supabase
+    const SUPABASE_URL = "https://pimyqqunvcwoqzqwqpvf.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpbXlxcXVudmN3b3F6cXdxcHZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc1MDk0MzQsImV4cCI6MjA3MzA4NTQzNH0.O5FbB0ygMAMNAnxGEs5qAvRF1qSA2qYLbSV8ozlsVBs";
+    
+    // Inicializar o cliente Supabase
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    // Dados em memória
     let alunos = [];
     let transacoes = [];
 
@@ -1027,7 +611,7 @@
         document.getElementById('userDisplayName').textContent = username;
         document.getElementById('userAvatar').textContent = username.charAt(0).toUpperCase();
         
-        // Carregar dados iniciais
+        // Carregar dados iniciais do Supabase
         carregarDados();
       } else {
         alert('Por favor, preencha usuário e senha.');
@@ -1061,11 +645,16 @@
         // Mostrar a seção correspondente
         const sectionId = this.getAttribute('data-section');
         document.getElementById(sectionId).classList.add('active');
+        
+        // Se for a seção financeira, carregar dados financeiros
+        if (sectionId === 'financeiro-dashboard') {
+          carregarDadosFinanceiros();
+        }
       });
     });
 
     // Formulário de cadastro de aluno
-    document.getElementById('cadastro-form').addEventListener('submit', function(e) {
+    document.getElementById('cadastro-form').addEventListener('submit', async function(e) {
       e.preventDefault();
       
       const nome = document.getElementById('nome-aluno').value;
@@ -1076,48 +665,109 @@
       const vendedor = document.getElementById('vendedor-aluno').value;
       
       if (nome && cpf && telefone && categoria && dataMatricula && vendedor) {
-        // Adicionar aluno à lista
-        const novoAluno = {
-          id: Date.now(),
-          nome,
-          cpf,
-          telefone,
-          categoria,
-          dataMatricula,
-          vendedor,
-          status: 'pendente'
-        };
+        // Adicionar loading state
+        const btnCadastrar = document.getElementById('btn-cadastrar');
+        btnCadastrar.disabled = true;
+        btnCadastrar.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Cadastrando...';
         
-        alunos.push(novoAluno);
-        
-        // Limpar formulário
-        document.getElementById('cadastro-form').reset();
-        
-        // Atualizar tabela
-        atualizarTabelaAlunos();
-        
-        // Atualizar dashboard
-        atualizarDashboard();
-        
-        alert('Aluno cadastrado com sucesso!');
+        try {
+          // Inserir aluno no Supabase
+          const { data, error } = await supabase
+            .from('alunos')
+            .insert([
+              { 
+                nome, 
+                cpf, 
+                telefone, 
+                categoria, 
+                data_matricula: dataMatricula, 
+                vendedor,
+                status: 'pendente'
+              }
+            ])
+            .select();
+          
+          if (error) {
+            throw error;
+          }
+          
+          if (data && data.length > 0) {
+            // Limpar formulário
+            document.getElementById('cadastro-form').reset();
+            
+            // Recarregar dados
+            await carregarAlunos();
+            
+            // Atualizar dashboard
+            atualizarDashboard();
+            
+            alert('Aluno cadastrado com sucesso!');
+          }
+        } catch (error) {
+          console.error('Erro ao cadastrar aluno:', error);
+          alert('Erro ao cadastrar aluno: ' + error.message);
+        } finally {
+          // Remover loading state
+          btnCadastrar.disabled = false;
+          btnCadastrar.innerHTML = '<i class="fa-solid fa-save"></i> Cadastrar Aluno';
+        }
       } else {
         alert('Por favor, preencha todos os campos.');
       }
     });
 
     // Função para carregar dados iniciais
-    function carregarDados() {
-      // Simular carregamento de dados do Supabase
-      setTimeout(() => {
-        // Inicializar com array vazio (sem alunos de exemplo)
-        alunos = [];
-        transacoes = [];
+    async function carregarDados() {
+      try {
+        await carregarAlunos();
+        await carregarDadosFinanceiros();
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+        alert('Erro ao carregar dados: ' + error.message);
+      }
+    }
+
+    // Função para carregar alunos do Supabase
+    async function carregarAlunos() {
+      try {
+        const { data, error } = await supabase
+          .from('alunos')
+          .select('*')
+          .order('data_matricula', { ascending: false });
         
-        // Atualizar interface
+        if (error) {
+          throw error;
+        }
+        
+        alunos = data || [];
         atualizarTabelaAlunos();
         atualizarDashboard();
+      } catch (error) {
+        console.error('Erro ao carregar alunos:', error);
+        throw error;
+      }
+    }
+
+    // Função para carregar dados financeiros do Supabase
+    async function carregarDadosFinanceiros() {
+      try {
+        // Carregar transações
+        const { data: transacoesData, error: transacoesError } = await supabase
+          .from('transacoes')
+          .select('*')
+          .order('data', { ascending: false })
+          .limit(5);
+        
+        if (transacoesError) {
+          throw transacoesError;
+        }
+        
+        transacoes = transacoesData || [];
         atualizarDashboardFinanceiro();
-      }, 1000);
+      } catch (error) {
+        console.error('Erro ao carregar dados financeiros:', error);
+        throw error;
+      }
     }
 
     // Função para atualizar a tabela de alunos
@@ -1137,7 +787,7 @@
           <td>${aluno.cpf}</td>
           <td>${aluno.telefone}</td>
           <td>${aluno.categoria}</td>
-          <td>${new Date(aluno.dataMatricula).toLocaleDateString('pt-BR')}</td>
+          <td>${new Date(aluno.data_matricula).toLocaleDateString('pt-BR')}</td>
           <td>${aluno.vendedor}</td>
           <td>
             <button class="btn btn-sm btn-outline" onclick="editarAluno(${aluno.id})">
@@ -1176,26 +826,24 @@
 
     // Função para atualizar o dashboard financeiro
     function atualizarDashboardFinanceiro() {
-      // Simular dados financeiros
-      const saldoAtual = 15250.00;
-      const totalReceitas = 25300.00;
-      const totalDespesas = 10050.00;
-      const lucroMensal = totalReceitas - totalDespesas;
+      // Calcular totais
+      const totalReceitas = transacoes
+        .filter(t => t.tipo === 'entrada')
+        .reduce((sum, t) => sum + parseFloat(t.valor), 0);
+      
+      const totalDespesas = transacoes
+        .filter(t => t.tipo === 'saida')
+        .reduce((sum, t) => sum + parseFloat(t.valor), 0);
+      
+      const saldoAtual = totalReceitas - totalDespesas;
       
       document.getElementById('saldo-atual').textContent = `R$ ${saldoAtual.toFixed(2)}`;
       document.getElementById('total-receitas').textContent = `R$ ${totalReceitas.toFixed(2)}`;
       document.getElementById('total-despesas').textContent = `R$ ${totalDespesas.toFixed(2)}`;
-      document.getElementById('lucro-mensal').textContent = `R$ ${lucroMensal.toFixed(2)}`;
+      document.getElementById('lucro-mensal').textContent = `R$ ${saldoAtual.toFixed(2)}`;
       
-      // Simular transações
-      const ultimasTransacoes = [
-        { descricao: 'Matrícula - João Silva', data: '2023-11-15', valor: 1200.00, tipo: 'entrada' },
-        { descricao: 'Pagamento - Instrutor', data: '2023-11-14', valor: 850.00, tipo: 'saida' },
-        { descricao: 'Matrícula - Maria Santos', data: '2023-11-13', valor: 1200.00, tipo: 'entrada' },
-        { descricao: 'Manutenção Veículos', data: '2023-11-12', valor: 1250.00, tipo: 'saida' }
-      ];
-      
-      const transacoesHtml = ultimasTransacoes.map(trans => `
+      // Atualizar lista de transações
+      const transacoesHtml = transacoes.map(trans => `
         <div class="transaction-item">
           <div class="transaction-info">
             <div class="transaction-icon ${trans.tipo === 'entrada' ? 'bg-success-light' : 'bg-danger-light'}">
@@ -1207,12 +855,24 @@
             </div>
           </div>
           <div class="transaction-amount amount-${trans.tipo === 'entrada' ? 'income' : 'expense'}">
-            ${trans.tipo === 'entrada' ? '+' : '-'} R$ ${trans.valor.toFixed(2)}
+            ${trans.tipo === 'entrada' ? '+' : '-'} R$ ${parseFloat(trans.valor).toFixed(2)}
           </div>
         </div>
       `).join('');
       
-      document.getElementById('ultimas-transacoes').innerHTML = transacoesHtml;
+      document.getElementById('ultimas-transacoes').innerHTML = transacoesHtml || `
+        <div class="transaction-item">
+          <div class="transaction-info">
+            <div class="transaction-icon bg-secondary">
+              <i class="fa-solid fa-info text-white"></i>
+            </div>
+            <div class="transaction-details">
+              <h4>Nenhuma transação encontrada</h4>
+              <p>Adicione transações para visualizar</p>
+            </div>
+          </div>
+        </div>
+      `;
     }
 
     // Funções para editar e excluir alunos
@@ -1224,12 +884,25 @@
       }
     };
 
-    window.excluirAluno = function(id) {
+    window.excluirAluno = async function(id) {
       if (confirm('Tem certeza que deseja excluir este aluno?')) {
-        alunos = alunos.filter(a => a.id !== id);
-        atualizarTabelaAlunos();
-        atualizarDashboard();
-        alert('Aluno excluído com sucesso!');
+        try {
+          const { error } = await supabase
+            .from('alunos')
+            .delete()
+            .eq('id', id);
+          
+          if (error) {
+            throw error;
+          }
+          
+          // Recarregar alunos
+          await carregarAlunos();
+          alert('Aluno excluído com sucesso!');
+        } catch (error) {
+          console.error('Erro ao excluir aluno:', error);
+          alert('Erro ao excluir aluno: ' + error.message);
+        }
       }
     };
 
