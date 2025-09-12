@@ -32,6 +32,7 @@ function renderEtapas(a){
   return STEPS.map(key=>{
     const st = a.etapas[key]||{inicio:null,fim:null};
     const done = !!st.fim;
+    // As classes 'chip' e estilos 'opacity' já estão definidas no CSS do tema Deepseek
     const on = done ? 'style="opacity:1"' : (st.inicio ? 'style="opacity:.85"' : 'style="opacity:.45"');
     return `<span class="chip" ${on}>${labels[key]}</span>`;
   });
@@ -208,6 +209,7 @@ export function renderTabela(){
   const data = getFiltered();
   data.forEach(aluno => {
     const status = aluno.statusGeral === 'concluido' ? 'Concluído' : aluno.statusGeral === 'andamento' ? 'Em Andamento' : 'Pendente';
+    // As classes de status já estão definidas no CSS do tema Deepseek e theme-bootstrap.css
     const statusClass = aluno.statusGeral === 'concluido' ? 'status-concluido' : aluno.statusGeral === 'andamento' ? 'status-andamento' : 'status-pendente';
     const canDelete = (currentUser?.role === 'admin') || (currentUser?.role === 'colaborador' && currentUser?.seller === aluno.vendedor);
     const tr = document.createElement('tr');
@@ -225,6 +227,7 @@ export function renderTabela(){
       </td>
       <td>
         <div class="table-actions">
+          <!-- Botões de ação com classes do tema Deepseek e ui-bootstrap-safe.js -->
           <button class="btn btn-sm btn-outline" data-edit="1" data-cpf="${aluno.cpf}"><i class="fas fa-pen"></i></button>
           ${canDelete ? `<button class="btn btn-sm btn-danger" data-action="excluir" data-cpf="${aluno.cpf}"><i class="fas fa-trash"></i></button>` : ''}
         </div>
@@ -268,6 +271,7 @@ function updateCharts(data){
   const byVend = ['Ewerton','Darlan'].map(s => data.filter(a=>a.vendedor===s).length);
   const cats = ['A','B','AB'].map(c => data.filter(a=>a.categoria===c).length);
 
+  // Cores do tema Deepseek
   const indigo = '#6366F1', emerald='#22C55E', amber='#F59E0B';
 
   if (!chartVendedores){
