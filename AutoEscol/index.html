@@ -22,7 +22,6 @@
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
   <style>
-    /* (Manter todos os estilos anteriores) */
     :root {
       --primary: #2563eb;
       --primary-dark: #1d4ed8;
@@ -45,12 +44,13 @@
       min-height: 100vh;
     }
 
-    /* (Manter todos os outros estilos) */
+    /* Layout Principal */
     .app-container {
       display: flex;
       min-height: 100vh;
     }
 
+    /* Sidebar */
     .sidebar {
       width: 280px;
       background: var(--dark-bg);
@@ -65,8 +65,430 @@
       overflow-y: auto;
     }
 
-    /* ... (todos os outros estilos permanecem iguais) ... */
+    .sidebar-header {
+      padding: 1.5rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
+    .sidebar-brand {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: white;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sidebar-brand i {
+      color: var(--primary);
+      font-size: 1.8rem;
+    }
+
+    .sidebar-nav {
+      padding: 1rem 0;
+      height: calc(100vh - 100px);
+      overflow-y: auto;
+    }
+
+    .nav-item {
+      margin-bottom: 0.3rem;
+    }
+
+    .nav-link {
+      color: rgba(255, 255, 255, 0.8);
+      padding: 0.8rem 1.5rem;
+      border-left: 3px solid transparent;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+      border-left-color: var(--primary);
+    }
+
+    .nav-link i {
+      font-size: 1.2rem;
+      width: 24px;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: 280px;
+      transition: all 0.3s;
+    }
+
+    /* Top Header */
+    .top-header {
+      background: white;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .search-bar {
+      width: 300px;
+      position: relative;
+    }
+
+    .search-bar input {
+      padding-left: 40px;
+      border-radius: 50px;
+      border: 1px solid var(--border);
+    }
+
+    .search-bar i {
+      position: absolute;
+      left: 15px;
+      top: 10px;
+      color: var(--text-secondary);
+    }
+
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .user-info {
+      text-align: right;
+    }
+
+    .user-name {
+      font-weight: 600;
+      margin-bottom: 0;
+    }
+
+    .user-role {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .user-avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 1.2rem;
+    }
+
+    /* Dashboard Content */
+    .dashboard-content {
+      padding: 2rem;
+    }
+
+    .page-title {
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .page-title i {
+      color: var(--primary);
+      font-size: 1.8rem;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+      transition: transform 0.2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .stat-title {
+      color: var(--text-secondary);
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+
+    .stat-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .bg-primary-light {
+      background: rgba(37, 99, 235, 0.1);
+      color: var(--primary);
+    }
+
+    .bg-success-light {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+    }
+
+    .bg-danger-light {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+    }
+
+    .bg-warning-light {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning);
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-change {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.9rem;
+    }
+
+    .change-positive {
+      color: var(--success);
+    }
+
+    .change-negative {
+      color: var(--danger);
+    }
+
+    /* Content Grid */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .chart-container, .recent-container, .form-container, .table-container {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+      font-weight: 600;
+      font-size: 1.2rem;
+    }
+
+    .view-all {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    /* Forms */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .form-control {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      width: 100%;
+      transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      border: none;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+    }
+
+    .btn-outline:hover {
+      background: #f9fafb;
+    }
+
+    /* Tables */
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .table th {
+      text-align: left;
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .table td {
+      padding: 1rem;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .table tr:hover {
+      background: #f9fafb;
+    }
+
+    /* Login Page */
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 420px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .login-header i {
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .login-header h1 {
+      margin: 0;
+      font-weight: 700;
+    }
+
+    .login-header p {
+      color: var(--text-secondary);
+      margin: 0.5rem 0 0 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 80px;
+        overflow: hidden;
+      }
+      
+      .sidebar-brand span, .nav-link span {
+        display: none;
+      }
+      
+      .main-content {
+        margin-left: 80px;
+      }
+      
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 0;
+        display: none;
+      }
+      
+      .main-content {
+        margin-left: 0;
+      }
+      
+      .top-header {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+      }
+      
+      .search-bar {
+        width: 100%;
+      }
+      
+      .dashboard-content {
+        padding: 1rem;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Status badges */
     .status-badge {
       padding: 0.25rem 0.75rem;
       border-radius: 999px;
@@ -89,6 +511,7 @@
       color: #dc2626;
     }
 
+    /* Content Sections */
     .content-section {
       display: none;
     }
@@ -97,6 +520,7 @@
       display: block;
     }
 
+    /* Financeiro */
     .transaction-item {
       display: flex;
       justify-content: space-between;
@@ -591,7 +1015,7 @@
   <script>
     // Configuração do Supabase
     const SUPABASE_URL = "https://pimyqqunvcwoqzqwqpvf.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpbXlxcXVudmN3b3F6cXdxcHZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc1MDk0MzQsImV4cCI6MjA3MzA4NTQzNH0.O5FbB0ygMAMNAnxGEs5qAvRF1qSA2qYLbSV8ozlsVBs";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhbmFzZSIsInJlZiI6InBpbXlxcXVudmN3b3F6cXdxcHZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc1MDk0MzQsImV4cCI6MjA3MzA4NTQzNH0.O5FbB0ygMAMNAnxGEs5qAvRF1qSA2qYLbSV8ozlsVBs";
     
     // Inicializar o cliente Supabase
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -671,6 +1095,17 @@
         btnCadastrar.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Cadastrando...';
         
         try {
+          // Primeiro, verificar se já existe um aluno com este CPF
+          const { data: alunoExistente, error: checkError } = await supabase
+            .from('alunos')
+            .select('id')
+            .eq('cpf', cpf)
+            .single();
+          
+          if (alunoExistente) {
+            throw new Error('Já existe um aluno cadastrado com este CPF');
+          }
+          
           // Inserir aluno no Supabase
           const { data, error } = await supabase
             .from('alunos')
@@ -730,12 +1165,23 @@
     // Função para carregar alunos do Supabase
     async function carregarAlunos() {
       try {
+        // Primeiro, vamos verificar a estrutura da tabela alunos
         const { data, error } = await supabase
           .from('alunos')
-          .select('*')
-          .order('data_matricula', { ascending: false });
+          .select('*');
         
         if (error) {
+          console.error('Erro ao carregar alunos:', error);
+          // Vamos tentar uma consulta mais simples para diagnosticar o problema
+          const { data: simpleData, error: simpleError } = await supabase
+            .from('alunos')
+            .select('id, nome')
+            .limit(1);
+            
+          if (simpleError) {
+            throw new Error('Não foi possível acessar a tabela de alunos. Verifique se a tabela existe no Supabase.');
+          }
+          
           throw error;
         }
         
@@ -744,6 +1190,8 @@
         atualizarDashboard();
       } catch (error) {
         console.error('Erro ao carregar alunos:', error);
+        // Mostrar mensagem amigável para o usuário
+        alert('Erro ao carregar alunos. Verifique se a tabela "alunos" existe no Supabase.');
         throw error;
       }
     }
@@ -751,22 +1199,26 @@
     // Função para carregar dados financeiros do Supabase
     async function carregarDadosFinanceiros() {
       try {
-        // Carregar transações
-        const { data: transacoesData, error: transacoesError } = await supabase
-          .from('transacoes')
-          .select('*')
-          .order('data', { ascending: false })
-          .limit(5);
-        
-        if (transacoesError) {
-          throw transacoesError;
+        // Tentar carregar transações
+        try {
+          const { data: transacoesData, error: transacoesError } = await supabase
+            .from('transacoes')
+            .select('*')
+            .order('data', { ascending: false })
+            .limit(5);
+          
+          if (!transacoesError) {
+            transacoes = transacoesData || [];
+          }
+        } catch (e) {
+          console.log('Tabela de transações não encontrada, continuando sem dados financeiros');
+          transacoes = [];
         }
         
-        transacoes = transacoesData || [];
         atualizarDashboardFinanceiro();
       } catch (error) {
         console.error('Erro ao carregar dados financeiros:', error);
-        throw error;
+        // Não mostrar erro para o usuário pois a tabela pode não existir ainda
       }
     }
 
@@ -783,12 +1235,12 @@
       alunos.forEach(aluno => {
         const row = document.createElement('tr');
         row.innerHTML = `
-          <td>${aluno.nome}</td>
-          <td>${aluno.cpf}</td>
-          <td>${aluno.telefone}</td>
-          <td>${aluno.categoria}</td>
-          <td>${new Date(aluno.data_matricula).toLocaleDateString('pt-BR')}</td>
-          <td>${aluno.vendedor}</td>
+          <td>${aluno.nome || 'N/A'}</td>
+          <td>${aluno.cpf || 'N/A'}</td>
+          <td>${aluno.telefone || 'N/A'}</td>
+          <td>${aluno.categoria || 'N/A'}</td>
+          <td>${aluno.data_matricula ? new Date(aluno.data_matricula).toLocaleDateString('pt-BR') : 'N/A'}</td>
+          <td>${aluno.vendedor || 'N/A'}</td>
           <td>
             <button class="btn btn-sm btn-outline" onclick="editarAluno(${aluno.id})">
               <i class="fa-solid fa-edit"></i>
@@ -808,7 +1260,7 @@
       
       const concluidos = alunos.filter(a => a.status === 'concluido').length;
       const andamento = alunos.filter(a => a.status === 'andamento').length;
-      const pendentes = alunos.filter(a => a.status === 'pendente').length;
+      const pendentes = alunos.filter(a => a.status === 'pendente' || !a.status).length;
       
       document.getElementById('concluidos').textContent = concluidos;
       document.getElementById('andamento').textContent = andamento;
@@ -829,11 +1281,11 @@
       // Calcular totais
       const totalReceitas = transacoes
         .filter(t => t.tipo === 'entrada')
-        .reduce((sum, t) => sum + parseFloat(t.valor), 0);
+        .reduce((sum, t) => sum + parseFloat(t.valor || 0), 0);
       
       const totalDespesas = transacoes
         .filter(t => t.tipo === 'saida')
-        .reduce((sum, t) => sum + parseFloat(t.valor), 0);
+        .reduce((sum, t) => sum + parseFloat(t.valor || 0), 0);
       
       const saldoAtual = totalReceitas - totalDespesas;
       
@@ -850,12 +1302,12 @@
               <i class="fa-solid fa-${trans.tipo === 'entrada' ? 'arrow-down text-success' : 'arrow-up text-danger'}"></i>
             </div>
             <div class="transaction-details">
-              <h4>${trans.descricao}</h4>
-              <p>${new Date(trans.data).toLocaleDateString('pt-BR')}</p>
+              <h4>${trans.descricao || 'Transação'}</h4>
+              <p>${trans.data ? new Date(trans.data).toLocaleDateString('pt-BR') : 'Data não informada'}</p>
             </div>
           </div>
           <div class="transaction-amount amount-${trans.tipo === 'entrada' ? 'income' : 'expense'}">
-            ${trans.tipo === 'entrada' ? '+' : '-'} R$ ${parseFloat(trans.valor).toFixed(2)}
+            ${trans.tipo === 'entrada' ? '+' : '-'} R$ ${parseFloat(trans.valor || 0).toFixed(2)}
           </div>
         </div>
       `).join('');
