@@ -1,0 +1,14 @@
+
+#app.theme-deepseek .section{ width:100% }
+#app.theme-deepseek #dashboard > .card,
+#app.theme-deepseek #cadastro > .card,
+#app.theme-deepseek #alunos > .card,
+#app.theme-deepseek #relatorios > .card,
+#app.theme-deepseek #config > .card{
+  max-width:1120px; width:calc(100% - 48px); margin:24px auto; display:block;
+}
+#app.theme-deepseek #dashboard .stat-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:16px }
+#app.theme-deepseek #dashboard .stat-grid .card{ min-width:280px }
+#app.theme-deepseek #alunos .filters, #app.theme-deepseek #alunos .filter-bar{ display:grid; grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); gap:12px; padding:8px 0 }
+#app.theme-deepseek .table{ width:100% }
+#app.theme-deepseek .card .form-control{ width:100% }

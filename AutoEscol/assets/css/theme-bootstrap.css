@@ -1,0 +1,28 @@
+/* assets/css/theme-bootstrap.css */
+
+/* Tipografia base */
+body { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+
+/* Mapear badges de status para cores Bootstrap */
+.status-badge { font-size: 0.75rem; }
+.status-concluido { background-color: #198754 !important; } /* bg-success */
+.status-andamento { background-color: #0d6efd !important; } /* bg-primary */
+.status-pendente  { background-color: #ffc107 !important; color: #212529 !important; } /* bg-warning text-dark */
+
+/* Chips das etapas */
+.chip {
+  display: inline-block;
+  padding: .25rem .5rem;
+  border-radius: 999px;
+  background: #e9ecef;
+  font-size: .75rem;
+  line-height: 1;
+}
+
+/* Tabela: cabeçalho clicável p/ sort (se você usa data-sort) */
+.table thead th[data-sort] { cursor: pointer; user-select: none; }
+.table thead th[data-sort]::after {
+  content: ' ⬍';
+  opacity: .35;
+  font-size: .9em;
+}

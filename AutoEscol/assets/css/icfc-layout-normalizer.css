@@ -1,0 +1,14 @@
+
+#app.theme-deepseek, #app.theme-deepseek *, #app.theme-deepseek *::before, #app.theme-deepseek *::after { box-sizing: border-box; }
+#app.theme-deepseek .section{ display:none } #app.theme-deepseek .section.active{ display:block; width:100% }
+#app.theme-deepseek .content, #app.theme-deepseek .main, #app.theme-deepseek .content-wrapper, #app.theme-deepseek .dashboard-content{
+  margin-left: var(--sidebar-w, 280px); margin-right:16px; width: calc(100% - var(--sidebar-w, 280px) - 16px); max-width:none;
+}
+#app.theme-deepseek .container, #app.theme-deepseek .container-fluid, #app.theme-deepseek .wrapper{ width:100%; max-width:none; padding:0 }
+#app.theme-deepseek .row{ display:flex; flex-wrap:wrap; gap:12px; margin:0; width:100% }
+#app.theme-deepseek [class*="col-"]{ flex:1 1 280px; max-width:100% }
+@media (max-width: 1024px){
+  #app.theme-deepseek .content, #app.theme-deepseek .main, #app.theme-deepseek .content-wrapper, #app.theme-deepseek .dashboard-content{
+    margin-left: 16px; width: calc(100% - 32px);
+  }
+}
