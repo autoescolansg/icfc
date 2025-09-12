@@ -1,4 +1,4 @@
-
+// assets/js/modules/seller.js
 const KEY = 'autoescolaSellerCfgV1';
 export function loadSellerCfg(){
   try{ const raw = localStorage.getItem(KEY); return raw? JSON.parse(raw): { Ewerton:{meta:0, comissao:0}, Darlan:{meta:0, comissao:0} }; }catch(e){ return { Ewerton:{meta:0, comissao:0}, Darlan:{meta:0, comissao:0} }; }
