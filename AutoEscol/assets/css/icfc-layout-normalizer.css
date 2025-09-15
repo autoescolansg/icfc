@@ -27,6 +27,13 @@
   }
 }
 
+/* ALTERAÇÃO: Adiciona breakpoint intermediário para padding em tablets */
+@media (min-width: 769px) and (max-width: 1024px){
+  #app.theme-deepseek .content, #app.theme-deepseek .main, #app.theme-deepseek .content-wrapper, #app.theme-deepseek .dashboard-content{
+    padding: 1.5rem; /* Padding um pouco maior para tablets */
+  }
+}
+
 @media (max-width: 768px){
   #app.theme-deepseek .content, #app.theme-deepseek .main, #app.theme-deepseek .content-wrapper, #app.theme-deepseek .dashboard-content{
     margin-left: 0; /* Conteúdo ocupa toda a largura quando sidebar está escondida */
