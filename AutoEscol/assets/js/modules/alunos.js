@@ -43,10 +43,9 @@ function renderEtapas(a){
   return STEPS.map(key=>{
     const st = a.etapas[key]||{inicio:null,fim:null};
     const done = !!st.fim;
-    // As classes 'chip' e estilos 'opacity' já estão definidas no CSS do tema Deepseek
     const on = done ? 'style="opacity:1"' : (st.inicio ? 'style="opacity:.85"' : 'style="opacity:.45"');
     return `<span class="chip" ${on}>${labels[key]}</span>`;
-  }).join(''); // Adicionado .join('') para concatenar os spans
+  }).join('');
 }
 
 /* ---------- init ---------- */
@@ -59,7 +58,7 @@ export async function initAlunos(){
   });
 
   // Event listeners para filtros
-  document.getElementById('searchInput')?.addEventListener('input', onFiltersChange);
+  document.getElementById('alunosSearchInput')?.addEventListener('input', onFiltersChange); // ID atualizado
   document.getElementById('sellerFilter')?.addEventListener('change', onFiltersChange);
   document.getElementById('dateStart')?.addEventListener('change', onFiltersChange);
   document.getElementById('dateEnd')?.addEventListener('change', onFiltersChange);
@@ -114,8 +113,8 @@ async function cadastrarAluno(){
       baliza_moto:{inicio:null,fim:null}
     }
   };
-  alunos.unshift(novo); // Adiciona no início da lista
-  await saveAlunos(alunos); // Salva na API e localmente
+  alunos.unshift(novo);
+  await saveAlunos(alunos);
   try{ document.getElementById('cadastro-form').reset(); }catch(_){}
   pushLog(`Cadastrar aluno ${novo.cpf} (${novo.nome}) vendedor=${novo.vendedor}`);
   renderTabela();
@@ -134,7 +133,6 @@ async function deletarAluno(cpf){
 
   if (!confirm(`Excluir aluno ${aluno.nome} (${formatCPF(aluno.cpf)})?`)) return;
 
-  // Chama API DELETE (com token via authFetch)
   const res = await authFetch(`${window.API_BASE}/alunos?cpf=${cpf}`, { method: 'DELETE' });
   const body = await res.json().catch(()=> ({}));
   if (!res.ok) {
@@ -143,7 +141,7 @@ async function deletarAluno(cpf){
   }
 
   alunos = alunos.filter(a => a.cpf !== cpf);
-  await saveAlunos(alunos); // Salva a lista atualizada após exclusão
+  await saveAlunos(alunos);
   renderTabela();
   refreshDashboard();
   pushLog(`Excluir aluno ${cpf}`);
@@ -212,7 +210,7 @@ async function onSaveEdit(e){
 
 /* ---------- filtros/render ---------- */
 export function getFiltered(){
-  const q=(document.getElementById('searchInput')?.value||'').toLowerCase();
+  const q=(document.getElementById('alunosSearchInput')?.value||'').toLowerCase(); // ID atualizado
   const sellerFilter=document.getElementById('sellerFilter')?.value||'todos';
   const catFilter=document.getElementById('catFilter')?.value||'todas';
   const dS=document.getElementById('dateStart')?.value||'';
@@ -246,7 +244,6 @@ export function renderTabela(){
 
   data.forEach(aluno => {
     const status = aluno.statusGeral === 'concluido' ? 'Concluído' : aluno.statusGeral === 'andamento' ? 'Em Andamento' : 'Pendente';
-    // As classes de status já estão definidas no CSS do tema Deepseek e theme-bootstrap.css
     const statusClass = aluno.statusGeral === 'concluido' ? 'status-concluido' : aluno.statusGeral === 'andamento' ? 'status-andamento' : 'status-pendente';
     const canDelete = (currentUser?.role === 'admin') || (currentUser?.role === 'colaborador' && currentUser?.seller === aluno.vendedor);
     const tr = document.createElement('tr');
@@ -264,7 +261,6 @@ export function renderTabela(){
       </td>
       <td>
         <div class="table-actions">
-          <!-- Botões de ação com classes do tema Deepseek e ui-bootstrap-safe.js -->
           <button class="btn btn-sm btn-outline" data-edit="1" data-cpf="${aluno.cpf}"><i class="fas fa-pen"></i></button>
           ${canDelete ? `<button class="btn btn-sm btn-danger" data-action="excluir" data-cpf="${aluno.cpf}"><i class="fas fa-trash"></i></button>` : ''}
         </div>
@@ -308,7 +304,6 @@ function updateCharts(data){
   const byVend = ['Ewerton','Darlan'].map(s => data.filter(a=>a.vendedor===s).length);
   const cats = ['A','B','AB'].map(c => data.filter(a=>a.categoria===c).length);
 
-  // Cores do tema Deepseek
   const indigo = '#6366F1', emerald='#22C55E', amber='#F59E0B';
 
   if (!chartVendedores){
