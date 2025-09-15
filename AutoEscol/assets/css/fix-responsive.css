@@ -1,4 +1,3 @@
-
 /* fix-responsive.css - overrides to ensure layout responsiveness and sane widths */
 
 /* Prevent horizontal scroll */
@@ -50,13 +49,14 @@ html, body {
     --sidebar-w: 0rem !important;
   }
   .sidebar {
-    left: -17.5rem !important;
-    width: 17.5rem;
-    transform: translateX(-100%);
+    /* ALTERAÇÃO: Usar -100% para garantir que a sidebar esteja sempre fora da tela */
+    left: -100% !important; 
+    width: 17.5rem; /* Mantém a largura para quando ela for ativada */
+    transform: translateX(0); /* Remove o transform para simplificar a lógica com 'left' */
   }
   .sidebar.active {
     transform: translateX(0);
-    left: 0;
+    left: 0 !important; /* ALTERAÇÃO: Garante que a sidebar ativa esteja em 0 */
   }
   #app.theme-deepseek .content,
   #app.theme-deepseek .main,
