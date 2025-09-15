@@ -7,7 +7,8 @@ function normalizeCPF(v) {
   return /^\d{11}$/.test(cpf) ? cpf : null;
 }
 
-export async function apiPut(alunosArray) {
+// ---------- Alunos ----------
+export async function apiPutAlunos(alunosArray) {
   const rows = [];
   const descartados = [];
 
@@ -19,11 +20,18 @@ export async function apiPut(alunosArray) {
     }
     // remove duplicatas de campo CPF
     const { cpf: _1, CPF: _2, ...rest } = a || {};
-    rows.push({ cpf, ...rest });
+    rows.push({ cpf, data: rest }); // Envia o objeto completo para a coluna 'data'
   }
 
   if (!rows.length) {
-    throw new Error("Nenhum CPF válido para enviar (precisa ter 11 dígitos).");
+    // Se não houver alunos válidos, ainda precisamos enviar um array vazio para limpar
+    // ou lidar com a situação de forma específica. Para PUT, enviar vazio pode significar limpar tudo.
+    // Para evitar limpar tudo acidentalmente, vamos permitir apenas se houver dados.
+    // Ou, se a intenção é limpar, o backend deve interpretar um array vazio como tal.
+    // Por enquanto, vamos lançar um erro se não houver dados para evitar PUTs vazios.
+    // throw new Error("Nenhum CPF válido para enviar (precisa ter 11 dígitos).");
+    // Se a intenção é apenas atualizar o cache local, não precisamos chamar a API.
+    return; // Não faz PUT se não há dados válidos para enviar
   }
 
   const res = await authFetch(`${window.API_BASE}/alunos`, {
@@ -39,22 +47,22 @@ export async function apiPut(alunosArray) {
   } catch {}
 
   if (!res.ok) {
-    console.error("PUT fail", res.status, text);
+    console.error("PUT alunos fail", res.status, text);
     throw new Error(json?.error || `PUT /alunos ${res.status}`);
   }
 
   if (descartados.length) {
-    console.warn(`Registros ignorados por CPF inválido: ${descartados.length}`);
+    console.warn(`Registros de alunos ignorados por CPF inválido: ${descartados.length}`);
   }
   return json;
 }
 
 export async function saveAlunos(alunosArray) {
   try {
-    await apiPut(alunosArray); // envia para API
+    await apiPutAlunos(alunosArray); // envia para API
     localStorage.setItem("alunos", JSON.stringify(alunosArray)); // mantém cópia local
   } catch (e) {
-    console.warn("API offline, salvando local", e);
+    console.warn("API offline ou falha ao salvar alunos, salvando local", e);
     localStorage.setItem("alunos", JSON.stringify(alunosArray));
   }
 }
@@ -65,16 +73,73 @@ export async function loadAlunos() {
       method: "GET",
       cache: "no-store",
     });
-    if (!res.ok) throw new Error("GET falhou");
+    if (!res.ok) throw new Error("GET alunos falhou");
     return await res.json();
   } catch (e) {
-    console.warn("Falha ao carregar da API, usando local", e);
+    console.warn("Falha ao carregar alunos da API, usando local", e);
     const raw = localStorage.getItem("alunos");
     return raw ? JSON.parse(raw) : [];
   }
 }
 
-// Config de vendedores
+// ---------- Transações Financeiras ----------
+export async function apiPutTransacoes(transacoesArray) {
+  const rows = transacoesArray.map(t => ({
+    id: t.id || undefined, // Supabase pode gerar o ID se não for fornecido
+    descricao: t.descricao,
+    valor: t.valor,
+    tipo: t.tipo,
+    categoria: t.categoria,
+    data: t.data,
+    cliente_cpf: t.cliente_cpf,
+    user_id: t.user_id || undefined // Pode ser definido pelo backend
+  }));
+
+  const res = await authFetch(`${window.API_BASE}/transacoes`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(rows),
+  });
+
+  const text = await res.text();
+  let json;
+  try {
+    json = JSON.parse(text);
+  } catch {}
+
+  if (!res.ok) {
+    console.error("PUT transacoes fail", res.status, text);
+    throw new Error(json?.error || `PUT /transacoes ${res.status}`);
+  }
+  return json;
+}
+
+export async function saveTransacoes(transacoesArray) {
+  try {
+    await apiPutTransacoes(transacoesArray);
+    localStorage.setItem("transacoes", JSON.stringify(transacoesArray));
+  } catch (e) {
+    console.warn("API offline ou falha ao salvar transações, salvando local", e);
+    localStorage.setItem("transacoes", JSON.stringify(transacoesArray));
+  }
+}
+
+export async function loadTransacoes() {
+  try {
+    const res = await authFetch(`${window.API_BASE}/transacoes`, {
+      method: "GET",
+      cache: "no-store",
+    });
+    if (!res.ok) throw new Error("GET transacoes falhou");
+    return await res.json();
+  } catch (e) {
+    console.warn("Falha ao carregar transações da API, usando local", e);
+    const raw = localStorage.getItem("transacoes");
+    return raw ? JSON.parse(raw) : [];
+  }
+}
+
+// ---------- Configuração de Vendedores ----------
 export async function loadSellerCfg() {
   try {
     const res = await authFetch(`${window.API_BASE}/seller`, {
@@ -86,5 +151,48 @@ export async function loadSellerCfg() {
   } catch (e) {
     console.warn("Falha seller cfg, usando padrão", e);
     return { Ewerton: { meta: 0, comissao: 0 }, Darlan: { meta: 0, comissao: 0 } };
+  }
+}
+
+// ---------- Gestão de Usuários (Profiles) ----------
+export async function loadUsers() {
+  try {
+    const res = await authFetch(`${window.API_BASE}/profiles`, { // Assumindo que você terá um endpoint /profiles
+      method: "GET",
+      cache: "no-store",
+    });
+    if (!res.ok) throw new Error("GET profiles falhou");
+    return await res.json();
+  } catch (e) {
+    console.warn("Falha ao carregar perfis de usuários da API", e);
+    return [];
+  }
+}
+
+export async function saveUser(userProfile) {
+  try {
+    const res = await authFetch(`${window.API_BASE}/profiles`, { // Assumindo um endpoint /profiles
+      method: "POST", // Ou PUT se for atualização
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(userProfile),
+    });
+    if (!res.ok) throw new Error("POST/PUT profile falhou");
+    return await res.json();
+  } catch (e) {
+    console.error("Falha ao salvar perfil de usuário", e);
+    throw e;
+  }
+}
+
+export async function deleteUser(userId) {
+  try {
+    const res = await authFetch(`${window.API_BASE}/profiles?id=${userId}`, { // Assumindo um endpoint /profiles
+      method: "DELETE",
+    });
+    if (!res.ok) throw new Error("DELETE profile falhou");
+    return await res.json();
+  } catch (e) {
+    console.error("Falha ao excluir perfil de usuário", e);
+    throw e;
   }
 }
