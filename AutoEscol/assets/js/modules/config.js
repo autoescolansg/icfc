@@ -1,16 +1,24 @@
 // assets/js/modules/config.js (Gestão de Usuários)
 import { supa, currentUser } from './auth.js';
 import { showToast } from './ux.js';
-import { loadUsers, saveUser, deleteUser } from './storage.js'; // Funções para gerenciar profiles
+import { loadUsers, saveUser, deleteUser } from './storage.js';
 
 let users = [];
 
 export async function initConfig(){
   // Apenas administradores podem acessar esta seção
+  // Oculta a aba de configurações se o usuário não for admin
+  const configNavLink = document.querySelector('.sidebar-menu a[data-section="config"]');
+  if (configNavLink) {
+    if (currentUser?.role !== 'admin') {
+      configNavLink.style.display = 'none';
+    } else {
+      configNavLink.style.display = 'flex'; // Garante que esteja visível para admin
+    }
+  }
+
+  // Se o usuário não for admin, não inicializa o resto da lógica de gestão de usuários
   if (currentUser?.role !== 'admin') {
-    // Ocultar a aba de configurações ou desabilitar o acesso
-    const configNavLink = document.querySelector('.sidebar-menu a[data-section="config"]');
-    if (configNavLink) configNavLink.style.display = 'none';
     return;
   }
 
@@ -48,13 +56,16 @@ async function cadastrarColaborador(){
 
   try {
     // Cadastrar usuário no Supabase Auth
+    // Nota: Para que isso funcione sem a SERVICE_ROLE_KEY no frontend,
+    // as configurações de Auth no Supabase devem permitir o auto-signup
+    // ou você precisará de uma Netlify Function para isso.
     const { data: authData, error: authError } = await supa.auth.signUp({
       email: email,
       password: password,
       options: {
         data: {
           role: role,
-          seller: seller || null // Adiciona role e seller aos metadados do usuário
+          seller: seller || null
         }
       }
     });
@@ -71,7 +82,7 @@ async function cadastrarColaborador(){
 
     await saveUser(newProfile); // Salva na tabela 'profiles' via API
 
-    showToast('Colaborador cadastrado com sucesso!', 'success');
+    showToast('Colaborador cadastrado com sucesso! Verifique o email para confirmação.', 'success');
     document.getElementById('colaborador-form').reset();
     renderColaboradoresTable();
 
@@ -88,12 +99,9 @@ async function deletarColaborador(userId){
     // Excluir perfil da tabela 'profiles'
     await deleteUser(userId);
 
-    // Excluir usuário do Supabase Auth (requer privilégios de admin ou service_role_key no backend)
-    // Esta parte geralmente é feita via backend (Netlify Function) para segurança
-    // Para simplificar, vamos assumir que a exclusão do profile já é suficiente para o frontend
-    // ou que a Netlify Function de deleteUser também cuida do auth.users
-    // Se você tiver uma Netlify Function para gerenciar usuários, ela deve ser chamada aqui.
-    // Ex: await authFetch(`${window.API_BASE}/users?id=${userId}`, { method: 'DELETE' });
+    // Para excluir o usuário do auth.users, você precisaria de uma Netlify Function
+    // que use a SERVICE_ROLE_KEY. O frontend não pode fazer isso diretamente por segurança.
+    // Ex: await authFetch(`${window.API_BASE}/users/delete?id=${userId}`, { method: 'DELETE' });
 
     showToast('Colaborador excluído.', 'warn');
     renderColaboradoresTable();
