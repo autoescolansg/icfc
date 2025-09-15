@@ -7,6 +7,7 @@ import { authFetch } from '../utils/authFetch.js';
 
 let alunos = [];
 let editingCPF = null;
+let chartDesempenhoVendedores = null; // NOVO: Variável para o gráfico de desempenho
 
 const STEPS = ['foto','aulas_teoricas','prova_teorica','aulas_praticas','baliza_carro','baliza_moto'];
 
@@ -312,7 +313,8 @@ export function renderTabela(){
 
 export async function refreshDashboard(){
   const allAlunos = await loadAlunos();
-  const data = getFiltered();
+  const data = getFiltered(); // Dados filtrados para as estatísticas gerais
+  const sellerConfig = await loadSellerCfg(); // NOVO: Carrega as configurações dos vendedores
 
   const total = data.length;
   const concluidos = data.filter(a => a.statusGeral === 'concluido').length;
@@ -363,12 +365,107 @@ export async function refreshDashboard(){
   calculateMonthlyTrend(pendentesCurrentMonth, pendentesPreviousMonth, 'pendentes-trend', 'alunos');
 
 
-  try{
-    const cfg = await loadSellerCfg();
-    const em = document.getElementById('ewerton-meta'); if (em) em.textContent = `Meta: ${cfg.Ewerton?.meta||0} | Comissão: ${cfg.Ewerton?.comissao||0}%`;
-    const dm = document.getElementById('darlan-meta'); if (dm) dm.textContent = `Meta: ${cfg.Darlan?.meta||0} | Comissão: ${cfg.Darlan?.comissao||0}%`;
-  }catch(e){ console.warn("Falha ao carregar seller cfg:", e); }
+  // NOVO: Lógica para o gráfico de desempenho de vendedores
+  renderDesempenhoVendedoresChart(allAlunos, sellerConfig, currentMonth, currentYear);
 }
+
+function renderDesempenhoVendedoresChart(alunosData, sellerConfig, month, year) {
+  const ctx = document.getElementById('chartDesempenhoVendedores')?.getContext('2d');
+  if (!ctx) return;
+
+  const vendedores = Object.keys(sellerConfig);
+  const alunosPorVendedor = {};
+  const metasPorVendedor = {};
+
+  vendedores.forEach(vend => {
+    alunosPorVendedor[vend] = alunosData.filter(a =>
+      a.vendedor === vend &&
+      new Date(a.dataCadastro).getMonth() === month &&
+      new Date(a.dataCadastro).getFullYear() === year
+    ).length;
+    metasPorVendedor[vend] = sellerConfig[vend]?.meta || 0;
+  });
+
+  const labels = vendedores;
+  const dataAlunos = vendedores.map(vend => alunosPorVendedor[vend]);
+  const dataMetas = vendedores.map(vend => metasPorVendedor[vend]);
+
+  if (chartDesempenhoVendedores) {
+    chartDesempenhoVendedores.data.labels = labels;
+    chartDesempenhoVendedores.data.datasets[0].data = dataAlunos;
+    chartDesempenhoVendedores.data.datasets[1].data = dataMetas;
+    chartDesempenhoVendedores.update();
+  } else {
+    chartDesempenhoVendedores = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Alunos Cadastrados',
+            data: dataAlunos,
+            backgroundColor: 'var(--primary)',
+            borderColor: 'var(--primary-dark)',
+            borderWidth: 1
+          },
+          {
+            label: 'Meta de Alunos',
+            data: dataMetas,
+            backgroundColor: 'rgba(var(--accent), 0.5)', // Cor mais clara para a meta
+            borderColor: 'var(--accent)',
+            borderWidth: 1
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+              color: 'var(--text-color-secondary)'
+            }
+          },
+          title: {
+            display: false,
+            text: 'Desempenho de Vendedores (Mês Atual)'
+          }
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Vendedor',
+              color: 'var(--text-color-secondary)'
+            },
+            ticks: {
+              color: 'var(--text-color-secondary)'
+            },
+            grid: {
+              color: 'rgba(var(--border-color), 0.5)'
+            }
+          },
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Número de Alunos',
+              color: 'var(--text-color-secondary)'
+            },
+            ticks: {
+              color: 'var(--text-color-secondary)'
+            },
+            grid: {
+              color: 'rgba(var(--border-color), 0.5)'
+            }
+          }
+        }
+      }
+    });
+  }
+}
+
 
 /* ---------- hook para realtime.js ---------- */
 export function renderAlunosFromList(list) {
