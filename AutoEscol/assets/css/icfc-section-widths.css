@@ -1,14 +1,25 @@
-
 #app.theme-deepseek .section{ width:100% }
+
+/* Ajustado para que os cards principais tenham um max-width e sejam centralizados */
 #app.theme-deepseek #dashboard > .card,
 #app.theme-deepseek #cadastro > .card,
 #app.theme-deepseek #alunos > .card,
 #app.theme-deepseek #relatorios > .card,
 #app.theme-deepseek #config > .card{
-  max-width:1120px; width:calc(100% - 48px); margin:24px auto; display:block;
+  max-width: 70rem; /* 1120px, usando rem para escalabilidade */
+  width: calc(100% - 3rem); /* 48px, usando rem */
+  margin: 1.5rem auto; /* 24px, usando rem, para centralizar */
+  display:block;
 }
-#app.theme-deepseek #dashboard .stat-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:16px }
-#app.theme-deepseek #dashboard .stat-grid .card{ min-width:280px }
-#app.theme-deepseek #alunos .filters, #app.theme-deepseek #alunos .filter-bar{ display:grid; grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); gap:12px; padding:8px 0 }
+
+#app.theme-deepseek #dashboard .stat-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(17.5rem,1fr)); gap:1rem } /* Usar rem */
+#app.theme-deepseek #dashboard .stat-grid .card{ min-width:17.5rem } /* Usar rem */
+
+#app.theme-deepseek #alunos .filters, #app.theme-deepseek #alunos .filter-bar{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(10rem,1fr)); /* Usar rem (160px) */
+  gap:0.75rem; /* Usar rem */
+  padding:0.5rem 0; /* Usar rem */
+}
 #app.theme-deepseek .table{ width:100% }
 #app.theme-deepseek .card .form-control{ width:100% }
