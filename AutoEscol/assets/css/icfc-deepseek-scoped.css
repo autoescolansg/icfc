@@ -4,7 +4,7 @@
   --light-bg:#f8f9fa; --dark-bg:#1f2937;
   --text-primary:#1f2937; --text-secondary:#4b5563; /* Ajustado para melhor contraste */
   --success:#10b981; --danger:#ef4444; --warning:#f59e0b;
-  --sidebar-w:17.5rem; /* 280px em rem */
+  --sidebar-w:17.5rem; /* 280px em rem - Largura padrão da sidebar */
   font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
   background:var(--light-bg); color:var(--text-primary); min-height:100vh;
 
@@ -45,18 +45,18 @@
 #app.theme-deepseek .sidebar {
   position: fixed;
   inset: 0 auto 0 0;
-  width: var(--sidebar-w); /* Usar variável */
+  width: var(--sidebar-w); /* Usa a variável */
   background: var(--sidebar-bg);
   color: var(--sidebar-text);
   z-index: 1000;
   overflow-y: auto;
-  box-shadow: 0 0 0.9375rem rgba(0,0,0,.1); /* Usar rem */
+  box-shadow: 0 0 0.9375rem rgba(0,0,0,.1);
   transition: width 0.3s ease-in-out, left 0.3s ease-in-out;
 }
 
 /* Sidebar header */
 #app.theme-deepseek .sidebar-header {
-  padding: 1.5rem 1rem; /* Usar rem */
+  padding: 1.5rem 1rem;
   border-bottom: 1px solid rgba(255,255,255,.1);
   display: flex;
   justify-content: space-between;
@@ -66,30 +66,30 @@
 /* Sidebar brand */
 #app.theme-deepseek .sidebar-brand {
   display: flex;
-  gap: 0.625rem; /* Usar rem */
+  gap: 0.625rem;
   align-items: center;
   font-weight: 700;
-  font-size: 1.5rem; /* Usar rem */
+  font-size: 1.5rem;
   color: var(--sidebar-text);
   text-decoration: none;
 }
 #app.theme-deepseek .sidebar-brand i {
   color: var(--primary);
-  font-size: 1.8rem; /* Usar rem */
+  font-size: 1.8rem;
 }
 
 /* Sidebar nav */
 #app.theme-deepseek .sidebar-nav {
-  padding: 1rem 0; /* Usar rem */
+  padding: 1rem 0;
 }
 #app.theme-deepseek .sidebar .nav-item {
-  margin-bottom: 0.3rem; /* Usar rem */
+  margin-bottom: 0.3rem;
 }
 #app.theme-deepseek .sidebar .nav-link {
   color: rgba(255,255,255,.8);
-  padding: 0.8rem 1.5rem; /* Usar rem */
+  padding: 0.8rem 1.5rem;
   display: flex;
-  gap: 0.75rem; /* Usar rem */
+  gap: 0.75rem;
   align-items: center;
   border-left: 4px solid transparent;
   text-decoration: none;
@@ -107,18 +107,18 @@
   font-weight: 600;
 }
 #app.theme-deepseek .sidebar .nav-link i {
-  width: 1.5rem; /* Usar rem */
-  font-size: 1.2rem; /* Usar rem */
+  width: 1.5rem;
+  font-size: 1.2rem;
   text-align: center;
 }
 
 /* Main content */
 #app.theme-deepseek .main-content {
-  margin-left: var(--sidebar-w); /* Usar variável */
-  padding: 2rem 3rem; /* Usar rem */
+  margin-left: var(--sidebar-w); /* Controlado pela variável */
+  padding: 2rem 3rem;
   max-width: 75rem; /* 1200px em rem */
   margin-right: auto;
-  margin-left: auto; /* Isso será sobrescrito pelo margin-left: var(--sidebar-w) */
+  /* margin-left: auto; REMOVIDO, pois é controlado por --sidebar-w */
   box-sizing: border-box;
   transition: margin-left 0.3s ease-in-out;
 }
@@ -129,36 +129,38 @@
   top: 0;
   z-index: 900;
   background: var(--header-bg);
-  padding: 1rem 2rem; /* Usar rem */
-  box-shadow: 0 0.125rem 0.625rem rgba(0,0,0,.05); /* Usar rem */
+  padding: 1rem 2rem;
+  box-shadow: 0 0.125rem 0.625rem rgba(0,0,0,.05);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem; /* Usar rem */
+  gap: 1rem;
 }
 #app.theme-deepseek .top-header .search-bar {
-  flex: 1 1 18.75rem; /* 300px em rem */
-  max-width: 25rem; /* 400px em rem */
+  flex: 1 1 18.75rem;
+  max-width: 25rem;
   position: relative;
+  display: flex; /* Usar flexbox para alinhar ícone e input */
+  align-items: center;
 }
 #app.theme-deepseek .top-header .search-bar input {
   width: 100%;
-  padding-left: 2.5rem; /* 40px em rem */
+  padding-left: 2.5rem;
   border-radius: 50px;
   border: 1px solid var(--border-color);
-  height: 2.5rem; /* 40px em rem */
+  height: 2.5rem;
   color: var(--text-primary);
 }
 #app.theme-deepseek .top-header .search-bar i {
-  position: absolute;
-  left: 0.9375rem; /* 15px em rem */
-  top: 0.625rem; /* 10px em rem */
+  position: absolute; /* Manter absolute para posicionamento dentro do input */
+  left: 0.9375rem;
+  /* top: 0.625rem; REMOVIDO, deixar o flexbox cuidar do alinhamento vertical */
   color: var(--text-secondary);
 }
 #app.theme-deepseek .user-menu {
   display: flex;
   align-items: center;
-  gap: 0.9375rem; /* 15px em rem */
+  gap: 0.9375rem;
 }
 #app.theme-deepseek .user-info {
   text-align: right;
@@ -172,8 +174,8 @@
   color: var(--text-secondary);
 }
 #app.theme-deepseek .user-avatar {
-  width: 2.8125rem; /* 45px em rem */
-  height: 2.8125rem; /* 45px em rem */
+  width: 2.8125rem;
+  height: 2.8125rem;
   border-radius: 50%;
   background: var(--primary);
   color: white;
@@ -181,23 +183,22 @@
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  font-size: 1.2rem; /* Usar rem */
+  font-size: 1.2rem;
 }
 
 /* Estatísticas (cards) */
 #app.theme-deepseek .stats-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1.5rem; /* Usar rem */
-  margin-bottom: 2rem; /* Usar rem */
+  display: grid; /* Usar grid para melhor controle responsivo */
+  grid-template-columns: repeat(auto-fit, minmax(17.5rem, 1fr)); /* 3 colunas em telas grandes, 1 em pequenas */
+  gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 #app.theme-deepseek .stat-card {
-  flex: 1 1 17.5rem; /* 280px em rem */
-  max-width: 20rem; /* 320px em rem */
+  /* flex: 1 1 17.5rem; REMOVIDO, o grid já cuida disso */
+  max-width: none; /* Permitir que o grid controle a largura */
   background: var(--card-bg);
-  border-radius: 0.75rem; /* 12px em rem */
-  padding: 1.5rem; /* Usar rem */
+  border-radius: 0.75rem;
+  padding: 1.5rem;
   box-shadow: var(--card-shadow);
   display: flex;
   flex-direction: column;
@@ -208,7 +209,7 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  margin-bottom: 1rem; /* Usar rem */
+  margin-bottom: 1rem;
 }
 #app.theme-deepseek .stat-title {
   color: var(--text-secondary);
@@ -216,21 +217,21 @@
   font-size: 0.95rem;
 }
 #app.theme-deepseek .stat-icon {
-  width: 3.125rem; /* 50px em rem */
-  height: 3.125rem; /* 50px em rem */
-  border-radius: 0.75rem; /* 12px em rem */
+  width: 3.125rem;
+  height: 3.125rem;
+  border-radius: 0.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem; /* Usar rem */
+  font-size: 1.5rem;
   background-color: var(--primary);
   color: white;
-  box-shadow: 0 0.125rem 0.375rem rgba(0,0,0,0.15); /* Usar rem */
+  box-shadow: 0 0.125rem 0.375rem rgba(0,0,0,0.15);
 }
 #app.theme-deepseek .stat-value {
-  font-size: 1.8rem; /* Usar rem */
+  font-size: 1.8rem;
   font-weight: 700;
-  margin-bottom: 0.5rem; /* Usar rem */
+  margin-bottom: 0.5rem;
 }
 
 /* Tabelas */
@@ -240,7 +241,7 @@
   overflow-x: auto;
 }
 #app.theme-deepseek .table th, #app.theme-deepseek .table td {
-  padding: 1rem; /* Usar rem */
+  padding: 1rem;
   border-bottom: 1px solid var(--border-color);
   text-align: left;
 }
@@ -254,8 +255,8 @@
 
 /* Botões */
 #app.theme-deepseek .btn {
-  padding: 0.75rem 1.5rem; /* Usar rem */
-  border-radius: 0.5rem; /* Usar rem */
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
   border: none;
   font-weight: 500;
   cursor: pointer;
@@ -282,7 +283,7 @@
 @media (max-width: 992px) {
   #app.theme-deepseek .sidebar {
     width: 5rem; /* 80px em rem */
-    /* A variável --sidebar-w é atualizada em main-custom.css */
+    --sidebar-w: 5rem; /* Atualiza a variável para o conteúdo */
   }
   #app.theme-deepseek .sidebar .nav-link span,
   #app.theme-deepseek .sidebar .sidebar-brand span {
@@ -295,7 +296,12 @@
   #app.theme-deepseek .sidebar .nav-link i {
     width: auto;
   }
-  /* main-content e top-header são ajustados em main-custom.css */
+  #app.theme-deepseek .main-content {
+    margin-left: var(--sidebar-w);
+  }
+  #app.theme-deepseek .top-header {
+    margin-left: var(--sidebar-w);
+  }
 }
 
 /* Sidebar escondida em telas pequenas */
@@ -304,13 +310,18 @@
     left: -17.5rem; /* -280px em rem */
     position: fixed;
     transition: left 0.3s ease;
-    /* A variável --sidebar-w é atualizada em main-custom.css */
+    --sidebar-w: 0rem; /* Atualiza a variável para o conteúdo */
   }
   #app.theme-deepseek .sidebar.active {
     left: 0;
-    /* A variável --sidebar-w é atualizada em main-custom.css */
+    --sidebar-w: 17.5rem; /* Quando ativa, volta a 280px */
   }
-  /* main-content e top-header são ajustados em main-custom.css */
+  #app.theme-deepseek .main-content {
+    margin-left: 0;
+  }
+  #app.theme-deepseek .top-header {
+    margin-left: 0;
+  }
 }
 
 /* Barra de pesquisa responsiva */
