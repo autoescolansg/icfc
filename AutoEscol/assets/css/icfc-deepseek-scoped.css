@@ -2,7 +2,7 @@
 #app.theme-deepseek{
   --primary:#2563eb; --primary-dark:#1d4ed8; --secondary:#059669;
   --light-bg:#f8f9fa; --dark-bg:#1f2937;
-  --text-primary:#1f2937; --text-secondary:#6b7280;
+  --text-primary:#1f2937; --text-secondary:#4b5563; /* Ajustado para melhor contraste */
   --success:#10b981; --danger:#ef4444; --warning:#f59e0b;
   --sidebar-w:280px; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
   background:var(--light-bg); color:var(--text-primary); min-height:100vh;
@@ -18,7 +18,7 @@
   --header-bg: #fff;
   --sidebar-bg: var(--dark-bg);
   --sidebar-text: #fff;
-  --sidebar-active-bg: rgba(255,255,255,.05);
+  --sidebar-active-bg: rgba(255,255,255,.1);
   --sidebar-active-border: var(--primary);
 }
 
@@ -36,97 +36,299 @@
   --header-bg: #374151;
   --sidebar-bg: #1f2937; /* Mantém sidebar escura */
   --sidebar-text: #e5e7eb;
-  --sidebar-active-bg: rgba(255,255,255,.08);
+  --sidebar-active-bg: rgba(255,255,255,.15);
   --sidebar-active-border: var(--primary);
 }
 
-#app.theme-deepseek .left-sidebar, #app.theme-deepseek .sidebar, #app.theme-deepseek nav.sidebar{
-  position:fixed; inset:0 auto 0 0; width:var(--sidebar-w);
-  background:var(--sidebar-bg); color:var(--sidebar-text); z-index:1000; overflow-y:auto; box-shadow:0 0 15px rgba(0,0,0,.1);
-  transition: width 0.3s ease-in-out, left 0.3s ease-in-out; /* Adicionado transição */
-}
-#app.theme-deepseek .sidebar-header{ padding:1.5rem 1rem; border-bottom:1px solid rgba(255,255,255,.1); display: flex; justify-content: space-between; align-items: center; }
-#app.theme-deepseek .sidebar-brand{ display:flex; gap:10px; align-items:center; font-weight:700; font-size:1.5rem; color:var(--sidebar-text); text-decoration:none }
-#app.theme-deepseek .sidebar-brand i{ color:var(--primary); font-size:1.8rem }
-#app.theme-deepseek .sidebar-nav{ padding:1rem 0 }
-#app.theme-deepseek .sidebar .nav-item{ margin-bottom:.3rem }
-#app.theme-deepseek .sidebar .nav-link, #app.theme-deepseek .left-sidebar a{
-  color:rgba(255,255,255,.8); padding:.8rem 1.5rem; display:flex; gap:12px; align-items:center;
-  border-left:3px solid transparent; text-decoration:none; cursor:pointer;
-}
-#app.theme-deepseek .sidebar .nav-link:hover, #app.theme-deepseek .left-sidebar a:hover, #app.theme-deepseek .sidebar .nav-link.active{
-  background:var(--sidebar-active-bg); color:var(--sidebar-text); border-left-color:var(--sidebar-active-border)
-}
-#app.theme-deepseek .sidebar .nav-link i{ width:24px; font-size:1.2rem }
-#app.theme-deepseek .top-header{
-  position:sticky; top:0; z-index:900; background:var(--header-bg); padding:1rem 2rem; margin-left:var(--sidebar-w);
-  box-shadow:0 2px 10px rgba(0,0,0,.05); display:flex; justify-content:space-between; align-items:center;
-  transition: margin-left 0.3s ease-in-out; /* Adicionado transição */
-}
-#app.theme-deepseek .top-header .search-bar{ width:300px; position:relative }
-#app.theme-deepseek .top-header .search-bar input{ padding-left:40px; border-radius:50px; border:1px solid var(--border-color); background-color: var(--input-bg); color: var(--text-primary); }
-#app.theme-deepseek .top-header .search-bar i{ position:absolute; left:15px; top:10px; color:var(--text-secondary) }
-#app.theme-deepseek .user-menu{ display:flex; gap:15px; align-items:center }
-#app.theme-deepseek .user-avatar{ width:45px; height:45px; border-radius:50%; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:600 }
-#app.theme-deepseek .content, #app.theme-deepseek .main, #app.theme-deepseek .content-wrapper, #app.theme-deepseek .dashboard-content{
-  margin-left:var(--sidebar-w); padding:2rem; min-height:calc(100vh - 64px);
-  background:var(--bg-color); color:var(--text-color);
-  transition: margin-left 0.3s ease-in-out; /* Adicionado transição */
-}
-#app.theme-deepseek .section{ display:none } #app.theme-deepseek .section.active{ display:block }
-#app.theme-deepseek .content-section{ display:none } #app.theme-deepseek .content-section.active{ display:block }
-#app.theme-deepseek .page-title{ display:flex; gap:12px; align-items:center; font-weight:600; margin-bottom:1.5rem }
-#app.theme-deepseek .page-title i{ color:var(--primary); font-size:1.8rem }
-#app.theme-deepseek .stats-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:1.5rem; margin-bottom:2rem }
-#app.theme-deepseek .content-grid{ display:grid; grid-template-columns:2fr 1fr; gap:1.5rem }
-@media (max-width:992px){
-  #app.theme-deepseek .content-grid{ grid-template-columns:1fr }
-  /* Sidebar colapsada */
-  #app.theme-deepseek .left-sidebar, #app.theme-deepseek .sidebar{ width:80px; overflow:hidden }
-  #app.theme-deepseek .sidebar-brand span, #app.theme-deepseek .sidebar .nav-link span{ display:none }
-  #app.theme-deepseek .sidebar-brand { justify-content: center; }
-  #app.theme-deepseek .sidebar .nav-link { justify-content: center; padding: .8rem 0; }
-  #app.theme-deepseek .sidebar .nav-link i { width: auto; }
-  #app.theme-deepseek .top-header{ margin-left:80px }
-  #app.theme-deepseek .content, #app.theme-deepseek .main, #app.theme-deepseek .content-wrapper{ margin-left:80px }
-  #app.theme-deepseek #btnToggleSidebar { display: block; } /* Mostra o botão de toggle */
-}
-@media (max-width:768px){
-  /* Sidebar completamente escondida */
-  #app.theme-deepseek .left-sidebar, #app.theme-deepseek .sidebar{ left:-80px; }
-  #app.theme-deepseek .sidebar.active { left:0; } /* Mostra quando ativo */
-  #app.theme-deepseek .top-header{ margin-left:0; flex-wrap: wrap; padding-left: 4rem; }
-  #app.theme-deepseek .top-header .search-bar { width: 100%; order: 2; margin-top: 1rem; }
-  #app.theme-deepseek .top-header .user-menu { order: 1; }
-  #app.theme-deepseek .content, #app.theme-deepseek .main, #app.theme-deepseek .content-wrapper{ margin-left:0 }
-  #app.theme-deepseek #btnToggleSidebar { position: absolute; left: 1rem; top: 1rem; z-index: 1001; color: var(--text-primary); }
+/* Sidebar */
+#app.theme-deepseek .sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: var(--sidebar-w);
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  z-index: 1000;
+  overflow-y: auto;
+  box-shadow: 0 0 15px rgba(0,0,0,.1);
+  transition: width 0.3s ease-in-out, left 0.3s ease-in-out;
 }
 
-#app.theme-deepseek .card, #app.theme-deepseek .table-container, #app.theme-deepseek .form-container, #app.theme-deepseek .chart-container, #app.theme-deepseek .recent-container{
-  background:var(--card-bg); border-radius:12px; padding:1.5rem; box-shadow:var(--card-shadow); width:100%;
+/* Sidebar header */
+#app.theme-deepseek .sidebar-header {
+  padding: 1.5rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-#app.theme-deepseek .stat-card{ background:var(--card-bg); border-radius:12px; padding:1.5rem; box-shadow:var(--card-shadow); transition:transform .2s }
-#app.theme-deepseek .stat-card:hover{ transform:translateY(-5px) }
-#app.theme-deepseek .stat-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem }
-#app.theme-deepseek .stat-title{ color:var(--text-secondary); font-weight:500; font-size:.95rem }
-#app.theme-deepseek .stat-icon{ width:50px; height:50px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.5rem }
-#app.theme-deepseek .bg-primary-light{ background:rgba(37,99,235,.1); color:var(--primary) }
-#app.theme-deepseek .bg-success-light{ background:rgba(16,185,129,.1); color:var(--success) }
-#app.theme-deepseek .bg-danger-light{ background:rgba(239,68,68,.1); color:var(--danger) }
-#app.theme-deepseek .bg-warning-light{ background:rgba(245,158,11,.1); color:var(--warning) }
-#app.theme-deepseek .stat-value{ font-size:1.8rem; font-weight:700; margin-bottom:.5rem }
-#app.theme-deepseek .change-positive{ color:var(--success) } #app.theme-deepseek .change-negative{ color:var(--danger) }
-#app.theme-deepseek .form-group{ margin-bottom:1.5rem } 
-#app.theme-deepseek .form-label{ font-weight:500; margin-bottom:.5rem; display:block } 
-#app.theme-deepseek .form-control{ padding:.75rem 1rem; border-radius:8px; border:1px solid var(--border-color); width:100%; background-color: var(--input-bg); color: var(--text-primary); }
-#app.theme-deepseek .form-control:focus{ border-color:var(--primary); outline:none; box-shadow:0 0 0 3px rgba(37,99,235,.1) } 
-#app.theme-deepseek .btn{ padding:.75rem 1.5rem; border-radius:8px; border:none; font-weight:500; cursor:pointer } 
-#app.theme-deepseek .btn-primary{ background:var(--primary); color:#fff } 
-#app.theme-deepseek .btn-primary:hover{ background:var(--primary-dark) } 
-#app.theme-deepseek .btn-outline{ background:transparent; border:1px solid var(--border-color); color:var(--text-primary) } 
-#app.theme-deepseek .btn-outline:hover{ background:var(--border-light) }
-#app.theme-deepseek .table{ width:100%; border-collapse:collapse } 
-#app.theme-deepseek .table th{ text-align:left; padding:1rem; border-bottom:1px solid var(--border-color); font-weight:600; color:var(--text-secondary) } 
-#app.theme-deepseek .table td{ padding:1rem; border-bottom:1px solid var(--border-light) } 
-#app.theme-deepseek .table tr:last-child td{ border-bottom:none } 
-#app.theme-deepseek .table tr:hover{ background:var(--border-light) }
+
+/* Sidebar brand */
+#app.theme-deepseek .sidebar-brand {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--sidebar-text);
+  text-decoration: none;
+}
+#app.theme-deepseek .sidebar-brand i {
+  color: var(--primary);
+  font-size: 1.8rem;
+}
+
+/* Sidebar nav */
+#app.theme-deepseek .sidebar-nav {
+  padding: 1rem 0;
+}
+#app.theme-deepseek .sidebar .nav-item {
+  margin-bottom: 0.3rem;
+}
+#app.theme-deepseek .sidebar .nav-link {
+  color: rgba(255,255,255,.8);
+  padding: 0.8rem 1.5rem;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  border-left: 4px solid transparent;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+#app.theme-deepseek .sidebar .nav-link:hover {
+  background: var(--sidebar-active-bg);
+  color: var(--sidebar-text);
+}
+#app.theme-deepseek .sidebar .nav-link.active {
+  background: var(--primary);
+  color: white;
+  border-left-color: var(--primary-dark);
+  font-weight: 600;
+}
+#app.theme-deepseek .sidebar .nav-link i {
+  width: 24px;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+/* Main content */
+#app.theme-deepseek .main-content {
+  margin-left: var(--sidebar-w);
+  padding: 2rem 3rem;
+  max-width: 1200px;
+  margin-right: auto;
+  margin-left: auto;
+  box-sizing: border-box;
+  transition: margin-left 0.3s ease-in-out;
+}
+
+/* Header */
+#app.theme-deepseek .top-header {
+  position: sticky;
+  top: 0;
+  z-index: 900;
+  background: var(--header-bg);
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+#app.theme-deepseek .top-header .search-bar {
+  flex: 1 1 300px;
+  max-width: 400px;
+  position: relative;
+}
+#app.theme-deepseek .top-header .search-bar input {
+  width: 100%;
+  padding-left: 40px;
+  border-radius: 50px;
+  border: 1px solid var(--border-color);
+  height: 40px;
+  color: var(--text-primary);
+}
+#app.theme-deepseek .top-header .search-bar i {
+  position: absolute;
+  left: 15px;
+  top: 10px;
+  color: var(--text-secondary);
+}
+#app.theme-deepseek .user-menu {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+#app.theme-deepseek .user-info {
+  text-align: right;
+}
+#app.theme-deepseek .user-name {
+  font-weight: 600;
+  margin: 0;
+}
+#app.theme-deepseek .user-role {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+#app.theme-deepseek .user-avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+/* Estatísticas (cards) */
+#app.theme-deepseek .stats-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+#app.theme-deepseek .stat-card {
+  flex: 1 1 280px;
+  max-width: 320px;
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--card-shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#app.theme-deepseek .stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+#app.theme-deepseek .stat-title {
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+#app.theme-deepseek .stat-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  background-color: var(--primary);
+  color: white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+#app.theme-deepseek .stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+/* Tabelas */
+#app.theme-deepseek .table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow-x: auto;
+}
+#app.theme-deepseek .table th, #app.theme-deepseek .table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  text-align: left;
+}
+#app.theme-deepseek .table th {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+#app.theme-deepseek .table tr:hover {
+  background-color: var(--border-light);
+}
+
+/* Botões */
+#app.theme-deepseek .btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+#app.theme-deepseek .btn-primary {
+  background: var(--primary);
+  color: white;
+}
+#app.theme-deepseek .btn-primary:hover {
+  background: var(--primary-dark);
+}
+#app.theme-deepseek .btn-outline {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+#app.theme-deepseek .btn-outline:hover {
+  background: var(--border-light);
+}
+
+/* Responsividade */
+
+/* Sidebar colapsada em telas médias */
+@media (max-width: 992px) {
+  #app.theme-deepseek .sidebar {
+    width: 80px;
+  }
+  #app.theme-deepseek .sidebar .nav-link span,
+  #app.theme-deepseek .sidebar .sidebar-brand span {
+    display: none;
+  }
+  #app.theme-deepseek .sidebar .nav-link {
+    justify-content: center;
+    padding: 0.8rem 0;
+  }
+  #app.theme-deepseek .sidebar .nav-link i {
+    width: auto;
+  }
+  #app.theme-deepseek .main-content {
+    margin-left: 80px;
+  }
+  #app.theme-deepseek .top-header {
+    margin-left: 80px;
+  }
+}
+
+/* Sidebar escondida em telas pequenas */
+@media (max-width: 768px) {
+  #app.theme-deepseek .sidebar {
+    left: -280px;
+    position: fixed;
+    transition: left 0.3s ease;
+  }
+  #app.theme-deepseek .sidebar.active {
+    left: 0;
+  }
+  #app.theme-deepseek .main-content {
+    margin-left: 0;
+  }
+  #app.theme-deepseek .top-header {
+    margin-left: 0;
+  }
+}
+
+/* Barra de pesquisa responsiva */
+@media (max-width: 576px) {
+  #app.theme-deepseek .top-header .search-bar {
+    max-width: 100%;
+    flex: 1 1 100%;
+  }
+}
+
+/* Acessibilidade: foco visível */
+#app.theme-deepseek a:focus, #app.theme-deepseek button:focus, #app.theme-deepseek input:focus, #app.theme-deepseek select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
