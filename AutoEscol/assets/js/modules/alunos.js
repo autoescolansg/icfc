@@ -343,4 +343,37 @@ export async function refreshDashboard(){
   calculateMonthlyTrend(totalAlunosCurrentMonth, totalAlunosPreviousMonth, 'total-alunos-trend', 'alunos');
 
   const ewCurrentMonth = allAlunos.filter(a => a.vendedor === 'Ewerton' && new Date(a.dataCadastro).getMonth() === currentMonth && new Date(a.dataCadastro).getFullYear() === currentYear).length;
-  const ewPreviousMonth = allAlunos.filter(a => a.vendedor === 'Ewerton' && new Date(a.dataCadastro).getMonth() === (currentMonth === 0 ? 11 : currentMonth - 1) && new Date(a.dataCadastro).getFullYear() === (currentMonth === 0 ? current
+  const ewPreviousMonth = allAlunos.filter(a => a.vendedor === 'Ewerton' && new Date(a.dataCadastro).getMonth() === (currentMonth === 0 ? 11 : currentMonth - 1) && new Date(a.dataCadastro).getFullYear() === (currentMonth === 0 ? currentYear - 1 : currentYear)).length;
+  calculateMonthlyTrend(ewCurrentMonth, ewPreviousMonth, 'ewerton-trend', 'alunos');
+
+  const daCurrentMonth = allAlunos.filter(a => a.vendedor === 'Darlan' && new Date(a.dataCadastro).getMonth() === currentMonth && new Date(a.dataCadastro).getFullYear() === currentYear).length;
+  const daPreviousMonth = allAlunos.filter(a => a.vendedor === 'Darlan' && new Date(a.dataCadastro).getMonth() === (currentMonth === 0 ? 11 : currentMonth - 1) && new Date(a.dataCadastro).getFullYear() === (currentMonth === 0 ? currentYear - 1 : currentYear)).length;
+  calculateMonthlyTrend(daCurrentMonth, daPreviousMonth, 'darlan-trend', 'alunos');
+
+  const concluidosCurrentMonth = allAlunos.filter(a => a.statusGeral === 'concluido' && new Date(a.dataCadastro).getMonth() === currentMonth && new Date(a.dataCadastro).getFullYear() === currentYear).length;
+  const concluidosPreviousMonth = allAlunos.filter(a => a.statusGeral === 'concluido' && new Date(a.dataCadastro).getMonth() === (currentMonth === 0 ? 11 : currentMonth - 1) && new Date(a.dataCadastro).getFullYear() === (currentMonth === 0 ? currentYear - 1 : currentYear)).length;
+  calculateMonthlyTrend(concluidosCurrentMonth, concluidosPreviousMonth, 'concluidos-trend', 'alunos');
+
+  const andamentoCurrentMonth = allAlunos.filter(a => a.statusGeral === 'andamento' && new Date(a.dataCadastro).getMonth() === currentMonth && new Date(a.dataCadastro).getFullYear() === currentYear).length;
+  const andamentoPreviousMonth = allAlunos.filter(a => a.statusGeral === 'andamento' && new Date(a.dataCadastro).getMonth() === (currentMonth === 0 ? 11 : currentMonth - 1) && new Date(a.dataCadastro).getFullYear() === (currentMonth === 0 ? currentYear - 1 : currentYear)).length;
+  calculateMonthlyTrend(andamentoCurrentMonth, andamentoPreviousMonth, 'andamento-trend', 'alunos');
+
+  const pendentesCurrentMonth = allAlunos.filter(a => a.statusGeral === 'pendente' && new Date(a.dataCadastro).getMonth() === currentMonth && new Date(a.dataCadastro).getFullYear() === currentYear).length;
+  const pendentesPreviousMonth = allAlunos.filter(a => a.statusGeral === 'pendente' && new Date(a.dataCadastro).getMonth() === (currentMonth === 0 ? 11 : currentMonth - 1) && new Date(a.dataCadastro).getFullYear() === (currentMonth === 0 ? currentYear - 1 : currentYear)).length;
+  calculateMonthlyTrend(pendentesCurrentMonth, pendentesPreviousMonth, 'pendentes-trend', 'alunos');
+
+
+  try{
+    const cfg = await loadSellerCfg();
+    const em = document.getElementById('ewerton-meta'); if (em) em.textContent = `Meta: ${cfg.Ewerton?.meta||0} | Comissão: ${cfg.Ewerton?.comissao||0}%`;
+    const dm = document.getElementById('darlan-meta'); if (dm) dm.textContent = `Meta: ${cfg.Darlan?.meta||0} | Comissão: ${cfg.Darlan?.comissao||0}%`;
+  }catch(e){ console.warn("Falha ao carregar seller cfg:", e); }
+}
+
+/* ---------- hook para realtime.js ---------- */
+export function renderAlunosFromList(list) {
+  if (Array.isArray(list)) alunos = list.slice();
+  renderTabela();
+  refreshDashboard();
+}
+window.renderAlunosFromList = renderAlunosFromList;
