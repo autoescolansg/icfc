@@ -10,20 +10,17 @@ export async function initRelatorios() {
   allTransacoes = await loadTransacoes();
   allAlunos = await loadAlunos();
 
-  // Define a data padrão para o relatório mensal
   const relatorioMensalMesAno = document.getElementById('relatorio-mensal-mesano');
   if (relatorioMensalMesAno) {
-    relatorioMensalMesAno.value = new Date().toISOString().slice(0, 7); // YYYY-MM
+    relatorioMensalMesAno.value = new Date().toISOString().slice(0, 7);
   }
 
   document.getElementById('btnGerarRelatorioMensal')?.addEventListener('click', gerarRelatorioMensal);
   document.getElementById('btnGerarRelatorioPeriodo')?.addEventListener('click', gerarRelatorioPeriodo);
   document.getElementById('btnGerarRelatorioCliente')?.addEventListener('click', gerarRelatorioCliente);
 
-  // Popula o select de clientes para o relatório
   populateRelatorioClienteSelect();
 
-  // Lógica para as abas (tabs)
   const relatorioTabs = document.getElementById('relatorioTabs');
   if (relatorioTabs) {
     relatorioTabs.addEventListener('click', (e) => {
@@ -32,21 +29,17 @@ export async function initRelatorios() {
 
       e.preventDefault();
       
-      // Remove active de todos os links e panes
       document.querySelectorAll('#relatorioTabs .nav-link').forEach(link => link.classList.remove('active'));
       document.querySelectorAll('#relatorioTabsContent .tab-pane').forEach(pane => pane.classList.remove('show', 'active'));
 
-      // Adiciona active ao link clicado
       target.classList.add('active');
       
-      // Mostra o painel correspondente
       const targetPaneId = target.dataset.bsTarget;
       const targetPane = document.querySelector(targetPaneId);
       if (targetPane) {
         targetPane.classList.add('show', 'active');
       }
     });
-    // Ativa a primeira aba por padrão ao carregar
     document.getElementById('mensal-tab')?.click();
   }
 }
@@ -55,7 +48,6 @@ function populateRelatorioClienteSelect() {
   const select = document.getElementById('relatorio-cliente-cpf');
   if (!select) return;
 
-  // Limpa opções existentes, exceto a primeira (placeholder)
   while (select.options.length > 1) {
     select.remove(1);
   }
@@ -69,7 +61,7 @@ function populateRelatorioClienteSelect() {
 }
 
 async function gerarRelatorioMensal() {
-  const mesAno = document.getElementById('relatorio-mensal-mesano').value; // YYYY-MM
+  const mesAno = document.getElementById('relatorio-mensal-mesano').value;
   if (!mesAno) {
     showToast('Selecione um mês e ano para o relatório mensal.', 'danger');
     return;
@@ -93,11 +85,11 @@ async function gerarRelatorioPeriodo() {
     return;
   }
 
-  const start = new Date(dataInicio + 'T00:00:00'); // Garante que a hora seja 00:00:00
-  const end = new Date(dataFim + 'T23:59:59');     // Garante que a hora seja 23:59:59
+  const start = new Date(dataInicio + 'T00:00:00');
+  const end = new Date(dataFim + 'T23:59:59');
 
   const filteredTransacoes = allTransacoes.filter(t => {
-    const d = new Date(t.data + 'T00:00:00'); // Converte a data da transação para comparação
+    const d = new Date(t.data + 'T00:00:00');
     return d >= start && d <= end;
   });
 
@@ -107,7 +99,7 @@ async function gerarRelatorioPeriodo() {
 async function gerarRelatorioCliente() {
   const clienteCpf = document.getElementById('relatorio-cliente-cpf').value;
 
-  let filteredTransacoes = allTransacoes.filter(t => t.tipo === 'entrada'); // Relatório de cliente foca em entradas
+  let filteredTransacoes = allTransacoes.filter(t => t.tipo === 'entrada');
 
   let titulo = 'Relatório de Entradas por Cliente';
   if (clienteCpf) {
@@ -128,7 +120,7 @@ function renderRelatorio(data, titulo) {
   let html = `<h3>${titulo}</h3>`;
 
   if (data.length === 0) {
-    html += `<p style="text-align: center; color: var(--text-secondary);">Nenhum resultado encontrado para este relatório.</p>`;
+    html += `<p class="text-center text-secondary py-3">Nenhum resultado encontrado para este relatório.</p>`;
     resultadosDiv.innerHTML = html;
     return;
   }
@@ -141,25 +133,40 @@ function renderRelatorio(data, titulo) {
   const saldo = totalEntradas - totalSaidas;
 
   html += `
-    <div class="stats-grid" style="margin-bottom: 1.5rem;">
+    <div class="stats-grid mb-4">
       <div class="stat-card">
-        <h4 class="stat-title">Total Entradas</h4>
+        <div class="stat-header">
+          <h4 class="stat-title">Total Entradas</h4>
+          <div class="stat-icon success-icon">
+            <i class="fa-solid fa-arrow-up"></i>
+          </div>
+        </div>
         <h3 class="stat-value text-success">${formatCurrency(totalEntradas)}</h3>
       </div>
       <div class="stat-card">
-        <h4 class="stat-title">Total Saídas</h4>
+        <div class="stat-header">
+          <h4 class="stat-title">Total Saídas</h4>
+          <div class="stat-icon danger-icon">
+            <i class="fa-solid fa-arrow-down"></i>
+          </div>
+        </div>
         <h3 class="stat-value text-danger">${formatCurrency(totalSaidas)}</h3>
       </div>
       <div class="stat-card">
-        <h4 class="stat-title">Saldo Final</h4>
+        <div class="stat-header">
+          <h4 class="stat-title">Saldo Final</h4>
+          <div class="stat-icon">
+            <i class="fa-solid fa-wallet"></i>
+          </div>
+        </div>
         <h3 class="stat-value ${saldo >= 0 ? 'text-success' : 'text-danger'}">${formatCurrency(saldo)}</h3>
       </div>
     </div>
   `;
 
   html += `
-    <h4 style="margin-top: 1.5rem;">Detalhes das Transações</h4>
-    <div style="overflow-x: auto;">
+    <h4 class="section-subtitle mt-4 mb-3">Detalhes das Transações</h4>
+    <div class="table-responsive">
       <table class="table">
         <thead>
           <tr>
@@ -202,8 +209,6 @@ function renderRelatorio(data, titulo) {
 export function renderRelatoriosFromList(transacoesList, alunosListUpdated) {
   if (Array.isArray(transacoesList)) allTransacoes = transacoesList.slice();
   if (Array.isArray(alunosListUpdated)) allAlunos = alunosListUpdated.slice();
-  // Não chamamos a renderização de relatório automaticamente, apenas atualizamos os dados
-  // O usuário deve clicar para gerar o relatório
-  populateRelatorioClienteSelect(); // Garante que o select de clientes esteja atualizado
+  populateRelatorioClienteSelect();
 }
 window.renderRelatoriosFromList = renderRelatoriosFromList;
