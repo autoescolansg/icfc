@@ -27,6 +27,9 @@ export function initNavigation(){
       const sidebar = document.getElementById('sidebar');
       if (window.innerWidth <= 768 && sidebar.classList.contains('active')) {
         sidebar.classList.remove('active');
+        // Altera o ícone do botão de abrir para 'bars'
+        const btnToggleOpen = document.getElementById('btnToggleSidebarOpen');
+        if (btnToggleOpen) btnToggleOpen.querySelector('i').className = 'fas fa-bars';
       }
     });
   });
@@ -35,16 +38,24 @@ export function initNavigation(){
   document.querySelector('.sidebar-menu a[data-section="dashboard"]')?.click();
 
   // Lógica para o botão de toggle da sidebar (hambúrguer)
-  const btnToggleSidebar = document.getElementById('btnToggleSidebar');
+  const btnToggleSidebarOpen = document.getElementById('btnToggleSidebarOpen');
+  const btnToggleSidebarClose = document.getElementById('btnToggleSidebarClose');
   const sidebar = document.getElementById('sidebar');
-  if (btnToggleSidebar && sidebar) {
-    btnToggleSidebar.addEventListener('click', () => {
-      sidebar.classList.toggle('active');
-      // Altera o ícone do botão
-      const icon = btnToggleSidebar.querySelector('i');
-      if (icon) {
-        icon.className = sidebar.classList.contains('active') ? 'fas fa-times' : 'fas fa-bars';
-      }
+
+  if (btnToggleSidebarOpen && sidebar) {
+    btnToggleSidebarOpen.addEventListener('click', () => {
+      sidebar.classList.add('active'); // Abre a sidebar
+      // Altera o ícone do botão de abrir para 'times' (se visível)
+      btnToggleSidebarOpen.querySelector('i').className = 'fas fa-times';
+    });
+  }
+
+  if (btnToggleSidebarClose && sidebar) {
+    btnToggleSidebarClose.addEventListener('click', () => {
+      sidebar.classList.remove('active'); // Fecha a sidebar
+      // Altera o ícone do botão de abrir para 'bars'
+      const btnToggleOpen = document.getElementById('btnToggleSidebarOpen');
+      if (btnToggleOpen) btnToggleOpen.querySelector('i').className = 'fas fa-bars';
     });
   }
 }
