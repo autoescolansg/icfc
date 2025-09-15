@@ -8,9 +8,10 @@ import { initAuth } from './modules/auth.js';
 import { initNavigation } from './modules/navigation.js';
 import { initAlunos } from './modules/alunos.js';
 import { initIO } from './modules/io.js';
-import { initSellerCfg } from './modules/seller.js';
-import { initFinanceiro } from './modules/financeiro.js'; // NOVO
-import { initConfig } from './modules/config.js'; // NOVO (para gestão de usuários)
+// import { initSellerCfg } from './modules/seller.js'; // REMOVIDO: Integrado em config.js
+import { initFinanceiro } from './modules/financeiro.js';
+import { initConfig } from './modules/config.js'; // Agora também gerencia seller cfg
+import { initRelatorios } from './modules/relatorios.js'; // NOVO
 
 function applySessionUI(isLogged) {
   const login = document.getElementById("login");
@@ -27,9 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavigation();
   initAlunos();
   initIO();
-  initSellerCfg();
-  initFinanceiro(); // Inicializa o módulo financeiro
-  initConfig(); // Inicializa o módulo de configurações (gestão de usuários)
+  // initSellerCfg(); // REMOVIDO
+  initFinanceiro();
+  initConfig(); // Agora também gerencia seller cfg
+  initRelatorios(); // NOVO
 
   // Começa escondendo o app até sabermos a sessão
   applySessionUI(false);
@@ -55,6 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
       userAvatar.textContent = 'U';
       userRole.textContent = 'Visitante';
     }
+    // Re-inicializa módulos que dependem do currentUser
+    initConfig(); // Para mostrar/esconder a aba de config
   });
 
   // Compat: se algum código antigo chamar appLoginSuccess, apenas loga (auth.js já cuida da sessão)
