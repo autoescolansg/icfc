@@ -15,7 +15,7 @@
 #app.theme-deepseek #dashboard .card > .card-title,
 #app.theme-deepseek #dashboard .page-title{
   display:flex; align-items:center; gap:12px;
-  font-size: 28px; font-weight: 700; color:#1f2937; margin: 4px 0 16px;
+  font-size: 28px; font-weight: 700; color:var(--text-primary); margin: 4px 0 16px;
 }
 #app.theme-deepseek #dashboard .page-title i{ color: var(--primary); font-size: 22px; }
 
@@ -27,8 +27,8 @@
   padding: 0 !important;
 }
 #app.theme-deepseek #dashboard > .card > .card{
-  background: #fff !important; border: 1px solid #edf1f5 !important; border-radius: 12px !important;
-  box-shadow: 0 6px 20px rgba(0,0,0,.04) !important;
+  background: var(--card-bg) !important; border: 1px solid var(--border-color) !important; border-radius: 12px !important;
+  box-shadow: var(--card-shadow) !important;
   padding: 20px !important; min-height: 130px;
 }
 #app.theme-deepseek #dashboard > .card{
@@ -55,7 +55,7 @@
 #app.theme-deepseek #dashboard > .card > .card .value,
 #app.theme-deepseek #dashboard > .card > .card .total,
 #app.theme-deepseek #dashboard > .card > .card .number{
-  font-size: 28px; font-weight: 800; color:#111827; line-height: 1.2;
+  font-size: 28px; font-weight: 800; color:var(--text-primary); line-height: 1.2;
 }
 #app.theme-deepseek #dashboard > .card > .card .trend,
 #app.theme-deepseek #dashboard > .card > .card .subtitle{
@@ -69,21 +69,21 @@
   display: grid !important; grid-template-columns: 2fr 1fr !important; gap: 16px !important;
 }
 #app.theme-deepseek #dashboard .content-grid .card{
-  background:#fff !important; border: 1px solid #edf1f5 !important; border-radius: 12px !important;
-  box-shadow: 0 6px 20px rgba(0,0,0,.04) !important; padding: 20px !important;
+  background:var(--card-bg) !important; border: 1px solid var(--border-color) !important; border-radius: 12px !important;
+  box-shadow: var(--card-shadow) !important; padding: 20px !important;
 }
 
 /* Cabeçalho dos blocos */
 #app.theme-deepseek #dashboard .section-header{
   display:flex; align-items:center; justify-content:space-between; margin-bottom: 12px;
 }
-#app.theme-deepseek #dashboard .section-title{ font-size:16px; font-weight:700; color:#1f2937; }
+#app.theme-deepseek #dashboard .section-title{ font-size:16px; font-weight:700; color:var(--text-primary); }
 #app.theme-deepseek #dashboard .view-all{ font-size: 12px; color: var(--primary); text-decoration: none; }
 
 /* Transações recentes (lista) */
 #app.theme-deepseek #dashboard .transaction-item{
   display:flex; align-items:center; justify-content:space-between; padding: 12px 0;
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 1px solid var(--border-light);
 }
 #app.theme-deepseek #dashboard .transaction-item:last-child{ border-bottom: 0; }
 #app.theme-deepseek #dashboard .transaction-info{ display:flex; align-items:center; gap: 12px; }
@@ -98,16 +98,23 @@
 
 /* 5) Cards padrão (toda a aplicação) no estilo Deepseek */
 #app.theme-deepseek .card{
-  background:#fff; border: 1px solid #edf1f5; border-radius:12px; box-shadow:0 6px 20px rgba(0,0,0,.04);
+  background:var(--card-bg); border: 1px solid var(--border-color); border-radius:12px; box-shadow:var(--card-shadow);
 }
-#app.theme-deepseek .card-header{ background:transparent; border-bottom:1px solid #edf1f5; }
+#app.theme-deepseek .card-header{ background:transparent; border-bottom:1px solid var(--border-color); }
 
 /* 6) Sidebar ativa / hover no azul Deepseek */
-#app.theme-deepseek .sidebar .nav-link.active{ background: rgba(37,99,235,.12); border-left-color: var(--primary); color:#fff; }
+#app.theme-deepseek .sidebar .nav-link.active{ background: var(--sidebar-active-bg); border-left-color: var(--sidebar-active-border); color:var(--sidebar-text); }
 #app.theme-deepseek .sidebar .nav-link:hover{ background: rgba(255,255,255,.05); }
 
 /* 7) Header com busca “pill” (se você tiver um input de busca) */
 #app.theme-deepseek .top-header .search-bar input{
-  height: 40px; border-radius: 999px; padding-left: 40px; border:1px solid #e5e7eb;
+  height: 40px; border-radius: 999px; padding-left: 40px; border:1px solid var(--border-color);
 }
-#app.theme-deepseek .top-header .search-bar i{ color:#9ca3af; position:absolute; left: 14px; top: 10px; }
+#app.theme-deepseek .top-header .search-bar i{ color:var(--text-secondary); position:absolute; left: 14px; top: 10px; }
+
+/* Responsividade para tabelas */
+@media (max-width: 768px) {
+  #app.theme-deepseek .table-responsive {
+    overflow-x: auto;
+  }
+}
