@@ -53,7 +53,7 @@ export function initNavigation(){
   if (btnToggleSidebarClose && sidebar) {
     btnToggleSidebarClose.addEventListener('click', () => {
       sidebar.classList.remove('active'); // Fecha a sidebar
-      // Altera o ícone do botão de abrir para 'bars'
+      // ALTERAÇÃO: Garante que o ícone do botão de abrir volte para 'bars' ao fechar
       const btnToggleOpen = document.getElementById('btnToggleSidebarOpen');
       if (btnToggleOpen) btnToggleOpen.querySelector('i').className = 'fas fa-bars';
     });
