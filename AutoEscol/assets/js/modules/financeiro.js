@@ -7,6 +7,8 @@ import { formatCPF } from './alunos.js';
 let transacoes = [];
 let alunosList = [];
 let chartBalancoMensal = null;
+let chartEntradasPorCategoria = null; // NOVO: Variável para o gráfico de entradas por categoria
+let chartSaidasPorCategoria = null;   // NOVO: Variável para o gráfico de saídas por categoria
 
 /* ---------- helpers ---------- */
 function formatDate(ds){ if(!ds) return ''; const d=new Date(ds); return isNaN(d)? ds : new Date(ds).toLocaleDateString('pt-BR') }
@@ -334,6 +336,10 @@ export async function refreshFinanceiroDashboard(){
 
   renderBalancoMensalChart(transacoesCurrentMonth);
   renderRecentTransactions();
+  
+  // NOVO: Renderiza os gráficos de entradas e saídas por categoria
+  renderEntradasPorCategoriaChart(transacoesCurrentMonth);
+  renderSaidasPorCategoriaChart(transacoesCurrentMonth);
 }
 
 function renderBalancoMensalChart(transacoesMesAtual) {
@@ -392,7 +398,7 @@ function renderBalancoMensalChart(transacoesMesAtual) {
           legend: {
             position: 'top',
             labels: {
-              color: 'var(--text-color-secondary)' // Cor da legenda
+              color: 'var(--text-color-secondary)'
             }
           },
           title: {
@@ -409,10 +415,10 @@ function renderBalancoMensalChart(transacoesMesAtual) {
               color: 'var(--text-color-secondary)'
             },
             ticks: {
-              color: 'var(--text-color-secondary)' // Cor dos ticks do eixo X
+              color: 'var(--text-color-secondary)'
             },
             grid: {
-              color: 'rgba(var(--border-color), 0.5)' // Cor da grade
+              color: 'rgba(var(--border-color), 0.5)'
             }
           },
           y: {
@@ -424,11 +430,119 @@ function renderBalancoMensalChart(transacoesMesAtual) {
             },
             beginAtZero: true,
             ticks: {
-              color: 'var(--text-color-secondary)' // Cor dos ticks do eixo Y
+              color: 'var(--text-color-secondary)'
             },
             grid: {
-              color: 'rgba(var(--border-color), 0.5)' // Cor da grade
+              color: 'rgba(var(--border-color), 0.5)'
             }
+          }
+        }
+      }
+    });
+  }
+}
+
+// NOVO: Função para renderizar o gráfico de entradas por categoria
+function renderEntradasPorCategoriaChart(transacoesMesAtual) {
+  const ctx = document.getElementById('chartEntradasPorCategoria')?.getContext('2d');
+  if (!ctx) return;
+
+  const entradasPorCategoria = transacoesMesAtual
+    .filter(t => t.tipo === 'entrada' && t.categoria)
+    .reduce((acc, t) => {
+      acc[t.categoria] = (acc[t.categoria] || 0) + t.valor;
+      return acc;
+    }, {});
+
+  const labels = Object.keys(entradasPorCategoria);
+  const data = Object.values(entradasPorCategoria);
+
+  const backgroundColors = labels.map((_, i) => `hsl(${i * 60}, 70%, 60%)`); // Cores dinâmicas
+
+  if (chartEntradasPorCategoria) {
+    chartEntradasPorCategoria.data.labels = labels;
+    chartEntradasPorCategoria.data.datasets[0].data = data;
+    chartEntradasPorCategoria.data.datasets[0].backgroundColor = backgroundColors;
+    chartEntradasPorCategoria.update();
+  } else {
+    chartEntradasPorCategoria = new Chart(ctx, {
+      type: 'pie', // Gráfico de pizza
+      data: {
+        labels: labels,
+        datasets: [{
+          data: data,
+          backgroundColor: backgroundColors,
+          borderColor: 'var(--card-background)',
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: {
+              color: 'var(--text-color-secondary)'
+            }
+          },
+          title: {
+            display: false,
+            text: 'Entradas por Categoria'
+          }
+        }
+      }
+    });
+  }
+}
+
+// NOVO: Função para renderizar o gráfico de saídas por categoria
+function renderSaidasPorCategoriaChart(transacoesMesAtual) {
+  const ctx = document.getElementById('chartSaidasPorCategoria')?.getContext('2d');
+  if (!ctx) return;
+
+  const saidasPorCategoria = transacoesMesAtual
+    .filter(t => t.tipo === 'saida' && t.categoria)
+    .reduce((acc, t) => {
+      acc[t.categoria] = (acc[t.categoria] || 0) + t.valor;
+      return acc;
+    }, {});
+
+  const labels = Object.keys(saidasPorCategoria);
+  const data = Object.values(saidasPorCategoria);
+
+  const backgroundColors = labels.map((_, i) => `hsl(${i * 45 + 180}, 70%, 60%)`); // Cores dinâmicas diferentes para saídas
+
+  if (chartSaidasPorCategoria) {
+    chartSaidasPorCategoria.data.labels = labels;
+    chartSaidasPorCategoria.data.datasets[0].data = data;
+    chartSaidasPorCategoria.data.datasets[0].backgroundColor = backgroundColors;
+    chartSaidasPorCategoria.update();
+  } else {
+    chartSaidasPorCategoria = new Chart(ctx, {
+      type: 'pie', // Gráfico de pizza
+      data: {
+        labels: labels,
+        datasets: [{
+          data: data,
+          backgroundColor: backgroundColors,
+          borderColor: 'var(--card-background)',
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: {
+              color: 'var(--text-color-secondary)'
+            }
+          },
+          title: {
+            display: false,
+            text: 'Saídas por Categoria'
           }
         }
       }
