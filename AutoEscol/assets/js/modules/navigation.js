@@ -17,6 +17,15 @@ export function initNavigation(){
       if (targetSection) {
         targetSection.classList.add('active');
       }
+
+      // Se a seção clicada for 'financeiro', 'financeiro-entradas' ou 'financeiro-saidas',
+      // garante que o link 'financeiro' principal também esteja ativo visualmente
+      if (sectionId.startsWith('financeiro')) {
+        document.querySelector('.sidebar-menu a[data-section="financeiro"]')?.classList.add('active');
+      }
     });
   });
+
+  // Ativa a seção inicial (Dashboard) ao carregar a página
+  document.querySelector('.sidebar-menu a[data-section="dashboard"]')?.click();
 }
