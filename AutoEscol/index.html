@@ -427,7 +427,9 @@
               <div class="card-header">
                 <h3 class="card-title-text">Balanço Mensal</h3>
               </div>
-              <canvas id="chartBalancoMensal"></canvas>
+              <div style="height: 300px;">
+                <canvas id="chartBalancoMensal"></canvas>
+              </div>
             </div>
             <div class="card">
               <div class="card-header">
@@ -436,6 +438,29 @@
               </div>
               <div id="recent-transactions-list">
                 <p class="text-center py-3 text-secondary">Nenhuma transação recente.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- NOVO: Grid para os gráficos de categoria -->
+          <div class="content-grid-2-1 mt-4">
+            <!-- Card para o Gráfico de Entradas por Categoria -->
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title-text">Entradas por Categoria (Mês Atual)</h3>
+              </div>
+              <div style="height: 300px;">
+                <canvas id="chartEntradasPorCategoria"></canvas>
+              </div>
+            </div>
+
+            <!-- Card para o Gráfico de Saídas por Categoria -->
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title-text">Saídas por Categoria (Mês Atual)</h3>
+              </div>
+              <div style="height: 300px;">
+                <canvas id="chartSaidasPorCategoria"></canvas>
               </div>
             </div>
           </div>
