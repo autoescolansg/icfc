@@ -1,73 +1,70 @@
+import { createClient } from '@supabase/supabase-js';
 
-// netlify/functions/seller.mjs
-import { createClient } from "@supabase/supabase-js";
-import { requireAuth } from "./utils/authGuard.mjs";
-import { getUserProfile } from "./utils/roles.mjs";
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
-  { auth: { persistSession: false } }
-);
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-export const handler = async (event) => {
+export async function handler(event, context) {
+  const { httpMethod, body } = event;
+
   try {
-    const method = event.httpMethod.toUpperCase();
-    if (method === "GET") return await handleGET();
-    if (method === "PUT") return await handlePUT(event);
-    return json(405, { error: "Method not allowed" });
-  } catch (err) {
-    return json(500, { error: String(err?.message || err) });
+    if (httpMethod === 'GET') {
+      // Retorna as configurações de todos os vendedores
+      const { data, error } = await supabase
+        .from('seller')
+        .select('*');
+
+      if (error) throw error;
+
+      // Formata para um objeto { nome: { meta, comissao } }
+      const formattedData = data.reduce((acc, item) => {
+        acc[item.nome] = { meta: item.meta, comissao: item.comissao };
+        return acc;
+      }, {});
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify(formattedData),
+      };
+    }
+
+    if (httpMethod === 'PUT') {
+      // Atualiza as configurações de vendedores
+      if (!body) {
+        return { statusCode: 400, body: 'Missing request body' };
+      }
+      const sellerConfigs = JSON.parse(body); // Espera um objeto como { "Ewerton": { meta: X, comissao: Y }, "Darlan": { meta: A, comissao: B } }
+
+      const updates = Object.keys(sellerConfigs).map(name => ({
+        nome: name,
+        meta: sellerConfigs[name].meta,
+        comissao: sellerConfigs[name].comissao,
+      }));
+
+      // Usa upsert para inserir ou atualizar
+      const { data, error } = await supabase
+        .from('seller')
+        .upsert(updates, { onConflict: 'nome' })
+        .select();
+
+      if (error) throw error;
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify(data),
+      };
+    }
+
+    return {
+      statusCode: 405,
+      body: 'Method Not Allowed',
+    };
+  } catch (error) {
+    console.error('Error in seller function:', error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: error.message }),
+    };
   }
-};
-
-async function handleGET() {
-  const { data, error } = await supabase
-    .from("seller")
-    .select("nome, meta, comissao, updated_at")
-    .order("nome");
-  if (error) throw error;
-
-  const obj = {};
-  for (const r of data || []) {
-    obj[r.nome] = { meta: Number(r.meta || 0), comissao: Number(r.comissao || 0) };
-  }
-  return json(200, obj);
-}
-
-async function handlePUT(event) {
-  const user = requireAuth(event);
-  const prof = await getUserProfile(user.userId);
-  if (prof.role !== "admin") return json(403, { error: "Admin only" });
-
-  if (!event.body) return json(400, { error: "Body vazio" });
-  let payload;
-  try { payload = JSON.parse(event.body); } catch { return json(400, { error: "JSON inválido" }); }
-
-  let rows = [];
-  if (Array.isArray(payload)) {
-    rows = payload.map(s => ({
-      nome: String(s?.nome || "").trim(),
-      meta: Number(s?.meta || 0),
-      comissao: Number(s?.comissao || 0),
-      updated_at: new Date().toISOString()
-    })).filter(s => s.nome);
-  } else {
-    rows = Object.entries(payload || {}).map(([nome, cfg]) => ({
-      nome: String(nome).trim(),
-      meta: Number(cfg?.meta || 0),
-      comissao: Number(cfg?.comissao || 0),
-      updated_at: new Date().toISOString()
-    })).filter(s => s.nome);
-  }
-  if (!rows.length) return json(400, { error: "Nada para gravar" });
-
-  const { data, error } = await supabase.from("seller").upsert(rows, { onConflict: "nome" }).select();
-  if (error) throw error;
-
-  return json(200, { ok: true, upserted: data?.length || 0 });
-}
-
-function json(statusCode, obj) {
-  return { statusCode, headers: { "content-type": "application/json" }, body: JSON.stringify(obj) };
 }
