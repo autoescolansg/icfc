@@ -1,0 +1,507 @@
+/* assets/css/main-custom.css */
+
+/* Variáveis CSS globais (mantidas para referência, mas idealmente consolidadas em icfc-deepseek-scoped.css) */
+/* Se você já tem essas variáveis em icfc-deepseek-scoped.css, pode remover este bloco. */
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --secondary: #059669;
+  --light-bg: #f8f9fa;
+  --dark-bg: #1f2937;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --border: #e5e7eb;
+  --card-bg: #fff; /* Definido aqui para ser usado globalmente */
+  --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.04); /* Definido aqui para ser usado globalmente */
+  --input-bg: #fff; /* Definido aqui para ser usado globalmente */
+  --border-light: #f3f4f6; /* Definido aqui para ser usado globalmente */
+}
+
+/* Estilos base do corpo */
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--light-bg);
+  color: var(--text-primary);
+  margin: 0;
+  min-height: 100vh;
+  scroll-behavior: smooth;
+}
+
+.app-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.dashboard-content {
+  padding: 2rem;
+}
+
+.page-title {
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.page-title i {
+  color: var(--primary);
+  font-size: 1.8rem;
+}
+
+/* Cards e Grids */
+/* Removido estilos de .stats-grid e .stat-card daqui, pois já estão bem definidos em icfc-deepseek-scoped.css */
+/* Ajustes para o card padrão, se necessário, mas icfc-deepseek-dashboard.css já tem regras para .card */
+.card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 1.5rem; /* Padding padrão para cards */
+  box-shadow: var(--card-shadow);
+}
+
+/* Estilos para formulários */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.form-control {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  width: 100%;
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+}
+.form-control:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Grid para formulários (novo) */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Botões (já bem definidos em icfc-deepseek-scoped.css e ui-bootstrap.js) */
+/* Mantido apenas para garantir que não haja regressão, mas ui-bootstrap.js deve cuidar disso */
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+}
+
+/* Tabelas (já bem definidas em icfc-deepseek-scoped.css e ui-bootstrap.js) */
+/* Mantido apenas para garantir que não haja regressão */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+/* Login Screen */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.login-header i {
+  font-size: 2.5rem;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+/* Seções de Conteúdo */
+.content-section {
+  display: none;
+}
+
+.content-section.active {
+  display: block;
+}
+
+/* Alertas */
+.alert {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.alert-info {
+  background: #d1ecf1;
+  border: 1px solid #bee5eb;
+  color: #0c5460;
+}
+
+.alert-success {
+  background: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+}
+
+.alert-danger {
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+}
+
+/* Toast Message */
+.toast {
+  visibility: hidden;
+  min-width: 250px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 8px;
+  padding: 16px;
+  position: fixed;
+  z-index: 10000;
+  left: 50%;
+  bottom: 30px;
+  font-size: 17px;
+  opacity: 0;
+  transition: opacity 0.5s, visibility 0.5s;
+  transform: translateX(-50%);
+}
+
+.toast.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+.toast.success { background-color: var(--success); }
+.toast.warn { background-color: var(--warning); }
+.toast.danger { background-color: var(--danger); }
+
+/* Indicadores de Tendência */
+.trend-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+.trend-indicator.positive { color: var(--success); }
+.trend-indicator.negative { color: var(--danger); }
+.trend-indicator i { font-size: 0.75rem; }
+
+/* Sub-navegação */
+.sub-nav-link {
+  padding-left: 3rem !important;
+  font-size: 0.95rem;
+}
+.sub-nav-link.active {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Abas (Tabs) */
+.nav-tabs {
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+.nav-tabs .nav-link {
+  border: 1px solid transparent;
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+  padding: 0.5rem 1rem;
+  color: var(--text-secondary);
+  background-color: transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+}
+.nav-tabs .nav-link:hover {
+  border-color: var(--border) var(--border) var(--border-light);
+}
+.nav-tabs .nav-link.active {
+  color: var(--primary);
+  background-color: var(--card-bg);
+  border-color: var(--border) var(--border) var(--card-bg);
+  border-bottom-color: var(--card-bg);
+}
+.tab-content > .tab-pane {
+  display: none;
+}
+.tab-content > .active {
+  display: block;
+}
+
+/* Validação de Formulário */
+.form-control.is-invalid {
+  border-color: var(--danger);
+  padding-right: calc(1.5em + 0.75rem);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right calc(0.375em + 0.1875rem) center;
+  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+.form-control.is-valid {
+  border-color: var(--success);
+  padding-right: calc(1.5em + 0.75rem);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right calc(0.375em + 0.1875rem) center;
+  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+.invalid-feedback {
+  color: var(--danger);
+  font-size: 0.875em;
+  margin-top: 0.25rem;
+}
+
+/* Botão de alternar tema */
+#btnTheme {
+  background: none;
+  border: none;
+  color: var(--sidebar-text); /* Ajustado para usar a cor do texto da sidebar */
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-left: 1rem;
+}
+#btnTheme:hover {
+  color: var(--primary);
+}
+
+/* Responsividade da Sidebar e Conteúdo Principal */
+/* As variáveis --sidebar-w são definidas em icfc-deepseek-scoped.css */
+
+/* Sidebar colapsada em telas médias */
+@media (max-width: 992px) {
+  #app.theme-deepseek .sidebar {
+    width: 80px;
+    /* Atualiza a variável para o conteúdo */
+    --sidebar-w: 80px;
+  }
+  #app.theme-deepseek .sidebar .nav-link span,
+  #app.theme-deepseek .sidebar .sidebar-brand span {
+    display: none;
+  }
+  #app.theme-deepseek .sidebar .nav-link {
+    justify-content: center;
+    padding: 0.8rem 0;
+  }
+  #app.theme-deepseek .sidebar .nav-link i {
+    width: auto;
+  }
+  #app.theme-deepseek .main-content {
+    margin-left: var(--sidebar-w); /* Agora será 80px */
+  }
+  #app.theme-deepseek .top-header {
+    margin-left: var(--sidebar-w); /* Agora será 80px */
+  }
+  #btnToggleSidebarOpen {
+    display: block; /* Mostra o botão de toggle no header */
+  }
+  #btnToggleSidebarClose {
+    display: block; /* Mostra o botão de fechar na sidebar */
+  }
+}
+
+/* Sidebar escondida em telas pequenas */
+@media (max-width: 768px) {
+  #app.theme-deepseek .sidebar {
+    left: -280px; /* Esconde completamente */
+    position: fixed;
+    transition: left 0.3s ease;
+    /* Atualiza a variável para o conteúdo quando escondida */
+    --sidebar-w: 0px;
+  }
+  #app.theme-deepseek .sidebar.active {
+    left: 0; /* Mostra quando ativo */
+    /* Atualiza a variável para o conteúdo quando ativa */
+    --sidebar-w: 280px;
+  }
+  #app.theme-deepseek .main-content {
+    margin-left: 0; /* Conteúdo ocupa toda a largura */
+  }
+  #app.theme-deepseek .top-header {
+    margin-left: 0;
+    flex-wrap: wrap; /* Permite que os itens do header quebrem linha */
+    padding-left: 4rem; /* Espaço para o botão de toggle */
+  }
+  #app.theme-deepseek .top-header .search-bar {
+    width: 100%;
+    order: 2; /* Move search bar para baixo */
+    margin-top: 1rem;
+  }
+  #app.theme-deepseek .top-header .user-menu {
+    order: 1;
+  }
+  .stats-grid {
+    grid-template-columns: 1fr; /* Uma coluna em telas muito pequenas */
+  }
+  #btnToggleSidebarOpen {
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+    z-index: 1001;
+    color: var(--text-primary); /* Cor para contrastar com o fundo do header */
+  }
+  #btnToggleSidebarClose {
+    color: var(--sidebar-text); /* Cor para contrastar com o fundo da sidebar */
+  }
+}
+
+/* Estilo para inputs de data */
+input[type="date"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236b7280' class='bi bi-calendar' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+  padding-right: 2.5rem;
+}
+
+/* Estilos para o cabeçalho dos cards com filtros */
+.card-header-filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.card-title-text {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 1rem; /* Adiciona margem superior para quebrar linha em telas menores */
+}
+
+/* Ajustes para o filter-bar em telas menores */
+@media (max-width: 768px) {
+  .filter-bar {
+    width: 100%; /* Ocupa toda a largura disponível */
+    margin-top: 1rem;
+  }
+  .filter-bar > * {
+    flex: 1 1 auto; /* Faz com que os itens se ajustem automaticamente */
+    min-width: 120px; /* Largura mínima para cada item */
+  }
+  .filter-bar input[type="text"],
+  .filter-bar select,
+  .filter-bar input[type="date"] {
+    flex: 1 1 100%; /* Ocupa 100% da largura em telas muito pequenas */
+  }
+}
+
+/* Ajustes para o table-responsive */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Melhorar o scroll em dispositivos móveis */
+}
+
+/* Estilos para o modal */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1001; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Center horizontally */
+}
+
+.modal-content {
+  background-color: var(--card-bg);
+  margin: auto;
+  padding: 20px;
+  border: 1px solid var(--border);
+  width: 80%;
+  max-width: 600px;
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.modal-header h2 {
+  margin: 0;
+}
+
+.modal-header .close {
+  color: var(--text-secondary);
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.modal-header .close:hover,
+.modal-header .close:focus {
+  color: var(--text-primary);
+  text-decoration: none;
+  cursor: pointer;
+}
