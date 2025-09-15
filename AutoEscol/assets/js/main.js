@@ -9,7 +9,8 @@ import { initNavigation } from './modules/navigation.js';
 import { initAlunos } from './modules/alunos.js';
 import { initIO } from './modules/io.js';
 import { initSellerCfg } from './modules/seller.js';
-// import { initConfig } from './modules/config.js'; // REMOVIDO: Configuração não é mais via UI
+import { initFinanceiro } from './modules/financeiro.js'; // NOVO
+import { initConfig } from './modules/config.js'; // NOVO (para gestão de usuários)
 
 function applySessionUI(isLogged) {
   const login = document.getElementById("login");
@@ -21,14 +22,14 @@ function applySessionUI(isLogged) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  // REMOVIDO: initConfig(); // Configuração agora é definida diretamente no index.html
-
   // Inicializações do seu app
   initTheme();
   initNavigation();
   initAlunos();
   initIO();
   initSellerCfg();
+  initFinanceiro(); // Inicializa o módulo financeiro
+  initConfig(); // Inicializa o módulo de configurações (gestão de usuários)
 
   // Começa escondendo o app até sabermos a sessão
   applySessionUI(false);
