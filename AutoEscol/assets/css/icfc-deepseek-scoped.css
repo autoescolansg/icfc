@@ -4,7 +4,8 @@
   --light-bg:#f8f9fa; --dark-bg:#1f2937;
   --text-primary:#1f2937; --text-secondary:#4b5563; /* Ajustado para melhor contraste */
   --success:#10b981; --danger:#ef4444; --warning:#f59e0b;
-  --sidebar-w:280px; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+  --sidebar-w:17.5rem; /* 280px em rem */
+  font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
   background:var(--light-bg); color:var(--text-primary); min-height:100vh;
 
   /* Variáveis para tema claro/escuro */
@@ -44,18 +45,18 @@
 #app.theme-deepseek .sidebar {
   position: fixed;
   inset: 0 auto 0 0;
-  width: var(--sidebar-w);
+  width: var(--sidebar-w); /* Usar variável */
   background: var(--sidebar-bg);
   color: var(--sidebar-text);
   z-index: 1000;
   overflow-y: auto;
-  box-shadow: 0 0 15px rgba(0,0,0,.1);
+  box-shadow: 0 0 0.9375rem rgba(0,0,0,.1); /* Usar rem */
   transition: width 0.3s ease-in-out, left 0.3s ease-in-out;
 }
 
 /* Sidebar header */
 #app.theme-deepseek .sidebar-header {
-  padding: 1.5rem 1rem;
+  padding: 1.5rem 1rem; /* Usar rem */
   border-bottom: 1px solid rgba(255,255,255,.1);
   display: flex;
   justify-content: space-between;
@@ -65,30 +66,30 @@
 /* Sidebar brand */
 #app.theme-deepseek .sidebar-brand {
   display: flex;
-  gap: 10px;
+  gap: 0.625rem; /* Usar rem */
   align-items: center;
   font-weight: 700;
-  font-size: 1.5rem;
+  font-size: 1.5rem; /* Usar rem */
   color: var(--sidebar-text);
   text-decoration: none;
 }
 #app.theme-deepseek .sidebar-brand i {
   color: var(--primary);
-  font-size: 1.8rem;
+  font-size: 1.8rem; /* Usar rem */
 }
 
 /* Sidebar nav */
 #app.theme-deepseek .sidebar-nav {
-  padding: 1rem 0;
+  padding: 1rem 0; /* Usar rem */
 }
 #app.theme-deepseek .sidebar .nav-item {
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.3rem; /* Usar rem */
 }
 #app.theme-deepseek .sidebar .nav-link {
   color: rgba(255,255,255,.8);
-  padding: 0.8rem 1.5rem;
+  padding: 0.8rem 1.5rem; /* Usar rem */
   display: flex;
-  gap: 12px;
+  gap: 0.75rem; /* Usar rem */
   align-items: center;
   border-left: 4px solid transparent;
   text-decoration: none;
@@ -106,18 +107,18 @@
   font-weight: 600;
 }
 #app.theme-deepseek .sidebar .nav-link i {
-  width: 24px;
-  font-size: 1.2rem;
+  width: 1.5rem; /* Usar rem */
+  font-size: 1.2rem; /* Usar rem */
   text-align: center;
 }
 
 /* Main content */
 #app.theme-deepseek .main-content {
-  margin-left: var(--sidebar-w);
-  padding: 2rem 3rem;
-  max-width: 1200px;
+  margin-left: var(--sidebar-w); /* Usar variável */
+  padding: 2rem 3rem; /* Usar rem */
+  max-width: 75rem; /* 1200px em rem */
   margin-right: auto;
-  margin-left: auto;
+  margin-left: auto; /* Isso será sobrescrito pelo margin-left: var(--sidebar-w) */
   box-sizing: border-box;
   transition: margin-left 0.3s ease-in-out;
 }
@@ -128,36 +129,36 @@
   top: 0;
   z-index: 900;
   background: var(--header-bg);
-  padding: 1rem 2rem;
-  box-shadow: 0 2px 10px rgba(0,0,0,.05);
+  padding: 1rem 2rem; /* Usar rem */
+  box-shadow: 0 0.125rem 0.625rem rgba(0,0,0,.05); /* Usar rem */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 1rem; /* Usar rem */
 }
 #app.theme-deepseek .top-header .search-bar {
-  flex: 1 1 300px;
-  max-width: 400px;
+  flex: 1 1 18.75rem; /* 300px em rem */
+  max-width: 25rem; /* 400px em rem */
   position: relative;
 }
 #app.theme-deepseek .top-header .search-bar input {
   width: 100%;
-  padding-left: 40px;
+  padding-left: 2.5rem; /* 40px em rem */
   border-radius: 50px;
   border: 1px solid var(--border-color);
-  height: 40px;
+  height: 2.5rem; /* 40px em rem */
   color: var(--text-primary);
 }
 #app.theme-deepseek .top-header .search-bar i {
   position: absolute;
-  left: 15px;
-  top: 10px;
+  left: 0.9375rem; /* 15px em rem */
+  top: 0.625rem; /* 10px em rem */
   color: var(--text-secondary);
 }
 #app.theme-deepseek .user-menu {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 0.9375rem; /* 15px em rem */
 }
 #app.theme-deepseek .user-info {
   text-align: right;
@@ -171,8 +172,8 @@
   color: var(--text-secondary);
 }
 #app.theme-deepseek .user-avatar {
-  width: 45px;
-  height: 45px;
+  width: 2.8125rem; /* 45px em rem */
+  height: 2.8125rem; /* 45px em rem */
   border-radius: 50%;
   background: var(--primary);
   color: white;
@@ -180,7 +181,7 @@
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  font-size: 1.2rem;
+  font-size: 1.2rem; /* Usar rem */
 }
 
 /* Estatísticas (cards) */
@@ -188,15 +189,15 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  gap: 1.5rem; /* Usar rem */
+  margin-bottom: 2rem; /* Usar rem */
 }
 #app.theme-deepseek .stat-card {
-  flex: 1 1 280px;
-  max-width: 320px;
+  flex: 1 1 17.5rem; /* 280px em rem */
+  max-width: 20rem; /* 320px em rem */
   background: var(--card-bg);
-  border-radius: 12px;
-  padding: 1.5rem;
+  border-radius: 0.75rem; /* 12px em rem */
+  padding: 1.5rem; /* Usar rem */
   box-shadow: var(--card-shadow);
   display: flex;
   flex-direction: column;
@@ -207,7 +208,7 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  margin-bottom: 1rem;
+  margin-bottom: 1rem; /* Usar rem */
 }
 #app.theme-deepseek .stat-title {
   color: var(--text-secondary);
@@ -215,21 +216,21 @@
   font-size: 0.95rem;
 }
 #app.theme-deepseek .stat-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 12px;
+  width: 3.125rem; /* 50px em rem */
+  height: 3.125rem; /* 50px em rem */
+  border-radius: 0.75rem; /* 12px em rem */
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 1.5rem; /* Usar rem */
   background-color: var(--primary);
   color: white;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  box-shadow: 0 0.125rem 0.375rem rgba(0,0,0,0.15); /* Usar rem */
 }
 #app.theme-deepseek .stat-value {
-  font-size: 1.8rem;
+  font-size: 1.8rem; /* Usar rem */
   font-weight: 700;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.5rem; /* Usar rem */
 }
 
 /* Tabelas */
@@ -239,7 +240,7 @@
   overflow-x: auto;
 }
 #app.theme-deepseek .table th, #app.theme-deepseek .table td {
-  padding: 1rem;
+  padding: 1rem; /* Usar rem */
   border-bottom: 1px solid var(--border-color);
   text-align: left;
 }
@@ -253,8 +254,8 @@
 
 /* Botões */
 #app.theme-deepseek .btn {
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  padding: 0.75rem 1.5rem; /* Usar rem */
+  border-radius: 0.5rem; /* Usar rem */
   border: none;
   font-weight: 500;
   cursor: pointer;
@@ -280,7 +281,8 @@
 /* Sidebar colapsada em telas médias */
 @media (max-width: 992px) {
   #app.theme-deepseek .sidebar {
-    width: 80px;
+    width: 5rem; /* 80px em rem */
+    /* A variável --sidebar-w é atualizada em main-custom.css */
   }
   #app.theme-deepseek .sidebar .nav-link span,
   #app.theme-deepseek .sidebar .sidebar-brand span {
@@ -293,30 +295,22 @@
   #app.theme-deepseek .sidebar .nav-link i {
     width: auto;
   }
-  #app.theme-deepseek .main-content {
-    margin-left: 80px;
-  }
-  #app.theme-deepseek .top-header {
-    margin-left: 80px;
-  }
+  /* main-content e top-header são ajustados em main-custom.css */
 }
 
 /* Sidebar escondida em telas pequenas */
 @media (max-width: 768px) {
   #app.theme-deepseek .sidebar {
-    left: -280px;
+    left: -17.5rem; /* -280px em rem */
     position: fixed;
     transition: left 0.3s ease;
+    /* A variável --sidebar-w é atualizada em main-custom.css */
   }
   #app.theme-deepseek .sidebar.active {
     left: 0;
+    /* A variável --sidebar-w é atualizada em main-custom.css */
   }
-  #app.theme-deepseek .main-content {
-    margin-left: 0;
-  }
-  #app.theme-deepseek .top-header {
-    margin-left: 0;
-  }
+  /* main-content e top-header são ajustados em main-custom.css */
 }
 
 /* Barra de pesquisa responsiva */
