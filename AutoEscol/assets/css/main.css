@@ -1,14 +1,17 @@
-/* assets/css/main.css - Redesign Completo */
+/* ===========================
+   main.css - Estilos Consolidados
+   Inclui redesign e funcionalidades para gestão de alunos
+   =========================== */
 
-/* --- Variáveis CSS (Tema Claro/Escuro) --- */
+/* --- Variáveis CSS --- */
 :root {
-  --primary: #4A90E2; /* Azul principal */
+  --primary: #4A90E2;
   --primary-dark: #357ABD;
-  --secondary: #50E3C2; /* Verde água */
-  --accent: #F5A623; /* Laranja para destaque */
+  --secondary: #50E3C2;
+  --accent: #F5A623;
 
-  --bg-light: #F8F9FA; /* Fundo claro */
-  --bg-dark: #1A202C; /* Fundo escuro */
+  --bg-light: #F8F9FA;
+  --bg-dark: #1A202C;
   --card-bg-light: #FFFFFF;
   --card-bg-dark: #2D3748;
 
@@ -28,18 +31,17 @@
   --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
   --shadow-dark: 0 4px 12px rgba(0, 0, 0, 0.3);
 
-  --sidebar-width: 16rem; /* Largura padrão da sidebar */
-  --sidebar-collapsed-width: 4.5rem; /* Largura da sidebar colapsada */
+  --sidebar-width: 16rem;
+  --sidebar-collapsed-width: 4.5rem;
 
-  /* Variáveis de tema padrão (claro) */
   --bg-color: var(--bg-light);
   --text-color-primary: var(--text-primary-light);
-  --text-color-secondary: var(--text-secondary-light);
+  --text-color-secondary: var(--text-color-secondary-light);
   --card-background: var(--card-bg-light);
   --border-color: var(--border-light);
   --shadow-color: var(--shadow-light);
   --header-bg: var(--card-bg-light);
-  --sidebar-bg: var(--bg-dark); /* Sidebar escura por padrão */
+  --sidebar-bg: var(--bg-dark);
   --sidebar-text: var(--text-primary-dark);
   --sidebar-active-bg: rgba(255, 255, 255, 0.15);
   --sidebar-active-border: var(--primary);
@@ -47,7 +49,7 @@
 }
 
 /* --- Dark Mode --- */
-#app.theme-light { /* Usando .theme-light para ativar o modo escuro, como no seu JS */
+#app.theme-light {
   --bg-color: var(--bg-dark);
   --text-color-primary: var(--text-primary-dark);
   --text-color-secondary: var(--text-secondary-dark);
@@ -55,7 +57,7 @@
   --border-color: var(--border-dark);
   --shadow-color: var(--shadow-dark);
   --header-bg: var(--card-bg-dark);
-  --sidebar-bg: var(--bg-dark); /* Mantém sidebar escura */
+  --sidebar-bg: var(--bg-dark);
   --sidebar-text: var(--text-primary-dark);
   --sidebar-active-bg: rgba(255, 255, 255, 0.15);
   --sidebar-active-border: var(--primary);
@@ -162,7 +164,7 @@ a:hover {
   margin-bottom: 0.3rem;
 }
 .nav-item.nav-bottom {
-  margin-top: auto; /* Empurra para o final da sidebar */
+  margin-top: auto;
   padding-top: 1rem;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
@@ -190,7 +192,7 @@ a:hover {
 }
 .nav-link i {
   font-size: 1.2rem;
-  width: 1.5rem; /* Garante alinhamento dos ícones */
+  width: 1.5rem;
   text-align: center;
 }
 .nav-link .nav-text {
@@ -207,19 +209,18 @@ a:hover {
   transition: max-height 0.3s ease-out;
 }
 .has-submenu .nav-link.active + .submenu {
-  max-height: 10rem; /* Altura suficiente para os sub-itens */
+  max-height: 10rem;
 }
 .submenu-item .nav-link {
   padding-left: 3rem;
   font-size: 0.9rem;
   background-color: rgba(0, 0, 0, 0.1);
-  border-left: none; /* Remove a borda para sub-itens */
+  border-left: none;
 }
 .submenu-item .nav-link.active {
   background-color: var(--primary-dark);
   border-left-color: var(--primary);
 }
-
 
 /* --- Main Content Wrapper --- */
 .main-content-wrapper {
@@ -317,9 +318,9 @@ a:hover {
 /* --- Content Area --- */
 .content-area {
   flex-grow: 1;
-  padding: 1.5rem 2rem; /* Padding padrão para o conteúdo */
-  max-width: 75rem; /* Largura máxima para o conteúdo principal */
-  margin: 0 auto; /* Centraliza o conteúdo */
+  padding: 1.5rem 2rem;
+  max-width: 75rem;
+  margin: 0 auto;
   width: 100%;
 }
 
@@ -378,7 +379,7 @@ a:hover {
   margin-bottom: 1rem;
   border-bottom: 1px solid var(--border-color);
 }
-.card-header-filters { /* Para cards com filtros */
+.card-header-filters {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -490,7 +491,7 @@ a:hover {
 .table th {
   font-weight: 600;
   color: var(--text-color-secondary);
-  background-color: var(--bg-color); /* Para cabeçalho fixo em scroll */
+  background-color: var(--bg-color);
   position: sticky;
   top: 0;
   z-index: 1;
@@ -713,7 +714,7 @@ a:hover {
   flex-wrap: wrap;
 }
 .nav-tabs .nav-item {
-  margin-bottom: -1px; /* Para sobrepor a borda inferior */
+  margin-bottom: -1px;
 }
 .nav-tabs .nav-link {
   border: 1px solid transparent;
@@ -757,7 +758,7 @@ a:hover {
   border-radius: 1rem;
   box-shadow: var(--shadow-color);
   padding: 2.5rem;
-  margin: 1rem; /* Garante espaçamento em telas pequenas */
+  margin: 1rem;
 }
 .login-header {
   text-align: center;
@@ -789,7 +790,6 @@ input[type="date"] {
   background-size: 1rem;
   padding-right: 2.5rem;
 }
-/* Dark mode date input icon */
 #app.theme-light input[type="date"] {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23A0AEC0' class='bi bi-calendar' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z'/%3E%3C/svg%3E");
 }
@@ -847,19 +847,19 @@ input[type="date"] {
     margin-left: var(--sidebar-collapsed-width);
   }
   .has-submenu .nav-link.active + .submenu {
-    max-height: 0; /* Esconde submenu quando sidebar colapsada */
+    max-height: 0;
   }
 }
 
 /* Sidebar escondida em telas pequenas (Tablet pequeno / Mobile) */
 @media (max-width: 768px) {
   .sidebar {
-    left: -100%; /* Esconde completamente */
-    width: var(--sidebar-width); /* Mantém largura total para quando for ativada */
-    box-shadow: var(--shadow-color); /* Adiciona sombra para destacar quando aberta */
+    left: -100%;
+    width: var(--sidebar-width);
+    box-shadow: var(--shadow-color);
   }
   .sidebar.active {
-    left: 0; /* Mostra a sidebar */
+    left: 0;
   }
   .sidebar .brand-text,
   .sidebar .nav-text {
@@ -874,12 +874,12 @@ input[type="date"] {
     padding: 0.8rem 1.5rem;
   }
   .main-content-wrapper {
-    margin-left: 0; /* Conteúdo ocupa toda a largura */
+    margin-left: 0;
   }
   .top-header {
     margin-left: 0;
     flex-wrap: wrap;
-    padding-left: 4rem; /* Espaço para o botão de toggle */
+    padding-left: 4rem;
   }
   .search-bar {
     order: 2;
@@ -891,27 +891,27 @@ input[type="date"] {
     order: 1;
   }
   .sidebar-toggle.d-lg-none {
-    display: block; /* Mostra o botão de toggle no header */
+    display: block;
     position: absolute;
     left: 1rem;
     top: 1rem;
     z-index: 1001;
     color: var(--text-color-primary);
   }
-  .sidebar-header .sidebar-toggle { /* Botão de fechar na sidebar */
+  .sidebar-header .sidebar-toggle {
     display: block;
   }
   .stats-grid {
-    grid-template-columns: 1fr; /* Empilha cards de estatísticas */
+    grid-template-columns: 1fr;
   }
   .content-grid-2-1 {
-    grid-template-columns: 1fr; /* Empilha o balanço e transações recentes */
+    grid-template-columns: 1fr;
   }
   .form-grid {
-    grid-template-columns: 1fr; /* Empilha campos de formulário */
+    grid-template-columns: 1fr;
   }
   .filter-bar {
-    flex-direction: column; /* Empilha filtros */
+    flex-direction: column;
     width: 100%;
   }
   .filter-bar .form-control,
@@ -920,7 +920,7 @@ input[type="date"] {
     min-width: unset;
   }
   .modal-dialog {
-    width: calc(100% - 2rem); /* Ajusta largura do modal em mobile */
+    width: calc(100% - 2rem);
     margin: 1rem auto;
   }
 }
