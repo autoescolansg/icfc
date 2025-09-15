@@ -7,7 +7,8 @@ import { authFetch } from '../utils/authFetch.js';
 
 let alunos = [];
 let editingCPF = null;
-let chartDesempenhoVendedores = null; // NOVO: Variável para o gráfico de desempenho
+let chartDesempenhoVendedores = null;
+let chartStatusAlunos = null; // NOVO: Variável para o gráfico de status dos alunos
 
 const STEPS = ['foto','aulas_teoricas','prova_teorica','aulas_praticas','baliza_carro','baliza_moto'];
 
@@ -314,7 +315,7 @@ export function renderTabela(){
 export async function refreshDashboard(){
   const allAlunos = await loadAlunos();
   const data = getFiltered(); // Dados filtrados para as estatísticas gerais
-  const sellerConfig = await loadSellerCfg(); // NOVO: Carrega as configurações dos vendedores
+  const sellerConfig = await loadSellerCfg(); // Carrega as configurações dos vendedores
 
   const total = data.length;
   const concluidos = data.filter(a => a.statusGeral === 'concluido').length;
@@ -365,8 +366,16 @@ export async function refreshDashboard(){
   calculateMonthlyTrend(pendentesCurrentMonth, pendentesPreviousMonth, 'pendentes-trend', 'alunos');
 
 
-  // NOVO: Lógica para o gráfico de desempenho de vendedores
+  try{
+    const em = document.getElementById('ewerton-meta'); if (em) em.textContent = `Meta: ${sellerConfig.Ewerton?.meta||0} | Comissão: ${sellerConfig.Ewerton?.comissao||0}%`;
+    const dm = document.getElementById('darlan-meta'); if (dm) dm.textContent = `Meta: ${sellerConfig.Darlan?.meta||0} | Comissão: ${sellerConfig.Darlan?.comissao||0}%`;
+  }catch(e){ console.warn("Falha ao carregar seller cfg:", e); }
+
+  // Lógica para o gráfico de desempenho de vendedores
   renderDesempenhoVendedoresChart(allAlunos, sellerConfig, currentMonth, currentYear);
+
+  // NOVO: Lógica para o gráfico de status geral dos alunos
+  renderStatusAlunosChart(allAlunos);
 }
 
 function renderDesempenhoVendedoresChart(alunosData, sellerConfig, month, year) {
@@ -411,7 +420,7 @@ function renderDesempenhoVendedoresChart(alunosData, sellerConfig, month, year) 
           {
             label: 'Meta de Alunos',
             data: dataMetas,
-            backgroundColor: 'rgba(var(--accent), 0.5)', // Cor mais clara para a meta
+            backgroundColor: 'rgba(var(--accent), 0.5)',
             borderColor: 'var(--accent)',
             borderWidth: 1
           }
@@ -459,6 +468,60 @@ function renderDesempenhoVendedoresChart(alunosData, sellerConfig, month, year) 
             grid: {
               color: 'rgba(var(--border-color), 0.5)'
             }
+          }
+        }
+      }
+    });
+  }
+}
+
+// NOVO: Função para renderizar o gráfico de status geral dos alunos
+function renderStatusAlunosChart(alunosData) {
+  const ctx = document.getElementById('chartStatusAlunos')?.getContext('2d');
+  if (!ctx) return;
+
+  const concluidos = alunosData.filter(a => a.statusGeral === 'concluido').length;
+  const emAndamento = alunosData.filter(a => a.statusGeral === 'andamento').length;
+  const pendentes = alunosData.filter(a => !a.statusGeral || a.statusGeral === 'pendente').length;
+
+  const data = {
+    labels: ['Concluídos', 'Em Andamento', 'Pendentes'],
+    datasets: [{
+      data: [concluidos, emAndamento, pendentes],
+      backgroundColor: [
+        'var(--success)',
+        'var(--warning)',
+        'var(--danger)'
+      ],
+      borderColor: [
+        'var(--card-background)',
+        'var(--card-background)',
+        'var(--card-background)'
+      ],
+      borderWidth: 2
+    }]
+  };
+
+  if (chartStatusAlunos) {
+    chartStatusAlunos.data = data;
+    chartStatusAlunos.update();
+  } else {
+    chartStatusAlunos = new Chart(ctx, {
+      type: 'doughnut', // Gráfico de rosca
+      data: data,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: {
+              color: 'var(--text-color-secondary)'
+            }
+          },
+          title: {
+            display: false,
+            text: 'Status Geral dos Alunos'
           }
         }
       }
