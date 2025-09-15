@@ -3,23 +3,34 @@
 
 /* Definir uma variável para a margem direita do conteúdo */
 #app.theme-deepseek {
-  --content-margin-right: 1rem; /* 16px */
+  --content-padding-x: 1.5rem; /* Padding horizontal padrão para o conteúdo */
 }
 
 #app.theme-deepseek .content, #app.theme-deepseek .main, #app.theme-deepseek .content-wrapper, #app.theme-deepseek .dashboard-content{
-  margin-left: var(--sidebar-w, 280px);
-  margin-right: var(--content-margin-right);
-  width: calc(100% - var(--sidebar-w, 280px) - var(--content-margin-right));
-  /* max-width:none; REMOVIDO para permitir que icfc-section-widths.css defina max-width */
+  margin-left: var(--sidebar-w); /* Usa a variável da sidebar */
+  padding: var(--content-padding-x); /* Padding horizontal */
+  width: calc(100% - var(--sidebar-w)); /* Largura total menos a sidebar */
+  max-width: none; /* Permitir que icfc-section-widths.css defina max-width para seções */
+  min-height: 100vh; /* Garante que o conteúdo tenha pelo menos a altura da viewport */
+  overflow-x: hidden; /* Evita rolagem horizontal indesejada no conteúdo */
 }
+
 #app.theme-deepseek .container, #app.theme-deepseek .container-fluid, #app.theme-deepseek .wrapper{ width:100%; max-width:none; padding:0 }
-#app.theme-deepseek .row{ display:flex; flex-wrap:wrap; gap:0.75rem; margin:0; width:100% } /* Usar rem */
-#app.theme-deepseek [class*="col-"]{ flex:1 1 17.5rem; max-width:100% } /* Usar rem (280px) */
+#app.theme-deepseek .row{ display:flex; flex-wrap:wrap; gap:0.75rem; margin:0; width:100% }
+#app.theme-deepseek [class*="col-"]{ flex:1 1 17.5rem; max-width:100% }
 
 @media (max-width: 1024px){
   #app.theme-deepseek .content, #app.theme-deepseek .main, #app.theme-deepseek .content-wrapper, #app.theme-deepseek .dashboard-content{
-    margin-left: 1rem; /* Usar rem (16px) */
-    margin-right: 1rem; /* Usar rem (16px) */
-    width: calc(100% - 2rem); /* Usar rem (32px) */
+    margin-left: var(--sidebar-w); /* Continua usando a variável da sidebar */
+    padding: 1rem; /* Reduz padding em telas menores */
+    width: calc(100% - var(--sidebar-w));
+  }
+}
+
+@media (max-width: 768px){
+  #app.theme-deepseek .content, #app.theme-deepseek .main, #app.theme-deepseek .content-wrapper, #app.theme-deepseek .dashboard-content{
+    margin-left: 0; /* Conteúdo ocupa toda a largura quando sidebar está escondida */
+    width: 100%;
+    padding: 1rem;
   }
 }
