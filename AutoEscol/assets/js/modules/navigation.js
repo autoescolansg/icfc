@@ -1,4 +1,3 @@
-// assets/js/modules/navigation.js
 export function initNavigation(){
   document.querySelectorAll('.sidebar-menu a').forEach(a => {
     a.addEventListener('click', (e) => {
