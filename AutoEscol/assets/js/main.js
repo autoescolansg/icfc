@@ -9,6 +9,7 @@ import { initNavigation } from './modules/navigation.js';
 import { initAlunos } from './modules/alunos.js';
 import { initIO } from './modules/io.js';
 import { initSellerCfg } from './modules/seller.js';
+import { initConfig } from './modules/config.js'; // Importa o novo módulo de configuração
 
 function applySessionUI(isLogged) {
   const login = document.getElementById("login");
@@ -20,6 +21,9 @@ function applySessionUI(isLogged) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Inicializa a configuração do Supabase primeiro
+  initConfig();
+
   // Inicializações do seu app
   initTheme();
   initNavigation();
@@ -37,6 +41,20 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('auth:ready', (e) => {
     const user = e.detail; // { id, email, role, seller } ou null
     applySessionUI(!!user);
+    // Atualiza o nome e avatar do usuário no header
+    const userDisplayName = document.getElementById('userDisplayName');
+    const userAvatar = document.getElementById('userAvatar');
+    const userRole = document.querySelector('.user-role');
+
+    if (user) {
+      userDisplayName.textContent = user.email || 'Usuário';
+      userAvatar.textContent = (user.email ? user.email.charAt(0).toUpperCase() : 'U');
+      userRole.textContent = user.role || 'Colaborador';
+    } else {
+      userDisplayName.textContent = 'Usuário';
+      userAvatar.textContent = 'U';
+      userRole.textContent = 'Visitante';
+    }
   });
 
   // Compat: se algum código antigo chamar appLoginSuccess, apenas loga (auth.js já cuida da sessão)
