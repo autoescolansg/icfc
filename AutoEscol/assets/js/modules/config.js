@@ -1,7 +1,8 @@
 // assets/js/modules/config.js (Gestão de Usuários e Configurações de Vendedores)
 import { supa, currentUser } from './auth.js';
-import { showToast } from './ux.js';
+import { showToast, validateForm } from './ux.js'; // Adicionado validateForm
 import { loadUsers, saveUser, deleteUser, loadSellerCfg, saveSellerCfg } from './storage.js';
+import { authFetch } from '../utils/authFetch.js'; // Para deletar colaborador
 
 let users = [];
 let sellerConfig = {};
@@ -27,7 +28,10 @@ export async function initConfig(){
   if (!Array.isArray(users)) users = [];
 
   document.getElementById('colaborador-form')?.addEventListener('submit', async (e)=>{
-    e.preventDefault(); await cadastrarColaborador();
+    e.preventDefault();
+    if (validateForm(e.target)) { // Valida o formulário antes de cadastrar
+      await cadastrarColaborador();
+    }
   });
 
   const tbody = document.querySelector('#colaboradoresTable tbody');
@@ -44,7 +48,9 @@ export async function initConfig(){
   populateSellerCfgForm();
 
   document.getElementById('seller-cfg-form')?.addEventListener('submit', async (e)=>{
-    e.preventDefault(); await onSaveSellerCfg();
+    e.preventDefault();
+    // Não há validação complexa aqui, apenas salvar
+    await onSaveSellerCfg();
   });
 }
 
@@ -55,20 +61,18 @@ async function cadastrarColaborador(){
   const role = document.getElementById('colaborador-role').value;
   const seller = document.getElementById('colaborador-seller').value;
 
-  if (!email || !password){
-    showToast('Email e Senha são obrigatórios.', 'danger');
-    return;
-  }
+  // Validações já feitas pelo validateForm, mas mantemos algumas para redundância ou lógica específica
   if (role === 'colaborador' && !seller){
     showToast('Para colaboradores, o vendedor associado é obrigatório.', 'danger');
+    // Adiciona classe de erro ao select do vendedor
+    document.getElementById('colaborador-seller').classList.add('is-invalid');
     return;
+  } else {
+    document.getElementById('colaborador-seller').classList.remove('is-invalid');
   }
 
   try {
     // Cadastrar usuário no Supabase Auth
-    // Nota: Para que isso funcione sem a SERVICE_ROLE_KEY no frontend,
-    // as configurações de Auth no Supabase devem permitir o auto-signup
-    // ou você precisará de uma Netlify Function para isso.
     const { data: authData, error: authError } = await supa.auth.signUp({
       email: email,
       password: password,
