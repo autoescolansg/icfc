@@ -1,12 +1,11 @@
-
 // assets/js/modules/auth.js
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-export const supa = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+// A instância do Supabase agora será criada após a configuração ser carregada
+export let supa = null; // Inicialmente nula
 
 // expõe a mesma instância para outros módulos + evento de pronto
-window.__supa = supa;
-window.dispatchEvent(new Event("supa:ready"));
+window.__supa = supa; // Será atualizado quando supa for inicializado
 
 export let currentUser = null;
 
@@ -28,13 +27,23 @@ async function setSessionUser(session) {
   }
   let role = "colaborador", seller = null, email = session.user?.email || null;
   try {
+    // Garante que supa está inicializado antes de usar
+    if (!supa) {
+      console.warn("Supabase client not initialized yet in auth.js. Waiting for config.");
+      // Pode ser necessário adicionar um listener aqui se a inicialização for assíncrona
+      // Por enquanto, assumimos que initConfig() já rodou e supa foi definido.
+      return;
+    }
     const { data: prof, error } = await supa.from("profiles").select("role,seller,email").single();
     if (!error && prof) {
       role = prof.role || role;
       seller = prof.seller ?? null;
       email = prof.email || email;
     }
-  } catch (_) { /* segue com defaults se falhar */ }
+  } catch (e) {
+    console.error("Erro ao buscar perfil do usuário:", e);
+    /* segue com defaults se falhar */
+  }
 
   currentUser = { id: session.user.id, email, role, seller };
   applyUI(true);
@@ -42,6 +51,19 @@ async function setSessionUser(session) {
 }
 
 export async function initAuth() {
+  // Espera o evento 'config:ready' para garantir que SUPABASE_URL e SUPABASE_ANON_KEY estão definidos
+  await new Promise(resolve => {
+    if (window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
+      resolve();
+    } else {
+      window.addEventListener('config:ready', resolve, { once: true });
+    }
+  });
+
+  // Inicializa o cliente Supabase aqui, após a configuração estar pronta
+  supa = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+  window.__supa = supa; // Atualiza a instância global
+
   const { data: { session } } = await supa.auth.getSession();
   await setSessionUser(session);
 
@@ -51,9 +73,9 @@ export async function initAuth() {
   btnLogin?.addEventListener("click", async () => {
     const email = document.getElementById("loginUser")?.value?.trim();
     const pass  = document.getElementById("loginPass")?.value?.trim();
-    if (!email || !pass) { alert("Informe usuário e senha"); return; }
+    if (!email || !pass) { alert("Informe usuário e senha"); return; } // Usar showToast aqui seria melhor
     const { error, data } = await supa.auth.signInWithPassword({ email, password: pass });
-    if (error) { alert(error.message); return; }
+    if (error) { alert(error.message); return; } // Usar showToast aqui seria melhor
     await setSessionUser(data.session);
     window.appLoginSuccess?.(email);
   });
