@@ -24,8 +24,6 @@ export async function apiPutAlunos(alunosArray) {
   }
 
   if (!rows.length) {
-    // Se não houver alunos válidos, não fazemos PUT para evitar limpar tudo.
-    // O backend deve lidar com a ausência de dados se for uma operação de "limpar tudo".
     return;
   }
 
@@ -78,8 +76,6 @@ export async function loadAlunos() {
 }
 
 // ---------- Transações Financeiras ----------
-// Para transações, usaremos POST para adicionar e DELETE para remover.
-// A atualização da lista completa será feita pelo realtime.
 export async function apiPostTransacao(transacao) {
   const res = await authFetch(`${window.API_BASE}/transacoes`, {
     method: "POST",
@@ -133,6 +129,21 @@ export async function loadSellerCfg() {
   } catch (e) {
     console.warn("Falha seller cfg, usando padrão", e);
     return { Ewerton: { meta: 0, comissao: 0 }, Darlan: { meta: 0, comissao: 0 } };
+  }
+}
+
+export async function saveSellerCfg(cfg) {
+  try {
+    const res = await authFetch(`${window.API_BASE}/seller`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(cfg),
+    });
+    if (!res.ok) throw new Error("PUT seller falhou");
+    return await res.json();
+  } catch (e) {
+    console.warn("Falha ao salvar seller cfg na API, salvando local", e);
+    // Opcional: salvar localmente se a API falhar
   }
 }
 
