@@ -3,7 +3,7 @@ export function initNavigation(){
   document.querySelectorAll('.sidebar-menu a').forEach(a => {
     a.addEventListener('click', (e) => {
       e.preventDefault();
-      const sectionId = a.getAttribute('data-section'); // Pega o ID da seção
+      const sectionId = a.getAttribute('data-section');
       
       // Remove a classe 'active' de todos os links da sidebar
       document.querySelectorAll('.sidebar-menu a').forEach(x => x.classList.remove('active'));
@@ -13,7 +13,10 @@ export function initNavigation(){
       // Oculta todas as seções de conteúdo
       document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
       // Mostra a seção correspondente ao link clicado
-      document.getElementById(sectionId)?.classList.add('active');
+      const targetSection = document.getElementById(sectionId);
+      if (targetSection) {
+        targetSection.classList.add('active');
+      }
     });
   });
 }
