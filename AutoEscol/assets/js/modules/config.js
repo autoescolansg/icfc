@@ -1,13 +1,13 @@
-// assets/js/modules/config.js (Gestão de Usuários)
+// assets/js/modules/config.js (Gestão de Usuários e Configurações de Vendedores)
 import { supa, currentUser } from './auth.js';
 import { showToast } from './ux.js';
-import { loadUsers, saveUser, deleteUser } from './storage.js';
+import { loadUsers, saveUser, deleteUser, loadSellerCfg, saveSellerCfg } from './storage.js';
 
 let users = [];
+let sellerConfig = {};
 
 export async function initConfig(){
   // Apenas administradores podem acessar esta seção
-  // Oculta a aba de configurações se o usuário não for admin
   const configNavLink = document.querySelector('.sidebar-menu a[data-section="config"]');
   if (configNavLink) {
     if (currentUser?.role !== 'admin') {
@@ -17,11 +17,12 @@ export async function initConfig(){
     }
   }
 
-  // Se o usuário não for admin, não inicializa o resto da lógica de gestão de usuários
+  // Se o usuário não for admin, não inicializa o resto da lógica de gestão de usuários e vendedores
   if (currentUser?.role !== 'admin') {
     return;
   }
 
+  // --- Gestão de Colaboradores ---
   users = await loadUsers();
   if (!Array.isArray(users)) users = [];
 
@@ -37,8 +38,17 @@ export async function initConfig(){
   });
 
   renderColaboradoresTable();
+
+  // --- Configurações de Vendedores ---
+  sellerConfig = await loadSellerCfg();
+  populateSellerCfgForm();
+
+  document.getElementById('seller-cfg-form')?.addEventListener('submit', async (e)=>{
+    e.preventDefault(); await onSaveSellerCfg();
+  });
 }
 
+// --- Funções de Gestão de Colaboradores ---
 async function cadastrarColaborador(){
   const email = document.getElementById('colaborador-email').value.trim();
   const password = document.getElementById('colaborador-password').value.trim();
@@ -96,12 +106,10 @@ async function deletarColaborador(userId){
   if (!confirm('Tem certeza que deseja excluir este colaborador? Isso removerá o usuário do sistema.')) return;
 
   try {
-    // Excluir perfil da tabela 'profiles'
-    await deleteUser(userId);
-
-    // Para excluir o usuário do auth.users, você precisaria de uma Netlify Function
-    // que use a SERVICE_ROLE_KEY. O frontend não pode fazer isso diretamente por segurança.
-    // Ex: await authFetch(`${window.API_BASE}/users/delete?id=${userId}`, { method: 'DELETE' });
+    // Excluir perfil da tabela 'profiles' e o usuário auth via Netlify Function
+    const res = await authFetch(`${window.API_BASE}/profiles?id=${userId}`, { method: 'DELETE' });
+    const body = await res.json().catch(()=> ({}));
+    if (!res.ok) throw new Error(body?.error || `Falha ao excluir colaborador (${res.status})`);
 
     showToast('Colaborador excluído.', 'warn');
     renderColaboradoresTable();
@@ -140,4 +148,37 @@ export async function renderColaboradoresTable(){
       </td>`;
     tbody.appendChild(tr);
   });
+}
+
+// --- Funções de Configurações de Vendedores ---
+function populateSellerCfgForm() {
+  const vendSelect = document.getElementById('cfgVend');
+  const metaInput = document.getElementById('cfgMeta');
+  const comissaoInput = document.getElementById('cfgComissao');
+
+  if (!vendSelect || !metaInput || !comissaoInput) return;
+
+  // Carrega a config do vendedor selecionado
+  vendSelect.addEventListener('change', () => {
+    const selectedVend = vendSelect.value;
+    const cfg = sellerConfig[selectedVend] || { meta: 0, comissao: 0 };
+    metaInput.value = cfg.meta;
+    comissaoInput.value = cfg.comissao;
+  });
+
+  // Inicializa com o primeiro vendedor
+  const initialVend = vendSelect.value;
+  const cfg = sellerConfig[initialVend] || { meta: 0, comissao: 0 };
+  metaInput.value = cfg.meta;
+  comissaoInput.value = cfg.comissao;
+}
+
+async function onSaveSellerCfg() {
+  const vend = document.getElementById('cfgVend').value;
+  const meta = parseInt(document.getElementById('cfgMeta').value || '0', 10);
+  const com = parseFloat(document.getElementById('cfgComissao').value || '0');
+
+  sellerConfig[vend] = { meta, comissao: com };
+  await saveSellerCfg(sellerConfig);
+  showToast('Configurações salvas para ' + vend, 'success');
 }
