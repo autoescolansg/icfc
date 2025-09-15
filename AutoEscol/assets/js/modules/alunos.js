@@ -2,11 +2,12 @@
 import { loadAlunos, saveAlunos, loadSellerCfg } from './storage.js';
 import { currentUser } from './auth.js';
 import { pushLog } from './logs.js';
-import { showToast, calculateMonthlyTrend } from './ux.js'; // Adicionado calculateMonthlyTrend
+import { showToast, calculateMonthlyTrend } from './ux.js';
 import { authFetch } from '../utils/authFetch.js';
 
 let alunos = [];
-// let chartVendedores = null, chartCategorias = null; // REMOVIDO: Gráficos removidos
+// REMOVIDO: Gráficos removidos, então não precisamos mais dessas variáveis
+// let chartVendedores = null, chartCategorias = null;
 let editingCPF = null;
 
 const STEPS = ['foto','aulas_teoricas','prova_teorica','aulas_praticas','baliza_carro','baliza_moto'];
@@ -24,7 +25,9 @@ function ensureEtapas(a){
   return a;
 }
 function formatDate(ds){ if(!ds) return ''; const d=new Date(ds); return isNaN(d)? ds : new Date(ds).toLocaleDateString('pt-BR') }
-function formatCPF(c){
+
+// EXPORTADO: formatCPF para ser usado em outros módulos
+export function formatCPF(c){
   if(!c) return '';
   const v=String(c).replace(/\D/g,'');
   if (v.length===11) return v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,'$1.$2.$3-$4');
@@ -334,10 +337,10 @@ export async function refreshDashboard(){
     const dm = document.getElementById('darlan-meta'); if (dm) dm.textContent = `Meta: ${cfg.Darlan?.meta||0} | Comissão: ${cfg.Darlan?.comissao||0}%`;
   }catch(e){ console.warn("Falha ao carregar seller cfg:", e); }
 
-  // updateCharts(data); // REMOVIDO: Gráficos removidos
+  // REMOVIDO: updateCharts(data);
 }
 
-// function updateCharts(data){ /* REMOVIDO: Gráficos removidos */ }
+// REMOVIDO: function updateCharts(data){ /* Gráficos removidos */ }
 
 /* ---------- hook para realtime.js ---------- */
 export function renderAlunosFromList(list) {
