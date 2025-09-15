@@ -307,12 +307,12 @@
 /* Sidebar escondida em telas pequenas */
 @media (max-width: 768px) {
   #app.theme-deepseek .sidebar {
-    left: -17.5rem; /* -280px em rem */
+    /* ALTERAÇÃO: Removido left: -17.5rem; pois já é tratado em fix-responsive.css */
     position: fixed;
     transition: left 0.3s ease;
     --sidebar-w: 0rem; /* Atualiza a variável para o conteúdo */
   }
-  #app.theme-deepseek .sidebar.active {
+  .sidebar.active {
     left: 0;
     --sidebar-w: 17.5rem; /* Quando ativa, volta a 280px */
   }
