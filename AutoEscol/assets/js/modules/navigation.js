@@ -20,7 +20,7 @@ export function initNavigation(){
 
       // Se a seção clicada for 'financeiro', 'financeiro-entradas' ou 'financeiro-saidas',
       // garante que o link 'financeiro' principal também esteja ativo visualmente
-      if (sectionId.startsWith('financeiro')) {
+      if (sectionId.startsWith('financeiro') && sectionId !== 'financeiro') {
         document.querySelector('.sidebar-menu a[data-section="financeiro"]')?.classList.add('active');
       }
     });
