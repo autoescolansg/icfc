@@ -1,12 +1,12 @@
 // assets/js/modules/financeiro.js
 import { loadTransacoes, apiPostTransacao, saveTransacoes, loadAlunos } from './storage.js';
-import { showToast, formatCurrency, calculateMonthlyTrend, validateForm } from './ux.js'; // Adicionado validateForm
+import { showToast, formatCurrency, calculateMonthlyTrend, validateForm } from './ux.js';
 import { authFetch } from '../utils/authFetch.js';
 import { formatCPF } from './alunos.js';
 
 let transacoes = [];
-let alunosList = []; // Para popular o select de clientes
-let chartBalancoMensal = null; // Variável para o gráfico
+let alunosList = [];
+let chartBalancoMensal = null;
 
 /* ---------- helpers ---------- */
 function formatDate(ds){ if(!ds) return ''; const d=new Date(ds); return isNaN(d)? ds : new Date(ds).toLocaleDateString('pt-BR') }
@@ -16,18 +16,18 @@ export async function initFinanceiro(){
   transacoes = await loadTransacoes();
   if (!Array.isArray(transacoes)) transacoes = [];
 
-  alunosList = await loadAlunos(); // Carrega alunos para o select de clientes
+  alunosList = await loadAlunos();
   populateAlunosSelect();
 
   document.getElementById('entrada-form')?.addEventListener('submit', async (e)=>{
     e.preventDefault();
-    if (validateForm(e.target)) { // Valida o formulário antes de adicionar
+    if (validateForm(e.target)) {
       await adicionarEntrada();
     }
   });
   document.getElementById('saida-form')?.addEventListener('submit', async (e)=>{
     e.preventDefault();
-    if (validateForm(e.target)) { // Valida o formulário antes de adicionar
+    if (validateForm(e.target)) {
       await adicionarSaida();
     }
   });
@@ -69,7 +69,6 @@ function populateAlunosSelect() {
   const select = document.getElementById('entrada-cliente-cpf');
   if (!select) return;
 
-  // Limpa opções existentes, exceto a primeira (placeholder)
   while (select.options.length > 1) {
     select.remove(1);
   }
@@ -93,14 +92,14 @@ async function adicionarEntrada(){
   const novaTransacao = {
     descricao, valor, tipo: 'entrada', categoria, data,
     cliente_cpf: clienteCpf || null,
-    conta: 'Caixa', // Entradas geralmente vão para o caixa ou conta corrente
-    forma_pagamento: 'Dinheiro' // Ou outra forma padrão
+    conta: 'Caixa',
+    forma_pagamento: 'Dinheiro'
   };
 
   try {
-    const newTransaction = await apiPostTransacao(novaTransacao); // Usa a função POST da storage
-    transacoes.unshift(newTransaction); // Adiciona a transação com o ID gerado pelo Supabase
-    await saveTransacoes(transacoes); // Atualiza o cache local
+    const newTransaction = await apiPostTransacao(novaTransacao);
+    transacoes.unshift(newTransaction);
+    await saveTransacoes(transacoes);
 
     document.getElementById('entrada-form').reset();
     document.getElementById('entrada-data').valueAsDate = new Date();
@@ -130,7 +129,7 @@ async function adicionarSaida(){
   };
 
   try {
-    const newTransaction = await apiPostTransacao(novaTransacao); // Usa a função POST da storage
+    const newTransaction = await apiPostTransacao(novaTransacao);
     transacoes.unshift(newTransaction);
     await saveTransacoes(transacoes);
 
@@ -155,7 +154,7 @@ async function deletarTransacao(id){
     if (!res.ok) throw new Error(body?.error || `Falha ao excluir transação (${res.status})`);
 
     transacoes = transacoes.filter(t => t.id !== id);
-    await saveTransacoes(transacoes); // Atualiza o cache local
+    await saveTransacoes(transacoes);
     showToast('Transação excluída.', 'warn');
     refreshFinanceiroDashboard();
     renderEntradasTable();
@@ -175,7 +174,7 @@ export function getFilteredEntradas(){
   let data = transacoes.filter(t => t.tipo === 'entrada');
   if (start) data = data.filter(t => new Date(t.data) >= start);
   if (end) data = data.filter(t => new Date(t.data) <= end);
-  return data.sort((a,b) => new Date(b.data) - new Date(a.data)); // Ordena por data mais recente
+  return data.sort((a,b) => new Date(b.data) - new Date(a.data));
 }
 
 export function renderEntradasTable(){
@@ -186,7 +185,7 @@ export function renderEntradasTable(){
   if (data.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+        <td colspan="6" class="text-center py-4 text-secondary">
           Nenhuma entrada registrada.
         </td>
       </tr>
@@ -219,7 +218,7 @@ export function getFilteredSaidas(){
   let data = transacoes.filter(t => t.tipo === 'saida');
   if (start) data = data.filter(t => new Date(t.data) >= start);
   if (end) data = data.filter(t => new Date(t.data) <= end);
-  return data.sort((a,b) => new Date(b.data) - new Date(a.data)); // Ordena por data mais recente
+  return data.sort((a,b) => new Date(b.data) - new Date(a.data));
 }
 
 export function renderSaidasTable(){
@@ -230,7 +229,7 @@ export function renderSaidasTable(){
   if (data.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+        <td colspan="7" class="text-center py-4 text-secondary">
           Nenhuma saída registrada.
         </td>
       </tr>
@@ -261,31 +260,32 @@ function renderRecentTransactions() {
   const listEl = document.getElementById('recent-transactions-list');
   if (!listEl) return;
 
-  const recent = transacoes.slice(0, 5).sort((a,b) => new Date(b.created_at || b.data) - new Date(a.created_at || a.data)); // 5 mais recentes
+  const recent = transacoes.slice(0, 5).sort((a,b) => new Date(b.created_at || b.data) - new Date(a.created_at || a.data));
   listEl.innerHTML = '';
 
   if (recent.length === 0) {
-    listEl.innerHTML = `<p style="text-align: center; padding: 1rem; color: var(--text-secondary);">Nenhuma transação recente.</p>`;
+    listEl.innerHTML = `<p class="text-center py-3 text-secondary">Nenhuma transação recente.</p>`;
     return;
   }
 
   recent.forEach(t => {
     const item = document.createElement('div');
-    item.className = 'transaction-item'; // Classe para estilização
+    item.className = 'transaction-item';
     const valorClass = t.tipo === 'entrada' ? 'amount-income' : 'amount-expense';
+    const iconClass = t.tipo === 'entrada' ? 'success-icon' : 'danger-icon';
     item.innerHTML = `
       <div class="transaction-info">
-        <div class="transaction-icon" style="background: ${t.tipo === 'entrada' ? 'rgba(16,185,129,.08)' : 'rgba(239,68,68,.08)'}; color: ${t.tipo === 'entrada' ? 'var(--success)' : 'var(--danger)'};">
+        <div class="transaction-icon ${iconClass}">
           <i class="fas fa-solid fa-arrow-${t.tipo === 'entrada' ? 'up' : 'down'}"></i>
         </div>
         <div>
           <div class="transaction-description">${t.descricao}</div>
-          <div class="transaction-date" style="font-size: 0.8em; color: var(--text-secondary);">${formatDate(t.data)}</div>
+          <div class="transaction-date">${formatDate(t.data)}</div>
         </div>
       </div>
       <div class="transaction-amount ${valorClass}">
         ${formatCurrency(t.valor)}
-        <button class="btn btn-sm btn-danger" data-action="excluir" data-id="${t.id}" style="margin-left: 10px;"><i class="fas fa-trash"></i></button>
+        <button class="btn btn-sm btn-danger" data-action="excluir" data-id="${t.id}"><i class="fas fa-trash"></i></button>
       </div>
     `;
     listEl.appendChild(item);
@@ -295,7 +295,7 @@ function renderRecentTransactions() {
 
 /* ---------- Dashboard Financeiro ---------- */
 export async function refreshFinanceiroDashboard(){
-  const allTransacoes = await loadTransacoes(); // Carrega todas as transações para o cálculo de tendência
+  const allTransacoes = await loadTransacoes();
 
   const currentMonth = new Date().getMonth();
   const currentYear = new Date().getFullYear();
@@ -320,7 +320,6 @@ export async function refreshFinanceiroDashboard(){
   const saidasMesAnterior = transacoesPreviousMonth.filter(t => t.tipo === 'saida').reduce((sum, t) => sum + t.valor, 0);
   const saldoMesAnterior = entradasMesAnterior - saidasMesAnterior;
 
-  // Saldo atual (considerando todas as transações até hoje)
   const saldoAtual = allTransacoes.reduce((sum, t) => sum + (t.tipo === 'entrada' ? t.valor : -t.valor), 0);
 
 
@@ -329,10 +328,9 @@ export async function refreshFinanceiroDashboard(){
   el('entradas-mes', formatCurrency(entradasMes));
   el('saidas-mes', formatCurrency(saidasMes));
 
-  // Calcular e exibir tendências
   calculateMonthlyTrend(saldoMes, saldoMesAnterior, 'saldo-trend', 'financeiro');
   calculateMonthlyTrend(entradasMes, entradasMesAnterior, 'entradas-trend', 'financeiro');
-  calculateMonthlyTrend(saidasMes, saidasMesAnterior, 'saidas-trend', 'financeiro', true); // Inverter para saídas
+  calculateMonthlyTrend(saidasMes, saidasMesAnterior, 'saidas-trend', 'financeiro', true);
 
   renderBalancoMensalChart(transacoesCurrentMonth);
   renderRecentTransactions();
@@ -350,7 +348,7 @@ function renderBalancoMensalChart(transacoesMesAtual) {
   const saidasPorDia = new Array(diasNoMes).fill(0);
 
   transacoesMesAtual.forEach(t => {
-    const dia = new Date(t.data).getDate() - 1; // -1 para índice do array
+    const dia = new Date(t.data).getDate() - 1;
     if (dia >= 0 && dia < diasNoMes) {
       if (t.tipo === 'entrada') {
         entradasPorDia[dia] += t.valor;
@@ -367,7 +365,7 @@ function renderBalancoMensalChart(transacoesMesAtual) {
     chartBalancoMensal.update();
   } else {
     chartBalancoMensal = new Chart(ctx, {
-      type: 'bar', // Alterado para gráfico de barras
+      type: 'bar',
       data: {
         labels: labels,
         datasets: [
@@ -393,6 +391,9 @@ function renderBalancoMensalChart(transacoesMesAtual) {
         plugins: {
           legend: {
             position: 'top',
+            labels: {
+              color: 'var(--text-color-secondary)' // Cor da legenda
+            }
           },
           title: {
             display: false,
@@ -401,19 +402,33 @@ function renderBalancoMensalChart(transacoesMesAtual) {
         },
         scales: {
           x: {
-            stacked: true, // Empilha barras para entradas/saídas
+            stacked: true,
             title: {
               display: true,
-              text: 'Dia do Mês'
+              text: 'Dia do Mês',
+              color: 'var(--text-color-secondary)'
+            },
+            ticks: {
+              color: 'var(--text-color-secondary)' // Cor dos ticks do eixo X
+            },
+            grid: {
+              color: 'rgba(var(--border-color), 0.5)' // Cor da grade
             }
           },
           y: {
-            stacked: true, // Empilha barras para entradas/saídas
+            stacked: true,
             title: {
               display: true,
-              text: 'Valor (R$)'
+              text: 'Valor (R$)',
+              color: 'var(--text-color-secondary)'
             },
-            beginAtZero: true
+            beginAtZero: true,
+            ticks: {
+              color: 'var(--text-color-secondary)' // Cor dos ticks do eixo Y
+            },
+            grid: {
+              color: 'rgba(var(--border-color), 0.5)' // Cor da grade
+            }
           }
         }
       }
