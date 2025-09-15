@@ -1,8 +1,8 @@
 // assets/js/modules/financeiro.js
-import { loadTransacoes, saveTransacoes, loadAlunos } from './storage.js'; // Adicionado loadAlunos
+import { loadTransacoes, apiPostTransacao, saveTransacoes, loadAlunos } from './storage.js';
 import { showToast, formatCurrency, calculateMonthlyTrend } from './ux.js';
 import { authFetch } from '../utils/authFetch.js';
-import { formatCPF } from './alunos.js'; // Reutiliza formatCPF
+import { formatCPF } from './alunos.js';
 
 let transacoes = [];
 let alunosList = []; // Para popular o select de clientes
@@ -18,6 +18,7 @@ export async function initFinanceiro(){
 
   alunosList = await loadAlunos(); // Carrega alunos para o select de clientes
   populateAlunosSelect();
+  populateRelatorioClienteSelect(); // Para o select de clientes nos relatórios
 
   document.getElementById('entrada-form')?.addEventListener('submit', async (e)=>{
     e.preventDefault(); await adicionarEntrada();
@@ -76,6 +77,23 @@ function populateAlunosSelect() {
   });
 }
 
+function populateRelatorioClienteSelect() {
+  const select = document.getElementById('relatorio-cliente-cpf');
+  if (!select) return;
+
+  // Limpa opções existentes, exceto a primeira (placeholder)
+  while (select.options.length > 1) {
+    select.remove(1);
+  }
+
+  alunosList.forEach(aluno => {
+    const option = document.createElement('option');
+    option.value = aluno.cpf;
+    option.textContent = `${aluno.nome} (${formatCPF(aluno.cpf)})`;
+    select.appendChild(option);
+  });
+}
+
 /* ---------- CRUD Entradas ---------- */
 async function adicionarEntrada(){
   const descricao = document.getElementById('entrada-descricao').value.trim();
@@ -91,22 +109,14 @@ async function adicionarEntrada(){
 
   const novaTransacao = {
     descricao, valor, tipo: 'entrada', categoria, data,
-    cliente_cpf: clienteCpf || null
+    cliente_cpf: clienteCpf || null,
+    conta: 'Caixa', // Entradas geralmente vão para o caixa ou conta corrente
+    forma_pagamento: 'Dinheiro' // Ou outra forma padrão
   };
 
-  // Para garantir que o ID seja gerado pelo backend/Supabase
-  // Não adicionamos ao array local antes de ter o ID do Supabase
   try {
-    const res = await authFetch(`${window.API_BASE}/transacoes`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(novaTransacao),
-    });
-    const body = await res.json();
-    if (!res.ok) throw new Error(body?.error || `Falha ao adicionar entrada (${res.status})`);
-
-    // Adiciona a transação com o ID gerado pelo Supabase
-    transacoes.unshift(body); // body deve conter a transação com o ID
+    const newTransaction = await apiPostTransacao(novaTransacao); // Usa a função POST da storage
+    transacoes.unshift(newTransaction); // Adiciona a transação com o ID gerado pelo Supabase
     await saveTransacoes(transacoes); // Atualiza o cache local
 
     document.getElementById('entrada-form').reset();
@@ -126,28 +136,24 @@ async function adicionarSaida(){
   const valor = parseFloat(document.getElementById('saida-valor').value);
   const categoria = document.getElementById('saida-categoria').value;
   const data = document.getElementById('saida-data').value;
+  const conta = document.getElementById('saida-conta').value;
+  const formaPagamento = document.getElementById('saida-forma-pagamento').value;
   const nomeRecebedor = document.getElementById('saida-nome-recebedor').value.trim();
 
-  if (!descricao || isNaN(valor) || valor <= 0 || !categoria || !data){
-    showToast('Preencha todos os campos obrigatórios (Descrição, Valor, Categoria, Data).', 'danger');
+  if (!descricao || isNaN(valor) || valor <= 0 || !categoria || !data || !conta || !formaPagamento){
+    showToast('Preencha todos os campos obrigatórios (Descrição, Valor, Categoria, Data, Conta, Forma de Pagamento).', 'danger');
     return;
   }
 
   const novaTransacao = {
     descricao, valor, tipo: 'saida', categoria, data,
-    nome_recebedor: nomeRecebedor || null // Novo campo para saídas
+    conta, forma_pagamento: formaPagamento,
+    nome_recebedor: nomeRecebedor || null
   };
 
   try {
-    const res = await authFetch(`${window.API_BASE}/transacoes`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(novaTransacao),
-    });
-    const body = await res.json();
-    if (!res.ok) throw new Error(body?.error || `Falha ao adicionar saída (${res.status})`);
-
-    transacoes.unshift(body);
+    const newTransaction = await apiPostTransacao(novaTransacao); // Usa a função POST da storage
+    transacoes.unshift(newTransaction);
     await saveTransacoes(transacoes);
 
     document.getElementById('saida-form').reset();
@@ -246,7 +252,7 @@ export function renderSaidasTable(){
   if (data.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+        <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
           Nenhuma saída registrada.
         </td>
       </tr>
@@ -260,6 +266,8 @@ export function renderSaidasTable(){
       <td>${formatDate(t.data)}</td>
       <td>${t.descricao}</td>
       <td>${t.categoria || '-'}</td>
+      <td>${t.conta || '-'}</td>
+      <td>${t.forma_pagamento || '-'}</td>
       <td>${t.nome_recebedor || '-'}</td>
       <td class="text-danger">${formatCurrency(t.valor)}</td>
       <td>
@@ -356,7 +364,8 @@ function renderBalancoMensalChart(transacoesMesAtual) {
   const ctx = document.getElementById('chartBalancoMensal')?.getContext('2d');
   if (!ctx) return;
 
-  const diasNoMes = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+  const today = new Date();
+  const diasNoMes = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
   const labels = Array.from({ length: diasNoMes }, (_, i) => (i + 1).toString());
 
   const entradasPorDia = new Array(diasNoMes).fill(0);
@@ -380,25 +389,23 @@ function renderBalancoMensalChart(transacoesMesAtual) {
     chartBalancoMensal.update();
   } else {
     chartBalancoMensal = new Chart(ctx, {
-      type: 'line',
+      type: 'bar', // Alterado para gráfico de barras
       data: {
         labels: labels,
         datasets: [
           {
             label: 'Entradas',
             data: entradasPorDia,
+            backgroundColor: 'var(--success)',
             borderColor: 'var(--success)',
-            backgroundColor: 'rgba(16, 185, 129, 0.2)',
-            fill: true,
-            tension: 0.3
+            borderWidth: 1
           },
           {
             label: 'Saídas',
             data: saidasPorDia,
+            backgroundColor: 'var(--danger)',
             borderColor: 'var(--danger)',
-            backgroundColor: 'rgba(239, 68, 68, 0.2)',
-            fill: true,
-            tension: 0.3
+            borderWidth: 1
           }
         ]
       },
@@ -416,12 +423,14 @@ function renderBalancoMensalChart(transacoesMesAtual) {
         },
         scales: {
           x: {
+            stacked: true, // Empilha barras para entradas/saídas
             title: {
               display: true,
               text: 'Dia do Mês'
             }
           },
           y: {
+            stacked: true, // Empilha barras para entradas/saídas
             title: {
               display: true,
               text: 'Valor (R$)'
