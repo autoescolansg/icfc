@@ -4,7 +4,7 @@ const API_BASE = window.API_BASE || "/api";
 function setupRealtime(supa) {
   let alunosChannel = null;
   let transacoesChannel = null;
-  let profilesChannel = null; // Novo canal para profiles
+  let profilesChannel = null;
 
   async function fetchAlunosNoStore() {
     const head = await fetch(`${API_BASE}/alunos`, { method: "HEAD", cache: "no-store" });
@@ -14,6 +14,7 @@ function setupRealtime(supa) {
     const data = await fetch(`${API_BASE}/alunos`, { cache: "no-store" }).then(r => r.json());
     sessionStorage.setItem("alunos.etag", etag || "");
     window.renderAlunosFromList?.(data);
+    window.renderRelatoriosFromList?.(undefined, data); // Atualiza alunos para relatórios
   }
 
   async function fetchTransacoesNoStore() {
@@ -24,6 +25,7 @@ function setupRealtime(supa) {
     const data = await fetch(`${API_BASE}/transacoes`, { cache: "no-store" }).then(r => r.json());
     sessionStorage.setItem("transacoes.etag", etag || "");
     window.renderTransacoesFromList?.(data);
+    window.renderRelatoriosFromList?.(data, undefined); // Atualiza transações para relatórios
   }
 
   async function fetchProfilesNoStore() {
