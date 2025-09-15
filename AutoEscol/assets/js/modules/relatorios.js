@@ -22,6 +22,33 @@ export async function initRelatorios() {
 
   // Popula o select de clientes para o relatório
   populateRelatorioClienteSelect();
+
+  // Lógica para as abas (tabs)
+  const relatorioTabs = document.getElementById('relatorioTabs');
+  if (relatorioTabs) {
+    relatorioTabs.addEventListener('click', (e) => {
+      const target = e.target.closest('.nav-link');
+      if (!target) return;
+
+      e.preventDefault();
+      
+      // Remove active de todos os links e panes
+      document.querySelectorAll('#relatorioTabs .nav-link').forEach(link => link.classList.remove('active'));
+      document.querySelectorAll('#relatorioTabsContent .tab-pane').forEach(pane => pane.classList.remove('show', 'active'));
+
+      // Adiciona active ao link clicado
+      target.classList.add('active');
+      
+      // Mostra o painel correspondente
+      const targetPaneId = target.dataset.bsTarget;
+      const targetPane = document.querySelector(targetPaneId);
+      if (targetPane) {
+        targetPane.classList.add('show', 'active');
+      }
+    });
+    // Ativa a primeira aba por padrão ao carregar
+    document.getElementById('mensal-tab')?.click();
+  }
 }
 
 function populateRelatorioClienteSelect() {
@@ -66,11 +93,11 @@ async function gerarRelatorioPeriodo() {
     return;
   }
 
-  const start = new Date(dataInicio);
-  const end = new Date(dataFim);
+  const start = new Date(dataInicio + 'T00:00:00'); // Garante que a hora seja 00:00:00
+  const end = new Date(dataFim + 'T23:59:59');     // Garante que a hora seja 23:59:59
 
   const filteredTransacoes = allTransacoes.filter(t => {
-    const d = new Date(t.data);
+    const d = new Date(t.data + 'T00:00:00'); // Converte a data da transação para comparação
     return d >= start && d <= end;
   });
 
@@ -132,19 +159,20 @@ function renderRelatorio(data, titulo) {
 
   html += `
     <h4 style="margin-top: 1.5rem;">Detalhes das Transações</h4>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Data</th>
-          <th>Tipo</th>
-          <th>Descrição</th>
-          <th>Categoria</th>
-          <th>Cliente/Recebedor</th>
-          <th>Valor</th>
-        </tr>
-      </thead>
-      <tbody>
-  `;
+    <div style="overflow-x: auto;">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Tipo</th>
+            <th>Descrição</th>
+            <th>Categoria</th>
+            <th>Cliente/Recebedor</th>
+            <th>Valor</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
 
   data.sort((a,b) => new Date(b.data) - new Date(a.data)).forEach(t => {
     const valorClass = t.tipo === 'entrada' ? 'text-success' : 'text-danger';
@@ -162,8 +190,9 @@ function renderRelatorio(data, titulo) {
   });
 
   html += `
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
   `;
 
   resultadosDiv.innerHTML = html;
