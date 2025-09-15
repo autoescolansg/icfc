@@ -23,9 +23,20 @@ function ensureEtapas(a){
   };
   return a;
 }
-function formatDate(ds){ if(!ds) return ''; const d=new Date(ds); return isNaN(d)? ds : d.toLocaleDateString('pt-BR') }
-function formatCPF(c){ if(!c) return ''; const v=String(c).replace(/\D/g,''); return v.length===11? v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,'$1.$2.$3-$4'): c }
-function formatTelefone(t){ if(!t) return ''; const v=String(t).replace(/\D/g,''); if (v.length===11) return `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`; if (v.length===10) return `(${v.slice(0,2)}) ${v.slice(2,6)}-${v.slice(6)}`; return t; }
+function formatDate(ds){ if(!ds) return ''; const d=new Date(ds); return isNaN(d)? ds : new Date(ds).toLocaleDateString('pt-BR') }
+function formatCPF(c){
+  if(!c) return '';
+  const v=String(c).replace(/\D/g,'');
+  if (v.length===11) return v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,'$1.$2.$3-$4');
+  return c;
+}
+function formatTelefone(t){
+  if(!t) return '';
+  const v=String(t).replace(/\D/g,'');
+  if (v.length===11) return `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
+  if (v.length===10) return `(${v.slice(0,2)}) ${v.slice(2,6)}-${v.slice(6)}`;
+  return t;
+}
 function renderEtapas(a){
   a = ensureEtapas(a);
   const labels = { foto:'Foto', aulas_teoricas:'Teóricas', prova_teorica:'Prova Teórica', aulas_praticas:'Práticas', baliza_carro:'Baliza Carro', baliza_moto:'Baliza Moto' };
@@ -35,7 +46,7 @@ function renderEtapas(a){
     // As classes 'chip' e estilos 'opacity' já estão definidas no CSS do tema Deepseek
     const on = done ? 'style="opacity:1"' : (st.inicio ? 'style="opacity:.85"' : 'style="opacity:.45"');
     return `<span class="chip" ${on}>${labels[key]}</span>`;
-  });
+  }).join(''); // Adicionado .join('') para concatenar os spans
 }
 
 /* ---------- init ---------- */
@@ -47,6 +58,7 @@ export async function initAlunos(){
     e.preventDefault(); await cadastrarAluno();
   });
 
+  // Event listeners para filtros
   document.getElementById('searchInput')?.addEventListener('input', onFiltersChange);
   document.getElementById('sellerFilter')?.addEventListener('change', onFiltersChange);
   document.getElementById('dateStart')?.addEventListener('change', onFiltersChange);
@@ -81,8 +93,14 @@ async function cadastrarAluno(){
   const dataCadastro = document.getElementById('data-cadastro').value || new Date().toISOString().slice(0,10);
   const vendedor = document.getElementById('vendedor').value;
 
-  if (!nome || !cpf){ alert('Preencha nome e CPF'); return; }
-  if (alunos.some(a => a.cpf === cpf)){ alert('Já existe aluno com esse CPF'); return; }
+  if (!nome){ showToast('Preencha o nome do aluno.', 'danger'); return; }
+  if (!cpf){ showToast('Preencha o CPF do aluno.', 'danger'); return; }
+  if (!/^\d{11}$/.test(cpf)){ showToast('CPF inválido. Deve conter 11 dígitos numéricos.', 'danger'); return; }
+  if (alunos.some(a => a.cpf === cpf)){ showToast('Já existe aluno com esse CPF.', 'danger'); return; }
+  if (!telefone){ showToast('Preencha o telefone do aluno.', 'danger'); return; }
+  if (!categoria){ showToast('Selecione a categoria.', 'danger'); return; }
+  if (!vendedor){ showToast('Selecione o vendedor.', 'danger'); return; }
+
 
   const novo = {
     nome, cpf, telefone, categoria, dataCadastro, vendedor,
@@ -96,11 +114,13 @@ async function cadastrarAluno(){
       baliza_moto:{inicio:null,fim:null}
     }
   };
-  alunos.unshift(novo);
-  await saveAlunos(alunos);
+  alunos.unshift(novo); // Adiciona no início da lista
+  await saveAlunos(alunos); // Salva na API e localmente
   try{ document.getElementById('cadastro-form').reset(); }catch(_){}
   pushLog(`Cadastrar aluno ${novo.cpf} (${novo.nome}) vendedor=${novo.vendedor}`);
-  renderTabela(); refreshDashboard(); showToast('Aluno cadastrado!', 'success');
+  renderTabela();
+  refreshDashboard();
+  showToast('Aluno cadastrado com sucesso!', 'success');
 }
 
 async function deletarAluno(cpf){
@@ -108,7 +128,7 @@ async function deletarAluno(cpf){
   if (!aluno) return;
 
   if (currentUser?.role==='colaborador' && currentUser?.seller !== aluno.vendedor){
-    alert('Você só pode excluir alunos do seu vendedor.');
+    showToast('Você só pode excluir alunos do seu vendedor.', 'danger');
     return;
   }
 
@@ -118,12 +138,14 @@ async function deletarAluno(cpf){
   const res = await authFetch(`${window.API_BASE}/alunos?cpf=${cpf}`, { method: 'DELETE' });
   const body = await res.json().catch(()=> ({}));
   if (!res.ok) {
-    alert(body?.error || `Falha ao excluir (${res.status})`);
+    showToast(body?.error || `Falha ao excluir (${res.status})`, 'danger');
     return;
   }
 
   alunos = alunos.filter(a => a.cpf !== cpf);
-  renderTabela(); refreshDashboard();
+  await saveAlunos(alunos); // Salva a lista atualizada após exclusão
+  renderTabela();
+  refreshDashboard();
   pushLog(`Excluir aluno ${cpf}`);
   showToast('Aluno excluído.', 'warn');
 }
@@ -132,7 +154,8 @@ async function deletarAluno(cpf){
 function openEdit(cpf){
   const aluno = alunos.find(x=>x.cpf===cpf); if(!aluno) return;
   if (currentUser?.role==='colaborador' && currentUser?.seller !== aluno.vendedor){
-    alert('Você só pode editar alunos do seu vendedor.'); return;
+    showToast('Você só pode editar alunos do seu vendedor.', 'danger');
+    return;
   }
   editingCPF = cpf;
   document.getElementById('edNome').value = aluno.nome||'';
@@ -157,7 +180,7 @@ async function onSaveEdit(e){
   e.preventDefault();
   if (!editingCPF) return;
   const aluno = alunos.find(x=>x.cpf===editingCPF); if(!aluno) return;
-  if (currentUser?.role==='colaborador' && currentUser?.seller !== aluno.vendedor){ alert('Sem permissão'); return; }
+  if (currentUser?.role==='colaborador' && currentUser?.seller !== aluno.vendedor){ showToast('Sem permissão para editar este aluno.', 'danger'); return; }
 
   aluno.nome = document.getElementById('edNome').value.trim();
   aluno.telefone = document.getElementById('edTelefone').value.trim();
@@ -181,7 +204,10 @@ async function onSaveEdit(e){
 
   await saveAlunos(alunos);
   pushLog(`Editar aluno ${aluno.cpf} (${aluno.nome})`);
-  closeModal(); renderTabela(); refreshDashboard(); showToast('Aluno atualizado!', 'success');
+  closeModal();
+  renderTabela();
+  refreshDashboard();
+  showToast('Aluno atualizado!', 'success');
 }
 
 /* ---------- filtros/render ---------- */
@@ -207,6 +233,17 @@ export function renderTabela(){
   const tbody = document.querySelector('#alunosTable tbody'); if (!tbody) return;
   tbody.innerHTML = '';
   const data = getFiltered();
+  if (data.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+          Nenhum aluno encontrado com os filtros aplicados.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
   data.forEach(aluno => {
     const status = aluno.statusGeral === 'concluido' ? 'Concluído' : aluno.statusGeral === 'andamento' ? 'Em Andamento' : 'Pendente';
     // As classes de status já estão definidas no CSS do tema Deepseek e theme-bootstrap.css
@@ -222,7 +259,7 @@ export function renderTabela(){
       <td>
         <span class="status-badge ${statusClass}">${status}</span>
         <div style="margin-top:.25rem; display:flex; gap:.25rem; flex-wrap:wrap">
-          ${renderEtapas(aluno).join('')}
+          ${renderEtapas(aluno)}
         </div>
       </td>
       <td>
