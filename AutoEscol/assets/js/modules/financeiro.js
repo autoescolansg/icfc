@@ -1,6 +1,6 @@
 // assets/js/modules/financeiro.js
 import { loadTransacoes, apiPostTransacao, saveTransacoes, loadAlunos } from './storage.js';
-import { showToast, formatCurrency, calculateMonthlyTrend } from './ux.js';
+import { showToast, formatCurrency, calculateMonthlyTrend, validateForm } from './ux.js'; // Adicionado validateForm
 import { authFetch } from '../utils/authFetch.js';
 import { formatCPF } from './alunos.js';
 
@@ -18,13 +18,18 @@ export async function initFinanceiro(){
 
   alunosList = await loadAlunos(); // Carrega alunos para o select de clientes
   populateAlunosSelect();
-  populateRelatorioClienteSelect(); // Para o select de clientes nos relatórios
 
   document.getElementById('entrada-form')?.addEventListener('submit', async (e)=>{
-    e.preventDefault(); await adicionarEntrada();
+    e.preventDefault();
+    if (validateForm(e.target)) { // Valida o formulário antes de adicionar
+      await adicionarEntrada();
+    }
   });
   document.getElementById('saida-form')?.addEventListener('submit', async (e)=>{
-    e.preventDefault(); await adicionarSaida();
+    e.preventDefault();
+    if (validateForm(e.target)) { // Valida o formulário antes de adicionar
+      await adicionarSaida();
+    }
   });
 
   document.getElementById('btnRefreshFinanceiro')?.addEventListener('click', ()=>{ refreshFinanceiroDashboard(); });
@@ -77,23 +82,6 @@ function populateAlunosSelect() {
   });
 }
 
-function populateRelatorioClienteSelect() {
-  const select = document.getElementById('relatorio-cliente-cpf');
-  if (!select) return;
-
-  // Limpa opções existentes, exceto a primeira (placeholder)
-  while (select.options.length > 1) {
-    select.remove(1);
-  }
-
-  alunosList.forEach(aluno => {
-    const option = document.createElement('option');
-    option.value = aluno.cpf;
-    option.textContent = `${aluno.nome} (${formatCPF(aluno.cpf)})`;
-    select.appendChild(option);
-  });
-}
-
 /* ---------- CRUD Entradas ---------- */
 async function adicionarEntrada(){
   const descricao = document.getElementById('entrada-descricao').value.trim();
@@ -101,11 +89,6 @@ async function adicionarEntrada(){
   const categoria = document.getElementById('entrada-categoria').value.trim();
   const data = document.getElementById('entrada-data').value;
   const clienteCpf = document.getElementById('entrada-cliente-cpf').value;
-
-  if (!descricao || isNaN(valor) || valor <= 0 || !data){
-    showToast('Preencha todos os campos obrigatórios (Descrição, Valor, Data).', 'danger');
-    return;
-  }
 
   const novaTransacao = {
     descricao, valor, tipo: 'entrada', categoria, data,
@@ -139,11 +122,6 @@ async function adicionarSaida(){
   const conta = document.getElementById('saida-conta').value;
   const formaPagamento = document.getElementById('saida-forma-pagamento').value;
   const nomeRecebedor = document.getElementById('saida-nome-recebedor').value.trim();
-
-  if (!descricao || isNaN(valor) || valor <= 0 || !categoria || !data || !conta || !formaPagamento){
-    showToast('Preencha todos os campos obrigatórios (Descrição, Valor, Categoria, Data, Conta, Forma de Pagamento).', 'danger');
-    return;
-  }
 
   const novaTransacao = {
     descricao, valor, tipo: 'saida', categoria, data,
