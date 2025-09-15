@@ -1,35 +1,32 @@
 // assets/js/modules/config.js (Gestão de Usuários e Configurações de Vendedores)
 import { supa, currentUser } from './auth.js';
-import { showToast, validateForm } from './ux.js'; // Adicionado validateForm
+import { showToast, validateForm } from './ux.js';
 import { loadUsers, saveUser, deleteUser, loadSellerCfg, saveSellerCfg } from './storage.js';
-import { authFetch } from '../utils/authFetch.js'; // Para deletar colaborador
+import { authFetch } from '../utils/authFetch.js';
 
 let users = [];
 let sellerConfig = {};
 
 export async function initConfig(){
-  // Apenas administradores podem acessar esta seção
-  const configNavLink = document.querySelector('.sidebar-menu a[data-section="config"]');
+  const configNavLink = document.querySelector('.sidebar-nav .nav-link[data-section="config"]');
   if (configNavLink) {
     if (currentUser?.role !== 'admin') {
       configNavLink.style.display = 'none';
     } else {
-      configNavLink.style.display = 'flex'; // Garante que esteja visível para admin
+      configNavLink.style.display = 'flex';
     }
   }
 
-  // Se o usuário não for admin, não inicializa o resto da lógica de gestão de usuários e vendedores
   if (currentUser?.role !== 'admin') {
     return;
   }
 
-  // --- Gestão de Colaboradores ---
   users = await loadUsers();
   if (!Array.isArray(users)) users = [];
 
   document.getElementById('colaborador-form')?.addEventListener('submit', async (e)=>{
     e.preventDefault();
-    if (validateForm(e.target)) { // Valida o formulário antes de cadastrar
+    if (validateForm(e.target)) {
       await cadastrarColaborador();
     }
   });
@@ -43,28 +40,23 @@ export async function initConfig(){
 
   renderColaboradoresTable();
 
-  // --- Configurações de Vendedores ---
   sellerConfig = await loadSellerCfg();
   populateSellerCfgForm();
 
   document.getElementById('seller-cfg-form')?.addEventListener('submit', async (e)=>{
     e.preventDefault();
-    // Não há validação complexa aqui, apenas salvar
     await onSaveSellerCfg();
   });
 }
 
-// --- Funções de Gestão de Colaboradores ---
 async function cadastrarColaborador(){
   const email = document.getElementById('colaborador-email').value.trim();
   const password = document.getElementById('colaborador-password').value.trim();
   const role = document.getElementById('colaborador-role').value;
   const seller = document.getElementById('colaborador-seller').value;
 
-  // Validações já feitas pelo validateForm, mas mantemos algumas para redundância ou lógica específica
   if (role === 'colaborador' && !seller){
     showToast('Para colaboradores, o vendedor associado é obrigatório.', 'danger');
-    // Adiciona classe de erro ao select do vendedor
     document.getElementById('colaborador-seller').classList.add('is-invalid');
     return;
   } else {
@@ -72,7 +64,6 @@ async function cadastrarColaborador(){
   }
 
   try {
-    // Cadastrar usuário no Supabase Auth
     const { data: authData, error: authError } = await supa.auth.signUp({
       email: email,
       password: password,
@@ -86,7 +77,6 @@ async function cadastrarColaborador(){
 
     if (authError) throw authError;
 
-    // Criar/Atualizar perfil na tabela 'profiles'
     const newProfile = {
       id: authData.user.id,
       email: email,
@@ -94,7 +84,7 @@ async function cadastrarColaborador(){
       seller: seller || null
     };
 
-    await saveUser(newProfile); // Salva na tabela 'profiles' via API
+    await saveUser(newProfile);
 
     showToast('Colaborador cadastrado com sucesso! Verifique o email para confirmação.', 'success');
     document.getElementById('colaborador-form').reset();
@@ -110,7 +100,6 @@ async function deletarColaborador(userId){
   if (!confirm('Tem certeza que deseja excluir este colaborador? Isso removerá o usuário do sistema.')) return;
 
   try {
-    // Excluir perfil da tabela 'profiles' e o usuário auth via Netlify Function
     const res = await authFetch(`${window.API_BASE}/profiles?id=${userId}`, { method: 'DELETE' });
     const body = await res.json().catch(()=> ({}));
     if (!res.ok) throw new Error(body?.error || `Falha ao excluir colaborador (${res.status})`);
@@ -124,14 +113,14 @@ async function deletarColaborador(userId){
 }
 
 export async function renderColaboradoresTable(){
-  users = await loadUsers(); // Recarrega a lista de usuários
+  users = await loadUsers();
   const tbody = document.querySelector('#colaboradoresTable tbody'); if (!tbody) return;
   tbody.innerHTML = '';
 
   if (users.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+        <td colspan="4" class="text-center py-4 text-secondary">
           Nenhum colaborador cadastrado.
         </td>
       </tr>
@@ -154,7 +143,6 @@ export async function renderColaboradoresTable(){
   });
 }
 
-// --- Funções de Configurações de Vendedores ---
 function populateSellerCfgForm() {
   const vendSelect = document.getElementById('cfgVend');
   const metaInput = document.getElementById('cfgMeta');
@@ -162,7 +150,6 @@ function populateSellerCfgForm() {
 
   if (!vendSelect || !metaInput || !comissaoInput) return;
 
-  // Carrega a config do vendedor selecionado
   vendSelect.addEventListener('change', () => {
     const selectedVend = vendSelect.value;
     const cfg = sellerConfig[selectedVend] || { meta: 0, comissao: 0 };
@@ -170,7 +157,6 @@ function populateSellerCfgForm() {
     comissaoInput.value = cfg.comissao;
   });
 
-  // Inicializa com o primeiro vendedor
   const initialVend = vendSelect.value;
   const cfg = sellerConfig[initialVend] || { meta: 0, comissao: 0 };
   metaInput.value = cfg.meta;
