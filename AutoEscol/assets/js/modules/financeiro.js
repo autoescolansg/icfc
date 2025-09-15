@@ -1,10 +1,12 @@
 // assets/js/modules/financeiro.js
-import { loadTransacoes, saveTransacoes } from './storage.js';
+import { loadTransacoes, saveTransacoes, loadAlunos } from './storage.js'; // Adicionado loadAlunos
 import { showToast, formatCurrency, calculateMonthlyTrend } from './ux.js';
 import { authFetch } from '../utils/authFetch.js';
 import { formatCPF } from './alunos.js'; // Reutiliza formatCPF
 
 let transacoes = [];
+let alunosList = []; // Para popular o select de clientes
+let chartBalancoMensal = null; // Variável para o gráfico
 
 /* ---------- helpers ---------- */
 function formatDate(ds){ if(!ds) return ''; const d=new Date(ds); return isNaN(d)? ds : new Date(ds).toLocaleDateString('pt-BR') }
@@ -14,98 +16,194 @@ export async function initFinanceiro(){
   transacoes = await loadTransacoes();
   if (!Array.isArray(transacoes)) transacoes = [];
 
-  document.getElementById('transacao-form')?.addEventListener('submit', async (e)=>{
-    e.preventDefault(); await adicionarTransacao();
+  alunosList = await loadAlunos(); // Carrega alunos para o select de clientes
+  populateAlunosSelect();
+
+  document.getElementById('entrada-form')?.addEventListener('submit', async (e)=>{
+    e.preventDefault(); await adicionarEntrada();
+  });
+  document.getElementById('saida-form')?.addEventListener('submit', async (e)=>{
+    e.preventDefault(); await adicionarSaida();
   });
 
-  document.getElementById('btnRefreshFinanceiro')?.addEventListener('click', ()=>{ refreshFinanceiroDashboard(); renderTransacoesTable(); });
-  document.getElementById('transacaoDateStart')?.addEventListener('change', renderTransacoesTable);
-  document.getElementById('transacaoDateEnd')?.addEventListener('change', renderTransacoesTable);
-  document.getElementById('transacaoTipoFilter')?.addEventListener('change', renderTransacoesTable);
+  document.getElementById('btnRefreshFinanceiro')?.addEventListener('click', ()=>{ refreshFinanceiroDashboard(); });
 
-  const tbody = document.querySelector('#transacoesTable tbody');
-  tbody?.addEventListener('click', (e)=>{
+  // Event listeners para filtros de entradas
+  document.getElementById('entradaDateStart')?.addEventListener('change', renderEntradasTable);
+  document.getElementById('entradaDateEnd')?.addEventListener('change', renderEntradasTable);
+
+  // Event listeners para filtros de saídas
+  document.getElementById('saidaDateStart')?.addEventListener('change', renderSaidasTable);
+  document.getElementById('saidaDateEnd')?.addEventListener('change', renderSaidasTable);
+
+  // Event listeners para exclusão de transações
+  document.querySelector('#entradasTable tbody')?.addEventListener('click', (e)=>{
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    if (btn.dataset.action === 'excluir') deletarTransacao(btn.dataset.id);
+  });
+  document.querySelector('#saidasTable tbody')?.addEventListener('click', (e)=>{
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    if (btn.dataset.action === 'excluir') deletarTransacao(btn.dataset.id);
+  });
+  document.getElementById('recent-transactions-list')?.addEventListener('click', (e)=>{
     const btn = e.target.closest('button');
     if (!btn) return;
     if (btn.dataset.action === 'excluir') deletarTransacao(btn.dataset.id);
   });
 
+
   refreshFinanceiroDashboard();
-  renderTransacoesTable();
+  renderEntradasTable();
+  renderSaidasTable();
 }
 
-/* ---------- CRUD ---------- */
-async function adicionarTransacao(){
-  const descricao = document.getElementById('transacao-descricao').value.trim();
-  const valor = parseFloat(document.getElementById('transacao-valor').value);
-  const tipo = document.getElementById('transacao-tipo').value;
-  const categoria = document.getElementById('transacao-categoria').value.trim();
-  const data = document.getElementById('transacao-data').value;
-  const clienteCpf = document.getElementById('transacao-cliente-cpf').value.replace(/\D/g,'');
+function populateAlunosSelect() {
+  const select = document.getElementById('entrada-cliente-cpf');
+  if (!select) return;
 
-  if (!descricao || isNaN(valor) || valor <= 0 || !tipo || !data){
-    showToast('Preencha todos os campos obrigatórios (Descrição, Valor, Tipo, Data).', 'danger');
+  // Limpa opções existentes, exceto a primeira (placeholder)
+  while (select.options.length > 1) {
+    select.remove(1);
+  }
+
+  alunosList.forEach(aluno => {
+    const option = document.createElement('option');
+    option.value = aluno.cpf;
+    option.textContent = `${aluno.nome} (${formatCPF(aluno.cpf)})`;
+    select.appendChild(option);
+  });
+}
+
+/* ---------- CRUD Entradas ---------- */
+async function adicionarEntrada(){
+  const descricao = document.getElementById('entrada-descricao').value.trim();
+  const valor = parseFloat(document.getElementById('entrada-valor').value);
+  const categoria = document.getElementById('entrada-categoria').value.trim();
+  const data = document.getElementById('entrada-data').value;
+  const clienteCpf = document.getElementById('entrada-cliente-cpf').value;
+
+  if (!descricao || isNaN(valor) || valor <= 0 || !data){
+    showToast('Preencha todos os campos obrigatórios (Descrição, Valor, Data).', 'danger');
     return;
   }
 
   const novaTransacao = {
-    descricao, valor, tipo, categoria, data,
+    descricao, valor, tipo: 'entrada', categoria, data,
     cliente_cpf: clienteCpf || null
   };
 
-  transacoes.unshift(novaTransacao); // Adiciona no início da lista
-  await saveTransacoes(transacoes); // Salva na API e localmente
-  try{ document.getElementById('transacao-form').reset(); }catch(_){}
-  document.getElementById('transacao-data').valueAsDate = new Date(); // Reseta a data para hoje
-  showToast('Transação adicionada com sucesso!', 'success');
-  refreshFinanceiroDashboard();
-  renderTransacoesTable();
+  // Para garantir que o ID seja gerado pelo backend/Supabase
+  // Não adicionamos ao array local antes de ter o ID do Supabase
+  try {
+    const res = await authFetch(`${window.API_BASE}/transacoes`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(novaTransacao),
+    });
+    const body = await res.json();
+    if (!res.ok) throw new Error(body?.error || `Falha ao adicionar entrada (${res.status})`);
+
+    // Adiciona a transação com o ID gerado pelo Supabase
+    transacoes.unshift(body); // body deve conter a transação com o ID
+    await saveTransacoes(transacoes); // Atualiza o cache local
+
+    document.getElementById('entrada-form').reset();
+    document.getElementById('entrada-data').valueAsDate = new Date();
+    showToast('Entrada registrada com sucesso!', 'success');
+    refreshFinanceiroDashboard();
+    renderEntradasTable();
+  } catch (e) {
+    console.error('Erro ao adicionar entrada:', e);
+    showToast('Erro ao adicionar entrada: ' + e.message, 'danger');
+  }
 }
 
-async function deletarTransacao(id){
-  if (!confirm('Tem certeza que deseja excluir esta transação?')) return;
+/* ---------- CRUD Saídas ---------- */
+async function adicionarSaida(){
+  const descricao = document.getElementById('saida-descricao').value.trim();
+  const valor = parseFloat(document.getElementById('saida-valor').value);
+  const categoria = document.getElementById('saida-categoria').value;
+  const data = document.getElementById('saida-data').value;
+  const nomeRecebedor = document.getElementById('saida-nome-recebedor').value.trim();
 
-  // Chama API DELETE (com token via authFetch)
-  const res = await authFetch(`${window.API_BASE}/transacoes?id=${id}`, { method: 'DELETE' });
-  const body = await res.json().catch(()=> ({}));
-  if (!res.ok) {
-    showToast(body?.error || `Falha ao excluir transação (${res.status})`, 'danger');
+  if (!descricao || isNaN(valor) || valor <= 0 || !categoria || !data){
+    showToast('Preencha todos os campos obrigatórios (Descrição, Valor, Categoria, Data).', 'danger');
     return;
   }
 
-  transacoes = transacoes.filter(t => t.id !== id);
-  await saveTransacoes(transacoes); // Salva a lista atualizada após exclusão
-  showToast('Transação excluída.', 'warn');
-  refreshFinanceiroDashboard();
-  renderTransacoesTable();
+  const novaTransacao = {
+    descricao, valor, tipo: 'saida', categoria, data,
+    nome_recebedor: nomeRecebedor || null // Novo campo para saídas
+  };
+
+  try {
+    const res = await authFetch(`${window.API_BASE}/transacoes`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(novaTransacao),
+    });
+    const body = await res.json();
+    if (!res.ok) throw new Error(body?.error || `Falha ao adicionar saída (${res.status})`);
+
+    transacoes.unshift(body);
+    await saveTransacoes(transacoes);
+
+    document.getElementById('saida-form').reset();
+    document.getElementById('saida-data').valueAsDate = new Date();
+    showToast('Saída registrada com sucesso!', 'success');
+    refreshFinanceiroDashboard();
+    renderSaidasTable();
+  } catch (e) {
+    console.error('Erro ao adicionar saída:', e);
+    showToast('Erro ao adicionar saída: ' + e.message, 'danger');
+  }
 }
 
-/* ---------- Renderização ---------- */
-export function getFilteredTransacoes(){
-  const dS=document.getElementById('transacaoDateStart')?.value||'';
-  const dE=document.getElementById('transacaoDateEnd')?.value||'';
-  const tipoFilter=document.getElementById('transacaoTipoFilter')?.value||'todos';
+/* ---------- Deletar Transação ---------- */
+async function deletarTransacao(id){
+  if (!confirm('Tem certeza que deseja excluir esta transação?')) return;
+
+  try {
+    const res = await authFetch(`${window.API_BASE}/transacoes?id=${id}`, { method: 'DELETE' });
+    const body = await res.json().catch(()=> ({}));
+    if (!res.ok) throw new Error(body?.error || `Falha ao excluir transação (${res.status})`);
+
+    transacoes = transacoes.filter(t => t.id !== id);
+    await saveTransacoes(transacoes); // Atualiza o cache local
+    showToast('Transação excluída.', 'warn');
+    refreshFinanceiroDashboard();
+    renderEntradasTable();
+    renderSaidasTable();
+  } catch (e) {
+    console.error('Erro ao excluir transação:', e);
+    showToast('Erro ao excluir transação: ' + e.message, 'danger');
+  }
+}
+
+/* ---------- Renderização de Tabelas ---------- */
+export function getFilteredEntradas(){
+  const dS=document.getElementById('entradaDateStart')?.value||'';
+  const dE=document.getElementById('entradaDateEnd')?.value||'';
   const start=dS?new Date(dS):null; const end=dE?new Date(dE):null;
 
-  let data = Array.isArray(transacoes) ? transacoes.slice() : [];
-
-  if (tipoFilter !== 'todos') data = data.filter(t => t.tipo === tipoFilter);
+  let data = transacoes.filter(t => t.tipo === 'entrada');
   if (start) data = data.filter(t => new Date(t.data) >= start);
   if (end) data = data.filter(t => new Date(t.data) <= end);
-
-  return data;
+  return data.sort((a,b) => new Date(b.data) - new Date(a.data)); // Ordena por data mais recente
 }
 
-export function renderTransacoesTable(){
-  const tbody = document.querySelector('#transacoesTable tbody'); if (!tbody) return;
+export function renderEntradasTable(){
+  const tbody = document.querySelector('#entradasTable tbody'); if (!tbody) return;
   tbody.innerHTML = '';
-  const data = getFilteredTransacoes();
+  const data = getFilteredEntradas();
 
   if (data.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
-          Nenhuma transação encontrada com os filtros aplicados.
+        <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+          Nenhuma entrada registrada.
         </td>
       </tr>
     `;
@@ -114,14 +212,12 @@ export function renderTransacoesTable(){
 
   data.forEach(t => {
     const tr = document.createElement('tr');
-    const valorClass = t.tipo === 'entrada' ? 'text-success' : 'text-danger';
     tr.innerHTML = `
       <td>${formatDate(t.data)}</td>
       <td>${t.descricao}</td>
       <td>${t.categoria || '-'}</td>
       <td>${t.cliente_cpf ? formatCPF(t.cliente_cpf) : '-'}</td>
-      <td>${t.tipo === 'entrada' ? 'Entrada' : 'Saída'}</td>
-      <td class="${valorClass}">${formatCurrency(t.valor)}</td>
+      <td class="text-success">${formatCurrency(t.valor)}</td>
       <td>
         <div class="table-actions">
           <button class="btn btn-sm btn-danger" data-action="excluir" data-id="${t.id}"><i class="fas fa-trash"></i></button>
@@ -131,6 +227,87 @@ export function renderTransacoesTable(){
   });
 }
 
+export function getFilteredSaidas(){
+  const dS=document.getElementById('saidaDateStart')?.value||'';
+  const dE=document.getElementById('saidaDateEnd')?.value||'';
+  const start=dS?new Date(dS):null; const end=dE?new Date(dE):null;
+
+  let data = transacoes.filter(t => t.tipo === 'saida');
+  if (start) data = data.filter(t => new Date(t.data) >= start);
+  if (end) data = data.filter(t => new Date(t.data) <= end);
+  return data.sort((a,b) => new Date(b.data) - new Date(a.data)); // Ordena por data mais recente
+}
+
+export function renderSaidasTable(){
+  const tbody = document.querySelector('#saidasTable tbody'); if (!tbody) return;
+  tbody.innerHTML = '';
+  const data = getFilteredSaidas();
+
+  if (data.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+          Nenhuma saída registrada.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  data.forEach(t => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${formatDate(t.data)}</td>
+      <td>${t.descricao}</td>
+      <td>${t.categoria || '-'}</td>
+      <td>${t.nome_recebedor || '-'}</td>
+      <td class="text-danger">${formatCurrency(t.valor)}</td>
+      <td>
+        <div class="table-actions">
+          <button class="btn btn-sm btn-danger" data-action="excluir" data-id="${t.id}"><i class="fas fa-trash"></i></button>
+        </div>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function renderRecentTransactions() {
+  const listEl = document.getElementById('recent-transactions-list');
+  if (!listEl) return;
+
+  const recent = transacoes.slice(0, 5).sort((a,b) => new Date(b.created_at || b.data) - new Date(a.created_at || a.data)); // 5 mais recentes
+  listEl.innerHTML = '';
+
+  if (recent.length === 0) {
+    listEl.innerHTML = `<p style="text-align: center; padding: 1rem; color: var(--text-secondary);">Nenhuma transação recente.</p>`;
+    return;
+  }
+
+  recent.forEach(t => {
+    const item = document.createElement('div');
+    item.className = 'transaction-item'; // Classe para estilização
+    const valorClass = t.tipo === 'entrada' ? 'amount-income' : 'amount-expense';
+    item.innerHTML = `
+      <div class="transaction-info">
+        <div class="transaction-icon" style="background: ${t.tipo === 'entrada' ? 'rgba(16,185,129,.08)' : 'rgba(239,68,68,.08)'}; color: ${t.tipo === 'entrada' ? 'var(--success)' : 'var(--danger)'};">
+          <i class="fas fa-solid fa-arrow-${t.tipo === 'entrada' ? 'up' : 'down'}"></i>
+        </div>
+        <div>
+          <div class="transaction-description">${t.descricao}</div>
+          <div class="transaction-date" style="font-size: 0.8em; color: var(--text-secondary);">${formatDate(t.data)}</div>
+        </div>
+      </div>
+      <div class="transaction-amount ${valorClass}">
+        ${formatCurrency(t.valor)}
+        <button class="btn btn-sm btn-danger" data-action="excluir" data-id="${t.id}" style="margin-left: 10px;"><i class="fas fa-trash"></i></button>
+      </div>
+    `;
+    listEl.appendChild(item);
+  });
+}
+
+
+/* ---------- Dashboard Financeiro ---------- */
 export async function refreshFinanceiroDashboard(){
   const allTransacoes = await loadTransacoes(); // Carrega todas as transações para o cálculo de tendência
 
@@ -170,12 +347,99 @@ export async function refreshFinanceiroDashboard(){
   calculateMonthlyTrend(saldoMes, saldoMesAnterior, 'saldo-trend', 'financeiro');
   calculateMonthlyTrend(entradasMes, entradasMesAnterior, 'entradas-trend', 'financeiro');
   calculateMonthlyTrend(saidasMes, saidasMesAnterior, 'saidas-trend', 'financeiro', true); // Inverter para saídas
+
+  renderBalancoMensalChart(transacoesCurrentMonth);
+  renderRecentTransactions();
 }
+
+function renderBalancoMensalChart(transacoesMesAtual) {
+  const ctx = document.getElementById('chartBalancoMensal')?.getContext('2d');
+  if (!ctx) return;
+
+  const diasNoMes = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+  const labels = Array.from({ length: diasNoMes }, (_, i) => (i + 1).toString());
+
+  const entradasPorDia = new Array(diasNoMes).fill(0);
+  const saidasPorDia = new Array(diasNoMes).fill(0);
+
+  transacoesMesAtual.forEach(t => {
+    const dia = new Date(t.data).getDate() - 1; // -1 para índice do array
+    if (dia >= 0 && dia < diasNoMes) {
+      if (t.tipo === 'entrada') {
+        entradasPorDia[dia] += t.valor;
+      } else {
+        saidasPorDia[dia] += t.valor;
+      }
+    }
+  });
+
+  if (chartBalancoMensal) {
+    chartBalancoMensal.data.labels = labels;
+    chartBalancoMensal.data.datasets[0].data = entradasPorDia;
+    chartBalancoMensal.data.datasets[1].data = saidasPorDia;
+    chartBalancoMensal.update();
+  } else {
+    chartBalancoMensal = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Entradas',
+            data: entradasPorDia,
+            borderColor: 'var(--success)',
+            backgroundColor: 'rgba(16, 185, 129, 0.2)',
+            fill: true,
+            tension: 0.3
+          },
+          {
+            label: 'Saídas',
+            data: saidasPorDia,
+            borderColor: 'var(--danger)',
+            backgroundColor: 'rgba(239, 68, 68, 0.2)',
+            fill: true,
+            tension: 0.3
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          title: {
+            display: false,
+            text: 'Balanço Mensal'
+          }
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Dia do Mês'
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Valor (R$)'
+            },
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  }
+}
+
 
 /* ---------- hook para realtime.js ---------- */
 export function renderTransacoesFromList(list) {
   if (Array.isArray(list)) transacoes = list.slice();
   refreshFinanceiroDashboard();
-  renderTransacoesTable();
+  renderEntradasTable();
+  renderSaidasTable();
 }
 window.renderTransacoesFromList = renderTransacoesFromList;
