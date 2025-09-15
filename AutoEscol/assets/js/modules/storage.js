@@ -24,14 +24,9 @@ export async function apiPutAlunos(alunosArray) {
   }
 
   if (!rows.length) {
-    // Se não houver alunos válidos, ainda precisamos enviar um array vazio para limpar
-    // ou lidar com a situação de forma específica. Para PUT, enviar vazio pode significar limpar tudo.
-    // Para evitar limpar tudo acidentalmente, vamos permitir apenas se houver dados.
-    // Ou, se a intenção é limpar, o backend deve interpretar um array vazio como tal.
-    // Por enquanto, vamos lançar um erro se não houver dados para evitar PUTs vazios.
-    // throw new Error("Nenhum CPF válido para enviar (precisa ter 11 dígitos).");
-    // Se a intenção é apenas atualizar o cache local, não precisamos chamar a API.
-    return; // Não faz PUT se não há dados válidos para enviar
+    // Se não houver alunos válidos, não fazemos PUT para evitar limpar tudo.
+    // O backend deve lidar com a ausência de dados se for uma operação de "limpar tudo".
+    return;
   }
 
   const res = await authFetch(`${window.API_BASE}/alunos`, {
@@ -83,22 +78,13 @@ export async function loadAlunos() {
 }
 
 // ---------- Transações Financeiras ----------
-export async function apiPutTransacoes(transacoesArray) {
-  const rows = transacoesArray.map(t => ({
-    id: t.id || undefined, // Supabase pode gerar o ID se não for fornecido
-    descricao: t.descricao,
-    valor: t.valor,
-    tipo: t.tipo,
-    categoria: t.categoria,
-    data: t.data,
-    cliente_cpf: t.cliente_cpf,
-    user_id: t.user_id || undefined // Pode ser definido pelo backend
-  }));
-
+// Para transações, usaremos POST para adicionar e DELETE para remover.
+// A atualização da lista completa será feita pelo realtime.
+export async function apiPostTransacao(transacao) {
   const res = await authFetch(`${window.API_BASE}/transacoes`, {
-    method: "PUT",
+    method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(rows),
+    body: JSON.stringify(transacao),
   });
 
   const text = await res.text();
@@ -108,20 +94,16 @@ export async function apiPutTransacoes(transacoesArray) {
   } catch {}
 
   if (!res.ok) {
-    console.error("PUT transacoes fail", res.status, text);
-    throw new Error(json?.error || `PUT /transacoes ${res.status}`);
+    console.error("POST transacao fail", res.status, text);
+    throw new Error(json?.error || `POST /transacoes ${res.status}`);
   }
   return json;
 }
 
 export async function saveTransacoes(transacoesArray) {
-  try {
-    await apiPutTransacoes(transacoesArray);
-    localStorage.setItem("transacoes", JSON.stringify(transacoesArray));
-  } catch (e) {
-    console.warn("API offline ou falha ao salvar transações, salvando local", e);
-    localStorage.setItem("transacoes", JSON.stringify(transacoesArray));
-  }
+  // Esta função agora apenas atualiza o cache local.
+  // A persistência na API é feita por apiPostTransacao e apiDeleteTransacao.
+  localStorage.setItem("transacoes", JSON.stringify(transacoesArray));
 }
 
 export async function loadTransacoes() {
@@ -157,7 +139,7 @@ export async function loadSellerCfg() {
 // ---------- Gestão de Usuários (Profiles) ----------
 export async function loadUsers() {
   try {
-    const res = await authFetch(`${window.API_BASE}/profiles`, { // Assumindo que você terá um endpoint /profiles
+    const res = await authFetch(`${window.API_BASE}/profiles`, {
       method: "GET",
       cache: "no-store",
     });
@@ -171,12 +153,12 @@ export async function loadUsers() {
 
 export async function saveUser(userProfile) {
   try {
-    const res = await authFetch(`${window.API_BASE}/profiles`, { // Assumindo um endpoint /profiles
-      method: "POST", // Ou PUT se for atualização
+    const res = await authFetch(`${window.API_BASE}/profiles`, {
+      method: "POST", // Usamos POST para criar, o backend pode lidar com PUT para atualizar
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(userProfile),
     });
-    if (!res.ok) throw new Error("POST/PUT profile falhou");
+    if (!res.ok) throw new Error("POST profile falhou");
     return await res.json();
   } catch (e) {
     console.error("Falha ao salvar perfil de usuário", e);
@@ -186,7 +168,7 @@ export async function saveUser(userProfile) {
 
 export async function deleteUser(userId) {
   try {
-    const res = await authFetch(`${window.API_BASE}/profiles?id=${userId}`, { // Assumindo um endpoint /profiles
+    const res = await authFetch(`${window.API_BASE}/profiles?id=${userId}`, {
       method: "DELETE",
     });
     if (!res.ok) throw new Error("DELETE profile falhou");
