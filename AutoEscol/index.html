@@ -95,6 +95,7 @@
       align-items: center;
       gap: 12px;
       text-decoration: none;
+      cursor: pointer;
     }
 
     .nav-link:hover, .nav-link.active {
@@ -370,6 +371,30 @@
     .content-section.active {
       display: block;
     }
+
+    .alert {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .alert-info {
+      background: #d1ecf1;
+      border: 1px solid #bee5eb;
+      color: #0c5460;
+    }
+
+    .alert-success {
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+
+    .alert-danger {
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
   </style>
 </head>
 <body>
@@ -398,12 +423,12 @@
         <h3><i class="fa-solid fa-key"></i> Configuração da API</h3>
         <div class="form-group">
           <label class="form-label">URL do Supabase</label>
-          <input type="text" id="supabase-url" class="form-control" placeholder="https://pimyqqunvcwoqzqwqpvf.supabase.co">
+          <input type="text" id="supabase-url" class="form-control" placeholder="https://seu-projeto.supabase.co">
         </div>
         
         <div class="form-group">
           <label class="form-label">Chave Pública (anon key)</label>
-          <input type="text" id="supabase-key" class="form-control" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpbXlxcXVudmN3b3F6cXdxcHZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc1MDk0MzQsImV4cCI6MjA3MzA4NTQzNH0.O5FbB0ygMAMNAnxGEs5qAvRF1qSA2qYLbSV8ozlsVBs">
+          <input type="text" id="supabase-key" class="form-control" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
         </div>
         
         <button id="btnSaveConfig" class="btn btn-primary" style="width: 100%;">
@@ -429,7 +454,6 @@
 
   <!-- Main Application -->
   <div id="app" style="display:none">
-    <!-- O resto do seu aplicativo aqui -->
     <div class="app-container">
       <div class="sidebar">
         <div class="sidebar-header">
@@ -528,6 +552,11 @@
               <i class="fa-solid fa-user-plus"></i>
               Cadastro de Aluno
             </h1>
+            
+            <div class="alert alert-info">
+              <i class="fa-solid fa-info-circle"></i> 
+              <strong>Importante:</strong> Certifique-se de que a tabela 'alunos' existe no Supabase com as colunas corretas.
+            </div>
             
             <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);">
               <form id="cadastro-form">
@@ -670,23 +699,15 @@
         if (error && error.code === 'PGRST301') {
           // Tabela não existe, mas a conexão está ok
           alert('Conexão bem-sucedida! A tabela "alunos" não existe ainda, mas você pode criá-la.');
-          initSupabase(url, key);
         } else if (error) {
           throw error;
         } else {
           alert('Conexão bem-sucedida! Configuração salva.');
-          initSupabase(url, key);
         }
       } catch (error) {
         console.error('Erro de conexão:', error);
         alert('Erro na conexão: ' + error.message + '\n\nVerifique se a URL e a chave estão corretas.');
       }
-    }
-
-    // Inicializar Supabase
-    function initSupabase(url, key) {
-      supabase = window.supabase.createClient(url, key);
-      alert('Supabase configurado com sucesso! Agora você pode fazer login.');
     }
 
     // Função de login
@@ -702,9 +723,9 @@
       }
       
       if (username && password) {
-        // Inicializar Supabase se ainda não foi inicializado
+        // Inicializar Supabase (apenas uma vez)
         if (!supabase) {
-          initSupabase(url, key);
+          supabase = window.supabase.createClient(url, key);
         }
         
         document.getElementById('login').style.display = 'none';
@@ -728,20 +749,32 @@
       document.getElementById('loginPass').value = '';
     });
 
-    // Navegação
-    document.querySelectorAll('.nav-link').forEach(link => {
-      link.addEventListener('click', function(e) {
+    // Navegação - CORRIGIDO
+    document.addEventListener('click', function(e) {
+      if (e.target.matches('.nav-link') || e.target.closest('.nav-link')) {
         e.preventDefault();
-        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-        this.classList.add('active');
+        const link = e.target.matches('.nav-link') ? e.target : e.target.closest('.nav-link');
         
+        // Remover classe active de todos os links
+        document.querySelectorAll('.nav-link').forEach(l => {
+          l.classList.remove('active');
+        });
+        
+        // Adicionar classe active ao link clicado
+        link.classList.add('active');
+        
+        // Ocultar todas as seções
         document.querySelectorAll('.content-section').forEach(section => {
           section.classList.remove('active');
         });
         
-        const sectionId = this.getAttribute('data-section');
-        document.getElementById(sectionId).classList.add('active');
-      });
+        // Mostrar a seção correspondente
+        const sectionId = link.getAttribute('data-section');
+        const targetSection = document.getElementById(sectionId);
+        if (targetSection) {
+          targetSection.classList.add('active');
+        }
+      }
     });
 
     // Formulário de cadastro
@@ -762,7 +795,18 @@
       
       if (nome && cpf && telefone && categoria && dataMatricula && vendedor) {
         try {
-          // Usando o formato de dados que o Supabase espera
+          // Primeiro verificar se a tabela existe
+          const { error: checkError } = await supabase
+            .from('alunos')
+            .select('id')
+            .limit(1);
+          
+          if (checkError && checkError.code === '42P01') {
+            alert('A tabela "alunos" não existe. Por favor, crie-a no Supabase primeiro usando o SQL abaixo:\n\nCREATE TABLE alunos (\n  id BIGSERIAL PRIMARY KEY,\n  nome TEXT NOT NULL,\n  cpf TEXT NOT NULL,\n  telefone TEXT,\n  categoria TEXT NOT NULL,\n  data_matricula DATE NOT NULL,\n  vendedor TEXT NOT NULL,\n  status TEXT DEFAULT "pendente",\n  created_at TIMESTAMPTZ DEFAULT NOW()\n);');
+            return;
+          }
+          
+          // Inserir aluno
           const { data, error } = await supabase
             .from('alunos')
             .insert([
@@ -775,12 +819,12 @@
                 vendedor: vendedor,
                 status: 'pendente'
               }
-            ]);
+            ])
+            .select();
           
           if (error) {
-            if (error.code === '42P01') {
-              // Tabela não existe
-              alert('A tabela "alunos" não existe. Por favor, crie-a no Supabase primeiro.');
+            if (error.message.includes('categoria')) {
+              alert('Erro: A coluna "categoria" não existe na tabela. Por favor, recrie a tabela com o SQL correto.');
             } else {
               throw error;
             }
@@ -811,11 +855,13 @@
           if (error.code === '42P01') {
             // Tabela não existe ainda
             alunos = [];
+            console.log('Tabela alunos não existe ainda');
           } else {
             throw error;
           }
         } else {
           alunos = data || [];
+          console.log('Alunos carregados:', alunos);
         }
         
         atualizarTabelaAlunos();
