@@ -23,9 +23,29 @@ export function initNavigation(){
       if (sectionId.startsWith('financeiro') && sectionId !== 'financeiro') {
         document.querySelector('.sidebar-menu a[data-section="financeiro"]')?.classList.add('active');
       }
+
+      // Fecha a sidebar em telas pequenas após clicar em um item
+      const sidebar = document.getElementById('sidebar');
+      if (window.innerWidth <= 768 && sidebar.classList.contains('active')) {
+        sidebar.classList.remove('active');
+      }
     });
   });
 
   // Ativa a seção inicial (Dashboard) ao carregar a página
   document.querySelector('.sidebar-menu a[data-section="dashboard"]')?.click();
+
+  // Lógica para o botão de toggle da sidebar (hambúrguer)
+  const btnToggleSidebar = document.getElementById('btnToggleSidebar');
+  const sidebar = document.getElementById('sidebar');
+  if (btnToggleSidebar && sidebar) {
+    btnToggleSidebar.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
+      // Altera o ícone do botão
+      const icon = btnToggleSidebar.querySelector('i');
+      if (icon) {
+        icon.className = sidebar.classList.contains('active') ? 'fas fa-times' : 'fas fa-bars';
+      }
+    });
+  }
 }
