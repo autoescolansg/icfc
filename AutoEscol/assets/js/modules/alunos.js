@@ -2,7 +2,7 @@
 import { loadAlunos, saveAlunos, loadSellerCfg } from './storage.js';
 import { currentUser } from './auth.js';
 import { pushLog } from './logs.js';
-import { showToast, calculateMonthlyTrend, validateForm } from './ux.js'; // Adicionado validateForm
+import { showToast, calculateMonthlyTrend, validateForm } from './ux.js';
 import { authFetch } from '../utils/authFetch.js';
 
 let alunos = [];
@@ -55,7 +55,7 @@ export async function initAlunos(){
 
   document.getElementById('cadastro-form')?.addEventListener('submit', async (e)=>{
     e.preventDefault();
-    if (validateForm(e.target)) { // Valida o formulário antes de cadastrar
+    if (validateForm(e.target)) {
       await cadastrarAluno();
     }
   });
@@ -80,7 +80,7 @@ export async function initAlunos(){
   document.getElementById('btnCancelEdit')?.addEventListener('click', closeModal);
   document.getElementById('editForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    if (validateForm(e.target)) { // Valida o formulário antes de salvar
+    if (validateForm(e.target)) {
       await onSaveEdit();
     }
   });
@@ -100,7 +100,6 @@ async function cadastrarAluno(){
   const dataCadastro = document.getElementById('data-cadastro').value || new Date().toISOString().slice(0,10);
   const vendedor = document.getElementById('vendedor').value;
 
-  // Validações já feitas pelo validateForm, mas mantemos algumas para redundância ou lógica específica
   if (alunos.some(a => a.cpf === cpf)){ showToast('Já existe aluno com esse CPF.', 'danger'); return; }
 
   const novo = {
@@ -235,7 +234,7 @@ export function renderTabela(){
   if (data.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+        <td colspan="7" class="text-center py-4 text-secondary">
           Nenhum aluno encontrado com os filtros aplicados.
         </td>
       </tr>
@@ -256,13 +255,13 @@ export function renderTabela(){
       <td>${aluno.vendedor || '-'}</td>
       <td>
         <span class="status-badge ${statusClass}">${status}</span>
-        <div style="margin-top:.25rem; display:flex; gap:.25rem; flex-wrap:wrap">
+        <div class="d-flex flex-wrap gap-1 mt-1">
           ${renderEtapas(aluno)}
         </div>
       </td>
       <td>
         <div class="table-actions">
-          <button class="btn btn-sm btn-outline" data-edit="1" data-cpf="${aluno.cpf}"><i class="fas fa-pen"></i></button>
+          <button class="btn btn-sm btn-outline-primary" data-edit="1" data-cpf="${aluno.cpf}"><i class="fas fa-pen"></i></button>
           ${canDelete ? `<button class="btn btn-sm btn-danger" data-action="excluir" data-cpf="${aluno.cpf}"><i class="fas fa-trash"></i></button>` : ''}
         </div>
       </td>`;
@@ -271,8 +270,8 @@ export function renderTabela(){
 }
 
 export async function refreshDashboard(){
-  const allAlunos = await loadAlunos(); // Carrega todos os alunos para o cálculo de tendência
-  const data = getFiltered(); // Alunos filtrados para exibição
+  const allAlunos = await loadAlunos();
+  const data = getFiltered();
 
   const total = data.length;
   const concluidos = data.filter(a => a.statusGeral === 'concluido').length;
@@ -285,7 +284,6 @@ export async function refreshDashboard(){
   el('total-alunos', total); el('concluidos', concluidos); el('andamento', andamento); el('pendentes', pendentes);
   el('ewerton-count', ew); el('darlan-count', da);
 
-  // Calcular e exibir tendências
   const currentMonth = new Date().getMonth();
   const currentYear = new Date().getFullYear();
 
@@ -303,27 +301,22 @@ export async function refreshDashboard(){
 
   calculateMonthlyTrend(totalAlunosCurrentMonth, totalAlunosPreviousMonth, 'total-alunos-trend', 'alunos');
 
-  // Tendência para Ewerton
   const ewCurrentMonth = allAlunos.filter(a => a.vendedor === 'Ewerton' && new Date(a.dataCadastro).getMonth() === currentMonth && new Date(a.dataCadastro).getFullYear() === currentYear).length;
   const ewPreviousMonth = allAlunos.filter(a => a.vendedor === 'Ewerton' && new Date(a.dataCadastro).getMonth() === (currentMonth === 0 ? 11 : currentMonth - 1) && new Date(a.dataCadastro).getFullYear() === (currentMonth === 0 ? currentYear - 1 : currentYear)).length;
   calculateMonthlyTrend(ewCurrentMonth, ewPreviousMonth, 'ewerton-trend', 'alunos');
 
-  // Tendência para Darlan
   const daCurrentMonth = allAlunos.filter(a => a.vendedor === 'Darlan' && new Date(a.dataCadastro).getMonth() === currentMonth && new Date(a.dataCadastro).getFullYear() === currentYear).length;
   const daPreviousMonth = allAlunos.filter(a => a.vendedor === 'Darlan' && new Date(a.dataCadastro).getMonth() === (currentMonth === 0 ? 11 : currentMonth - 1) && new Date(a.dataCadastro).getFullYear() === (currentMonth === 0 ? currentYear - 1 : currentYear)).length;
   calculateMonthlyTrend(daCurrentMonth, daPreviousMonth, 'darlan-trend', 'alunos');
 
-  // Tendência para Concluídos
   const concluidosCurrentMonth = allAlunos.filter(a => a.statusGeral === 'concluido' && new Date(a.dataCadastro).getMonth() === currentMonth && new Date(a.dataCadastro).getFullYear() === currentYear).length;
   const concluidosPreviousMonth = allAlunos.filter(a => a.statusGeral === 'concluido' && new Date(a.dataCadastro).getMonth() === (currentMonth === 0 ? 11 : currentMonth - 1) && new Date(a.dataCadastro).getFullYear() === (currentMonth === 0 ? currentYear - 1 : currentYear)).length;
   calculateMonthlyTrend(concluidosCurrentMonth, concluidosPreviousMonth, 'concluidos-trend', 'alunos');
 
-  // Tendência para Em Andamento
   const andamentoCurrentMonth = allAlunos.filter(a => a.statusGeral === 'andamento' && new Date(a.dataCadastro).getMonth() === currentMonth && new Date(a.dataCadastro).getFullYear() === currentYear).length;
   const andamentoPreviousMonth = allAlunos.filter(a => a.statusGeral === 'andamento' && new Date(a.dataCadastro).getMonth() === (currentMonth === 0 ? 11 : currentMonth - 1) && new Date(a.dataCadastro).getFullYear() === (currentMonth === 0 ? currentYear - 1 : currentYear)).length;
   calculateMonthlyTrend(andamentoCurrentMonth, andamentoPreviousMonth, 'andamento-trend', 'alunos');
 
-  // Tendência para Pendentes
   const pendentesCurrentMonth = allAlunos.filter(a => a.statusGeral === 'pendente' && new Date(a.dataCadastro).getMonth() === currentMonth && new Date(a.dataCadastro).getFullYear() === currentYear).length;
   const pendentesPreviousMonth = allAlunos.filter(a => a.statusGeral === 'pendente' && new Date(a.dataCadastro).getMonth() === (currentMonth === 0 ? 11 : currentMonth - 1) && new Date(a.dataCadastro).getFullYear() === (currentMonth === 0 ? currentYear - 1 : currentYear)).length;
   calculateMonthlyTrend(pendentesCurrentMonth, pendentesPreviousMonth, 'pendentes-trend', 'alunos');
