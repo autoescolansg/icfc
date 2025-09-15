@@ -1,6 +1,6 @@
 // assets/js/modules/alunos.js
 import { loadAlunos, saveAlunos, loadSellerCfg } from './storage.js';
-import { currentUser } from './auth.js';
+import { currentUser  } from './auth.js';
 import { pushLog } from './logs.js';
 import { showToast, calculateMonthlyTrend, validateForm } from './ux.js';
 import { authFetch } from '../utils/authFetch.js';
@@ -37,14 +37,55 @@ function formatTelefone(t){
   if (v.length===10) return `(${v.slice(0,2)}) ${v.slice(2,6)}-${v.slice(6)}`;
   return t;
 }
-function renderEtapas(a){
+
+/* Função para detectar se uma etapa está atrasada */
+function isEtapaAtrasada(aluno, etapaKey, prazoDias) {
+  const etapa = aluno.etapas?.[etapaKey];
+  if (!etapa) return false;
+  if (etapa.fim) return false; // concluída
+  if (!aluno.dataCadastro) return false;
+  const dataCadastro = new Date(aluno.dataCadastro);
+  const prazo = new Date(dataCadastro);
+  prazo.setDate(prazo.getDate() + prazoDias);
+  const hoje = new Date();
+  return hoje > prazo;
+}
+
+/* Renderização visual das etapas com cores e tooltips */
+function renderEtapasVisual(a) {
   a = ensureEtapas(a);
-  const labels = { foto:'Foto', aulas_teoricas:'Teóricas', prova_teorica:'Prova Teórica', aulas_praticas:'Práticas', baliza_carro:'Baliza Carro', baliza_moto:'Baliza Moto' };
-  return STEPS.map(key=>{
-    const st = a.etapas[key]||{inicio:null,fim:null};
-    const done = !!st.fim;
-    const on = done ? 'style="opacity:1"' : (st.inicio ? 'style="opacity:.85"' : 'style="opacity:.45"');
-    return `<span class="chip" ${on}>${labels[key]}</span>`;
+  const labels = {
+    foto: 'Foto',
+    aulas_teoricas: 'Aulas Teóricas',
+    prova_teorica: 'Prova Teórica',
+    aulas_praticas: 'Aulas Práticas',
+    baliza_carro: 'Baliza Carro',
+    baliza_moto: 'Baliza Moto'
+  };
+  const prazos = {
+    foto: 30,
+    aulas_teoricas: 60,
+    prova_teorica: 90,
+    aulas_praticas: 120,
+    baliza_carro: 150,
+    baliza_moto: 150
+  };
+  return STEPS.map(key => {
+    const etapa = a.etapas[key] || { inicio: null, fim: null };
+    let statusClass = 'etapa-pendente';
+    let title = `${labels[key]}: Pendente`;
+    if (etapa.fim) {
+      statusClass = 'etapa-concluida';
+      title = `${labels[key]}: Concluída em ${formatDate(etapa.fim)}`;
+    } else if (etapa.inicio) {
+      statusClass = 'etapa-em-andamento';
+      title = `${labels[key]}: Em andamento desde ${formatDate(etapa.inicio)}`;
+    }
+    if (isEtapaAtrasada(a, key, prazos[key])) {
+      statusClass = 'etapa-atrasada';
+      title += ' (Atrasada)';
+    }
+    return `<span class="etapa-chip ${statusClass}" title="${title}">${labels[key]}</span>`;
   }).join('');
 }
 
@@ -127,7 +168,7 @@ async function deletarAluno(cpf){
   const aluno = alunos.find(a => a.cpf === cpf);
   if (!aluno) return;
 
-  if (currentUser?.role==='colaborador' && currentUser?.seller !== aluno.vendedor){
+  if (currentUser ?.role==='colaborador' && currentUser ?.seller !== aluno.vendedor){
     showToast('Você só pode excluir alunos do seu vendedor.', 'danger');
     return;
   }
@@ -152,7 +193,7 @@ async function deletarAluno(cpf){
 /* ---------- Modal edição ---------- */
 function openEdit(cpf){
   const aluno = alunos.find(x=>x.cpf===cpf); if(!aluno) return;
-  if (currentUser?.role==='colaborador' && currentUser?.seller !== aluno.vendedor){
+  if (currentUser ?.role==='colaborador' && currentUser ?.seller !== aluno.vendedor){
     showToast('Você só pode editar alunos do seu vendedor.', 'danger');
     return;
   }
@@ -178,7 +219,7 @@ function closeModal(){ const m=document.getElementById('editModal'); if(m) m.sty
 async function onSaveEdit(){
   if (!editingCPF) return;
   const aluno = alunos.find(x=>x.cpf===editingCPF); if(!aluno) return;
-  if (currentUser?.role==='colaborador' && currentUser?.seller !== aluno.vendedor){ showToast('Sem permissão para editar este aluno.', 'danger'); return; }
+  if (currentUser ?.role==='colaborador' && currentUser ?.seller !== aluno.vendedor){ showToast('Sem permissão para editar este aluno.', 'danger'); return; }
 
   aluno.nome = document.getElementById('edNome').value.trim();
   aluno.telefone = document.getElementById('edTelefone').value.trim();
@@ -219,7 +260,7 @@ export function getFiltered(){
 
   let data = Array.isArray(alunos) ? alunos.slice() : [];
   if (sellerFilter!=='todos') data=data.filter(a=>a.vendedor===sellerFilter);
-  if (currentUser?.role==='colaborador' && currentUser?.seller) data=data.filter(a=>a.vendedor===currentUser.seller);
+  if (currentUser ?.role==='colaborador' && currentUser ?.seller) data=data.filter(a=>a.vendedor===currentUser .seller);
   if (q) data=data.filter(a=>(a.nome?.toLowerCase().includes(q) || a.cpf?.includes(q)));
   if (catFilter!=='todas') data=data.filter(a=>a.categoria===catFilter);
   if (start) data=data.filter(a=> new Date(a.dataCadastro)>=start);
@@ -245,7 +286,7 @@ export function renderTabela(){
   data.forEach(aluno => {
     const status = aluno.statusGeral === 'concluido' ? 'Concluído' : aluno.statusGeral === 'andamento' ? 'Em Andamento' : 'Pendente';
     const statusClass = aluno.statusGeral === 'concluido' ? 'status-concluido' : aluno.statusGeral === 'andamento' ? 'status-andamento' : 'status-pendente';
-    const canDelete = (currentUser?.role === 'admin') || (currentUser?.role === 'colaborador' && currentUser?.seller === aluno.vendedor);
+    const canDelete = (currentUser ?.role === 'admin') || (currentUser ?.role === 'colaborador' && currentUser ?.seller === aluno.vendedor);
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${aluno.nome}</td>
@@ -255,8 +296,8 @@ export function renderTabela(){
       <td>${aluno.vendedor || '-'}</td>
       <td>
         <span class="status-badge ${statusClass}">${status}</span>
-        <div class="d-flex flex-wrap gap-1 mt-1">
-          ${renderEtapas(aluno)}
+        <div style="margin-top:.25rem; display:flex; flex-wrap:wrap; gap:.25rem;">
+          ${renderEtapasVisual(aluno)}
         </div>
       </td>
       <td>
@@ -302,37 +343,4 @@ export async function refreshDashboard(){
   calculateMonthlyTrend(totalAlunosCurrentMonth, totalAlunosPreviousMonth, 'total-alunos-trend', 'alunos');
 
   const ewCurrentMonth = allAlunos.filter(a => a.vendedor === 'Ewerton' && new Date(a.dataCadastro).getMonth() === currentMonth && new Date(a.dataCadastro).getFullYear() === currentYear).length;
-  const ewPreviousMonth = allAlunos.filter(a => a.vendedor === 'Ewerton' && new Date(a.dataCadastro).getMonth() === (currentMonth === 0 ? 11 : currentMonth - 1) && new Date(a.dataCadastro).getFullYear() === (currentMonth === 0 ? currentYear - 1 : currentYear)).length;
-  calculateMonthlyTrend(ewCurrentMonth, ewPreviousMonth, 'ewerton-trend', 'alunos');
-
-  const daCurrentMonth = allAlunos.filter(a => a.vendedor === 'Darlan' && new Date(a.dataCadastro).getMonth() === currentMonth && new Date(a.dataCadastro).getFullYear() === currentYear).length;
-  const daPreviousMonth = allAlunos.filter(a => a.vendedor === 'Darlan' && new Date(a.dataCadastro).getMonth() === (currentMonth === 0 ? 11 : currentMonth - 1) && new Date(a.dataCadastro).getFullYear() === (currentMonth === 0 ? currentYear - 1 : currentYear)).length;
-  calculateMonthlyTrend(daCurrentMonth, daPreviousMonth, 'darlan-trend', 'alunos');
-
-  const concluidosCurrentMonth = allAlunos.filter(a => a.statusGeral === 'concluido' && new Date(a.dataCadastro).getMonth() === currentMonth && new Date(a.dataCadastro).getFullYear() === currentYear).length;
-  const concluidosPreviousMonth = allAlunos.filter(a => a.statusGeral === 'concluido' && new Date(a.dataCadastro).getMonth() === (currentMonth === 0 ? 11 : currentMonth - 1) && new Date(a.dataCadastro).getFullYear() === (currentMonth === 0 ? currentYear - 1 : currentYear)).length;
-  calculateMonthlyTrend(concluidosCurrentMonth, concluidosPreviousMonth, 'concluidos-trend', 'alunos');
-
-  const andamentoCurrentMonth = allAlunos.filter(a => a.statusGeral === 'andamento' && new Date(a.dataCadastro).getMonth() === currentMonth && new Date(a.dataCadastro).getFullYear() === currentYear).length;
-  const andamentoPreviousMonth = allAlunos.filter(a => a.statusGeral === 'andamento' && new Date(a.dataCadastro).getMonth() === (currentMonth === 0 ? 11 : currentMonth - 1) && new Date(a.dataCadastro).getFullYear() === (currentMonth === 0 ? currentYear - 1 : currentYear)).length;
-  calculateMonthlyTrend(andamentoCurrentMonth, andamentoPreviousMonth, 'andamento-trend', 'alunos');
-
-  const pendentesCurrentMonth = allAlunos.filter(a => a.statusGeral === 'pendente' && new Date(a.dataCadastro).getMonth() === currentMonth && new Date(a.dataCadastro).getFullYear() === currentYear).length;
-  const pendentesPreviousMonth = allAlunos.filter(a => a.statusGeral === 'pendente' && new Date(a.dataCadastro).getMonth() === (currentMonth === 0 ? 11 : currentMonth - 1) && new Date(a.dataCadastro).getFullYear() === (currentMonth === 0 ? currentYear - 1 : currentYear)).length;
-  calculateMonthlyTrend(pendentesCurrentMonth, pendentesPreviousMonth, 'pendentes-trend', 'alunos');
-
-
-  try{
-    const cfg = await loadSellerCfg();
-    const em = document.getElementById('ewerton-meta'); if (em) em.textContent = `Meta: ${cfg.Ewerton?.meta||0} | Comissão: ${cfg.Ewerton?.comissao||0}%`;
-    const dm = document.getElementById('darlan-meta'); if (dm) dm.textContent = `Meta: ${cfg.Darlan?.meta||0} | Comissão: ${cfg.Darlan?.comissao||0}%`;
-  }catch(e){ console.warn("Falha ao carregar seller cfg:", e); }
-}
-
-/* ---------- hook para realtime.js ---------- */
-export function renderAlunosFromList(list) {
-  if (Array.isArray(list)) alunos = list.slice();
-  renderTabela();
-  refreshDashboard();
-}
-window.renderAlunosFromList = renderAlunosFromList;
+  const ewPreviousMonth = allAlunos.filter(a => a.vendedor === 'Ewerton' && new Date(a.dataCadastro).getMonth() === (currentMonth === 0 ? 11 : currentMonth - 1) && new Date(a.dataCadastro).getFullYear() === (currentMonth === 0 ? current
