@@ -224,13 +224,26 @@
             </button>
           </div>
 
-          <!-- NOVO: Card para o Gráfico de Desempenho de Vendedores -->
-          <div class="card mt-4">
-            <div class="card-header">
-              <h3 class="card-title-text">Desempenho de Vendedores (Mês Atual)</h3>
+          <!-- NOVO: Grid para organizar os gráficos -->
+          <div class="content-grid-2-1 mt-4">
+            <!-- Card para o Gráfico de Desempenho de Vendedores -->
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title-text">Desempenho de Vendedores (Mês Atual)</h3>
+              </div>
+              <div style="height: 300px;">
+                <canvas id="chartDesempenhoVendedores"></canvas>
+              </div>
             </div>
-            <div style="height: 300px;"> <!-- Altura fixa para o gráfico -->
-              <canvas id="chartDesempenhoVendedores"></canvas>
+
+            <!-- NOVO: Card para o Gráfico de Status Geral dos Alunos -->
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title-text">Status Geral dos Alunos</h3>
+              </div>
+              <div style="height: 300px;">
+                <canvas id="chartStatusAlunos"></canvas>
+              </div>
             </div>
           </div>
         </section>
