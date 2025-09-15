@@ -397,6 +397,15 @@
       }
       .top-header {
         margin-left: 80px;
+<button id="btnToggleSidebar" aria-label="Abrir menu" class="btn btn-link d-lg-none">
+  <i class="fas fa-bars"></i>
+</button>
+
+<label for="headerSearchInput" class="visually-hidden">Pesquisar</label>
+<div class="search-bar">
+  <i class="fa-solid fa-search" aria-hidden="true"></i>
+  <input type="text" id="headerSearchInput" class="form-control" placeholder="Pesquisar...">
+</div>
       }
       #btnToggleSidebar {
         display: block; /* Mostra o botão de toggle */
