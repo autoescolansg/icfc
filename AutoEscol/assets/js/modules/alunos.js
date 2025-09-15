@@ -2,11 +2,11 @@
 import { loadAlunos, saveAlunos, loadSellerCfg } from './storage.js';
 import { currentUser } from './auth.js';
 import { pushLog } from './logs.js';
-import { showToast } from './ux.js';
+import { showToast, calculateMonthlyTrend } from './ux.js'; // Adicionado calculateMonthlyTrend
 import { authFetch } from '../utils/authFetch.js';
 
 let alunos = [];
-let chartVendedores = null, chartCategorias = null;
+// let chartVendedores = null, chartCategorias = null; // REMOVIDO: Gráficos removidos
 let editingCPF = null;
 
 const STEPS = ['foto','aulas_teoricas','prova_teorica','aulas_praticas','baliza_carro','baliza_moto'];
@@ -58,7 +58,7 @@ export async function initAlunos(){
   });
 
   // Event listeners para filtros
-  document.getElementById('alunosSearchInput')?.addEventListener('input', onFiltersChange); // ID atualizado
+  document.getElementById('alunosSearchInput')?.addEventListener('input', onFiltersChange);
   document.getElementById('sellerFilter')?.addEventListener('change', onFiltersChange);
   document.getElementById('dateStart')?.addEventListener('change', onFiltersChange);
   document.getElementById('dateEnd')?.addEventListener('change', onFiltersChange);
@@ -210,7 +210,7 @@ async function onSaveEdit(e){
 
 /* ---------- filtros/render ---------- */
 export function getFiltered(){
-  const q=(document.getElementById('alunosSearchInput')?.value||'').toLowerCase(); // ID atualizado
+  const q=(document.getElementById('alunosSearchInput')?.value||'').toLowerCase();
   const sellerFilter=document.getElementById('sellerFilter')?.value||'todos';
   const catFilter=document.getElementById('catFilter')?.value||'todas';
   const dS=document.getElementById('dateStart')?.value||'';
@@ -270,7 +270,9 @@ export function renderTabela(){
 }
 
 export async function refreshDashboard(){
-  const data = getFiltered();
+  const allAlunos = await loadAlunos(); // Carrega todos os alunos para o cálculo de tendência
+  const data = getFiltered(); // Alunos filtrados para exibição
+
   const total = data.length;
   const concluidos = data.filter(a => a.statusGeral === 'concluido').length;
   const andamento = data.filter(a => a.statusGeral === 'andamento').length;
@@ -282,52 +284,60 @@ export async function refreshDashboard(){
   el('total-alunos', total); el('concluidos', concluidos); el('andamento', andamento); el('pendentes', pendentes);
   el('ewerton-count', ew); el('darlan-count', da);
 
+  // Calcular e exibir tendências
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+
+  const totalAlunosCurrentMonth = allAlunos.filter(a => {
+    const d = new Date(a.dataCadastro);
+    return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+  }).length;
+
+  const totalAlunosPreviousMonth = allAlunos.filter(a => {
+    const d = new Date(a.dataCadastro);
+    const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+    const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+    return d.getMonth() === prevMonth && d.getFullYear() === prevYear;
+  }).length;
+
+  calculateMonthlyTrend(totalAlunosCurrentMonth, totalAlunosPreviousMonth, 'total-alunos-trend', 'alunos');
+
+  // Tendência para Ewerton
+  const ewCurrentMonth = allAlunos.filter(a => a.vendedor === 'Ewerton' && new Date(a.dataCadastro).getMonth() === currentMonth && new Date(a.dataCadastro).getFullYear() === currentYear).length;
+  const ewPreviousMonth = allAlunos.filter(a => a.vendedor === 'Ewerton' && new Date(a.dataCadastro).getMonth() === (currentMonth === 0 ? 11 : currentMonth - 1) && new Date(a.dataCadastro).getFullYear() === (currentMonth === 0 ? currentYear - 1 : currentYear)).length;
+  calculateMonthlyTrend(ewCurrentMonth, ewPreviousMonth, 'ewerton-trend', 'alunos');
+
+  // Tendência para Darlan
+  const daCurrentMonth = allAlunos.filter(a => a.vendedor === 'Darlan' && new Date(a.dataCadastro).getMonth() === currentMonth && new Date(a.dataCadastro).getFullYear() === currentYear).length;
+  const daPreviousMonth = allAlunos.filter(a => a.vendedor === 'Darlan' && new Date(a.dataCadastro).getMonth() === (currentMonth === 0 ? 11 : currentMonth - 1) && new Date(a.dataCadastro).getFullYear() === (currentMonth === 0 ? currentYear - 1 : currentYear)).length;
+  calculateMonthlyTrend(daCurrentMonth, daPreviousMonth, 'darlan-trend', 'alunos');
+
+  // Tendência para Concluídos
+  const concluidosCurrentMonth = allAlunos.filter(a => a.statusGeral === 'concluido' && new Date(a.dataCadastro).getMonth() === currentMonth && new Date(a.dataCadastro).getFullYear() === currentYear).length;
+  const concluidosPreviousMonth = allAlunos.filter(a => a.statusGeral === 'concluido' && new Date(a.dataCadastro).getMonth() === (currentMonth === 0 ? 11 : currentMonth - 1) && new Date(a.dataCadastro).getFullYear() === (currentMonth === 0 ? currentYear - 1 : currentYear)).length;
+  calculateMonthlyTrend(concluidosCurrentMonth, concluidosPreviousMonth, 'concluidos-trend', 'alunos');
+
+  // Tendência para Em Andamento
+  const andamentoCurrentMonth = allAlunos.filter(a => a.statusGeral === 'andamento' && new Date(a.dataCadastro).getMonth() === currentMonth && new Date(a.dataCadastro).getFullYear() === currentYear).length;
+  const andamentoPreviousMonth = allAlunos.filter(a => a.statusGeral === 'andamento' && new Date(a.dataCadastro).getMonth() === (currentMonth === 0 ? 11 : currentMonth - 1) && new Date(a.dataCadastro).getFullYear() === (currentMonth === 0 ? currentYear - 1 : currentYear)).length;
+  calculateMonthlyTrend(andamentoCurrentMonth, andamentoPreviousMonth, 'andamento-trend', 'alunos');
+
+  // Tendência para Pendentes
+  const pendentesCurrentMonth = allAlunos.filter(a => a.statusGeral === 'pendente' && new Date(a.dataCadastro).getMonth() === currentMonth && new Date(a.dataCadastro).getFullYear() === currentYear).length;
+  const pendentesPreviousMonth = allAlunos.filter(a => a.statusGeral === 'pendente' && new Date(a.dataCadastro).getMonth() === (currentMonth === 0 ? 11 : currentMonth - 1) && new Date(a.dataCadastro).getFullYear() === (currentMonth === 0 ? currentYear - 1 : currentYear)).length;
+  calculateMonthlyTrend(pendentesCurrentMonth, pendentesPreviousMonth, 'pendentes-trend', 'alunos');
+
+
   try{
     const cfg = await loadSellerCfg();
     const em = document.getElementById('ewerton-meta'); if (em) em.textContent = `Meta: ${cfg.Ewerton?.meta||0} | Comissão: ${cfg.Ewerton?.comissao||0}%`;
     const dm = document.getElementById('darlan-meta'); if (dm) dm.textContent = `Meta: ${cfg.Darlan?.meta||0} | Comissão: ${cfg.Darlan?.comissao||0}%`;
   }catch(e){ console.warn("Falha ao carregar seller cfg:", e); }
 
-  updateCharts(data);
+  // updateCharts(data); // REMOVIDO: Gráficos removidos
 }
 
-function updateCharts(data){
-  if (!window.Chart) { console.warn("Chart.js não carregado; pulando gráficos."); return; }
-  const cv = document.getElementById('chartVendedores');
-  const cc = document.getElementById('chartCategorias');
-  if (!cv || !cc) return;
-
-  const ctxV = cv.getContext('2d');
-  const ctxC = cc.getContext('2d');
-  if (!ctxV || !ctxC) return;
-
-  const byVend = ['Ewerton','Darlan'].map(s => data.filter(a=>a.vendedor===s).length);
-  const cats = ['A','B','AB'].map(c => data.filter(a=>a.categoria===c).length);
-
-  const indigo = '#6366F1', emerald='#22C55E', amber='#F59E0B';
-
-  if (!chartVendedores){
-    chartVendedores = new Chart(ctxV, {
-      type:'bar',
-      data:{ labels:['Ewerton','Darlan'], datasets:[{ label:'Alunos', data:byVend, backgroundColor:[indigo, emerald] }]},
-      options:{ responsive:true, plugins:{ legend:{display:false}}}
-    });
-  } else {
-    chartVendedores.data.datasets[0].data = byVend;
-    chartVendedores.update();
-  }
-
-  if (!chartCategorias){
-    chartCategorias = new Chart(ctxC, {
-      type:'doughnut',
-      data:{ labels:['A','B','AB'], datasets:[{ data:cats, backgroundColor:[indigo, emerald, amber] }]},
-      options:{ responsive:true }
-    });
-  } else {
-    chartCategorias.data.datasets[0].data = cats;
-    chartCategorias.update();
-  }
-}
+// function updateCharts(data){ /* REMOVIDO: Gráficos removidos */ }
 
 /* ---------- hook para realtime.js ---------- */
 export function renderAlunosFromList(list) {
