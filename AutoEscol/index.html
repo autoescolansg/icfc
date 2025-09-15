@@ -417,6 +417,26 @@
     .trend-indicator.positive { color: var(--success); }
     .trend-indicator.negative { color: var(--danger); }
     .trend-indicator i { font-size: 0.75rem; }
+
+    /* Estilos para sub-navegação (opcional, se quiser botões dentro da aba Financeiro) */
+    .sub-nav {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    .sub-nav .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      background: #f0f0f0;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+    .sub-nav .btn.active {
+      background: var(--primary);
+      color: white;
+    }
   </style>
 </head>
 <body>
@@ -483,6 +503,18 @@
             <a href="#" data-section="financeiro" class="nav-link">
               <i class="fa-solid fa-dollar-sign"></i>
               <span>Financeiro</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" data-section="financeiro-entradas" class="nav-link sub-nav-link" style="padding-left: 3rem;">
+              <i class="fa-solid fa-arrow-up"></i>
+              <span>Entradas</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" data-section="financeiro-saidas" class="nav-link sub-nav-link" style="padding-left: 3rem;">
+              <i class="fa-solid fa-arrow-down"></i>
+              <span>Saídas</span>
             </a>
           </div>
           <div class="nav-item">
@@ -767,45 +799,62 @@
               </button>
             </div>
 
-            <h2 class="page-title" style="margin-top: 2rem;">
-              <i class="fa-solid fa-cash-register"></i>
-              Gestão de Transações
-            </h2>
+            <div class="content-grid" style="margin-top: 1.5rem;">
+              <div class="card">
+                <div class="section-header">
+                  <h3 class="section-title">Balanço Mensal</h3>
+                </div>
+                <canvas id="chartBalancoMensal"></canvas>
+              </div>
+              <div class="card">
+                <div class="section-header">
+                  <h3 class="section-title">Transações Recentes</h3>
+                  <a href="#" class="view-all" data-section="financeiro-entradas">Ver todas</a>
+                </div>
+                <div id="recent-transactions-list">
+                  <!-- Transações recentes serão carregadas aqui -->
+                  <p style="text-align: center; padding: 1rem; color: var(--text-secondary);">Nenhuma transação recente.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="financeiro-entradas" class="content-section">
+            <h1 class="page-title">
+              <i class="fa-solid fa-arrow-up"></i>
+              Gestão de Entradas
+            </h1>
 
             <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04); margin-bottom: 1.5rem;">
-              <form id="transacao-form">
+              <form id="entrada-form">
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;">
                   <div class="form-group">
-                    <label class="form-label">Descrição</label>
-                    <input type="text" id="transacao-descricao" class="form-control" required>
+                    <label class="form-label">Descrição de Pagamento</label>
+                    <input type="text" id="entrada-descricao" class="form-control" required>
                   </div>
                   <div class="form-group">
                     <label class="form-label">Valor</label>
-                    <input type="number" id="transacao-valor" class="form-control" step="0.01" required>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Tipo</label>
-                    <select id="transacao-tipo" class="form-control" required>
-                      <option value="entrada">Entrada</option>
-                      <option value="saida">Saída</option>
-                    </select>
+                    <input type="number" id="entrada-valor" class="form-control" step="0.01" required>
                   </div>
                   <div class="form-group">
                     <label class="form-label">Categoria</label>
-                    <input type="text" id="transacao-categoria" class="form-control">
+                    <input type="text" id="entrada-categoria" class="form-control" placeholder="Ex: Matrícula, Renovação">
                   </div>
                   <div class="form-group">
                     <label class="form-label">Data</label>
-                    <input type="date" id="transacao-data" class="form-control" required>
+                    <input type="date" id="entrada-data" class="form-control" required>
                   </div>
                   <div class="form-group">
                     <label class="form-label">Cliente (CPF do Aluno)</label>
-                    <input type="text" id="transacao-cliente-cpf" class="form-control" placeholder="Opcional">
+                    <select id="entrada-cliente-cpf" class="form-control">
+                      <option value="">Selecione um aluno (opcional)</option>
+                      <!-- Opções de alunos serão carregadas aqui via JS -->
+                    </select>
                   </div>
                 </div>
                 <div class="form-group">
                   <button type="submit" class="btn btn-primary">
-                    <i class="fa-solid fa-plus"></i> Adicionar Transação
+                    <i class="fa-solid fa-plus"></i> Registrar Entrada
                   </button>
                 </div>
               </form>
@@ -813,34 +862,104 @@
 
             <div style="background: white; border-radius: 12px; padding: 0; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);">
               <div style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; border-bottom: 1px solid #f3f4f6;">
-                <h3 style="margin: 0; font-size: 1.2rem;">Transações Recentes</h3>
+                <h3 style="margin: 0; font-size: 1.2rem;">Entradas Recentes</h3>
                 <div class="filter-bar">
-                  <input type="date" id="transacaoDateStart" class="form-control">
-                  <input type="date" id="transacaoDateEnd" class="form-control">
-                  <select id="transacaoTipoFilter" class="form-control">
-                    <option value="todos">Todos Tipos</option>
-                    <option value="entrada">Entrada</option>
-                    <option value="saida">Saída</option>
-                  </select>
+                  <input type="date" id="entradaDateStart" class="form-control">
+                  <input type="date" id="entradaDateEnd" class="form-control">
                 </div>
               </div>
               
-              <table class="table" id="transacoesTable">
+              <table class="table" id="entradasTable">
                 <thead>
                   <tr>
                     <th>Data</th>
                     <th>Descrição</th>
                     <th>Categoria</th>
                     <th>Cliente</th>
-                    <th>Tipo</th>
                     <th>Valor</th>
                     <th>Ações</th>
                   </tr>
                 </thead>
-                <tbody id="tabela-transacoes">
+                <tbody id="tabela-entradas">
                   <tr>
-                    <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
-                      Nenhuma transação registrada.
+                    <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                      Nenhuma entrada registrada.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="financeiro-saidas" class="content-section">
+            <h1 class="page-title">
+              <i class="fa-solid fa-arrow-down"></i>
+              Gestão de Saídas
+            </h1>
+
+            <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04); margin-bottom: 1.5rem;">
+              <form id="saida-form">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;">
+                  <div class="form-group">
+                    <label class="form-label">Descrição</label>
+                    <input type="text" id="saida-descricao" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Valor</label>
+                    <input type="number" id="saida-valor" class="form-control" step="0.01" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Categoria</label>
+                    <select id="saida-categoria" class="form-control" required>
+                      <option value="">Selecione a Categoria</option>
+                      <option value="Funcionários">Funcionários</option>
+                      <option value="Fornecedores">Fornecedores</option>
+                      <option value="Manutenção de Veículos">Manutenção de Veículos</option>
+                      <option value="Impostos">Impostos</option>
+                      <option value="Outros">Outros</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Data</label>
+                    <input type="date" id="saida-data" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Nome (Recebedor)</label>
+                    <input type="text" id="saida-nome-recebedor" class="form-control" placeholder="Opcional">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-plus"></i> Registrar Saída
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div style="background: white; border-radius: 12px; padding: 0; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);">
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; border-bottom: 1px solid #f3f4f6;">
+                <h3 style="margin: 0; font-size: 1.2rem;">Saídas Recentes</h3>
+                <div class="filter-bar">
+                  <input type="date" id="saidaDateStart" class="form-control">
+                  <input type="date" id="saidaDateEnd" class="form-control">
+                </div>
+              </div>
+              
+              <table class="table" id="saidasTable">
+                <thead>
+                  <tr>
+                    <th>Data</th>
+                    <th>Descrição</th>
+                    <th>Categoria</th>
+                    <th>Recebedor</th>
+                    <th>Valor</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="tabela-saidas">
+                  <tr>
+                    <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                      Nenhuma saída registrada.
                     </td>
                   </tr>
                 </tbody>
@@ -1033,16 +1152,15 @@
     window.SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpbXlxcXVudmN3b3F6cXdxcHZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc1MDk0MzQsImV4cCI6MjA3MzA4NTQzNH0.O5FbB0ygMAMNAnxGEs5qAvRF1qSA2qYLbSV8ozlsVBs"; // Substitua pela sua Anon Key do Supabase
     // --- FIM DA SEÇÃO DE CHAVES ---
 
-    // Define a data de matrícula padrão para hoje no formulário de cadastro
+    // Define a data padrão para hoje nos formulários
     document.addEventListener('DOMContentLoaded', () => {
-      const dataMatriculaInput = document.getElementById('data-cadastro');
-      if (dataMatriculaInput) {
-        dataMatriculaInput.valueAsDate = new Date();
-      }
-      const transacaoDataInput = document.getElementById('transacao-data');
-      if (transacaoDataInput) {
-        transacaoDataInput.valueAsDate = new Date();
-      }
+      const today = new Date().toISOString().slice(0,10);
+      const dataCadastroInput = document.getElementById('data-cadastro');
+      if (dataCadastroInput) dataCadastroInput.value = today;
+      const entradaDataInput = document.getElementById('entrada-data');
+      if (entradaDataInput) entradaDataInput.value = today;
+      const saidaDataInput = document.getElementById('saida-data');
+      if (saidaDataInput) saidaDataInput.value = today;
     });
   </script>
   
