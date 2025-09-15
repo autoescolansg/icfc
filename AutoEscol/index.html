@@ -419,23 +419,12 @@
     .trend-indicator i { font-size: 0.75rem; }
 
     /* Estilos para sub-navegação (opcional, se quiser botões dentro da aba Financeiro) */
-    .sub-nav {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 1.5rem;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 10px;
+    .sub-nav-link {
+      padding-left: 3rem !important; /* Ajuste para sub-itens */
+      font-size: 0.95rem;
     }
-    .sub-nav .btn {
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      background: #f0f0f0;
-      color: var(--text-primary);
-      text-decoration: none;
-    }
-    .sub-nav .btn.active {
-      background: var(--primary);
-      color: white;
+    .sub-nav-link.active {
+      background: rgba(255, 255, 255, 0.08) !important; /* Um pouco mais claro que o pai */
     }
   </style>
 </head>
@@ -506,15 +495,21 @@
             </a>
           </div>
           <div class="nav-item">
-            <a href="#" data-section="financeiro-entradas" class="nav-link sub-nav-link" style="padding-left: 3rem;">
+            <a href="#" data-section="financeiro-entradas" class="nav-link sub-nav-link">
               <i class="fa-solid fa-arrow-up"></i>
               <span>Entradas</span>
             </a>
           </div>
           <div class="nav-item">
-            <a href="#" data-section="financeiro-saidas" class="nav-link sub-nav-link" style="padding-left: 3rem;">
+            <a href="#" data-section="financeiro-saidas" class="nav-link sub-nav-link">
               <i class="fa-solid fa-arrow-down"></i>
               <span>Saídas</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" data-section="relatorios-financeiros" class="nav-link">
+              <i class="fa-solid fa-chart-line"></i>
+              <span>Relatórios</span>
             </a>
           </div>
           <div class="nav-item">
@@ -795,7 +790,7 @@
 
             <div style="text-align: right; margin-top: 1.5rem;">
               <button id="btnRefreshFinanceiro" class="btn btn-outline">
-                <i class="fa-solid fa-sync-alt"></i> Atualizar Financeiro
+                <i class="fa-solid fa-sync-alt"></i> Atualizar Dashboard
               </button>
             </div>
 
@@ -827,7 +822,7 @@
 
             <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04); margin-bottom: 1.5rem;">
               <form id="entrada-form">
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
                   <div class="form-group">
                     <label class="form-label">Descrição de Pagamento</label>
                     <input type="text" id="entrada-descricao" class="form-control" required>
@@ -899,7 +894,7 @@
 
             <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04); margin-bottom: 1.5rem;">
               <form id="saida-form">
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
                   <div class="form-group">
                     <label class="form-label">Descrição</label>
                     <input type="text" id="saida-descricao" class="form-control" required>
@@ -922,6 +917,30 @@
                   <div class="form-group">
                     <label class="form-label">Data</label>
                     <input type="date" id="saida-data" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Conta</label>
+                    <select id="saida-conta" class="form-control" required>
+                      <option value="">Selecione a Conta</option>
+                      <option value="Caixa">Caixa</option>
+                      <option value="Conta Corrente">Conta Corrente</option>
+                      <option value="Poupança">Poupança</option>
+                      <option value="Cartão de Crédito">Cartão de Crédito</option>
+                      <option value="Outros">Outros</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Forma de Pagamento</label>
+                    <select id="saida-forma-pagamento" class="form-control" required>
+                      <option value="">Selecione a Forma</option>
+                      <option value="Dinheiro">Dinheiro</option>
+                      <option value="Pix">Pix</option>
+                      <option value="Transferência">Transferência</option>
+                      <option value="Cartão de Débito">Cartão de Débito</option>
+                      <option value="Cartão de Crédito">Cartão de Crédito</option>
+                      <option value="Cheque">Cheque</option>
+                      <option value="Outros">Outros</option>
+                    </select>
                   </div>
                   <div class="form-group">
                     <label class="form-label">Nome (Recebedor)</label>
@@ -951,6 +970,8 @@
                     <th>Data</th>
                     <th>Descrição</th>
                     <th>Categoria</th>
+                    <th>Conta</th>
+                    <th>Forma Pgto.</th>
                     <th>Recebedor</th>
                     <th>Valor</th>
                     <th>Ações</th>
@@ -958,12 +979,62 @@
                 </thead>
                 <tbody id="tabela-saidas">
                   <tr>
-                    <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                    <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
                       Nenhuma saída registrada.
                     </td>
                   </tr>
                 </tbody>
               </table>
+            </div>
+          </section>
+
+          <section id="relatorios-financeiros" class="content-section">
+            <h1 class="page-title">
+              <i class="fa-solid fa-chart-line"></i>
+              Relatórios Financeiros
+            </h1>
+
+            <div class="stats-grid">
+              <div class="stat-card">
+                <h3 class="stat-title">Relatório Mensal</h3>
+                <div class="form-group">
+                  <label class="form-label">Mês/Ano</label>
+                  <input type="month" id="relatorio-mensal-mesano" class="form-control">
+                </div>
+                <button id="btnGerarRelatorioMensal" class="btn btn-primary" style="width: 100%;">Gerar Relatório</button>
+              </div>
+
+              <div class="stat-card">
+                <h3 class="stat-title">Relatório por Período</h3>
+                <div class="form-group">
+                  <label class="form-label">Data Início</label>
+                  <input type="date" id="relatorio-periodo-inicio" class="form-control">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Data Fim</label>
+                  <input type="date" id="relatorio-periodo-fim" class="form-control">
+                </div>
+                <button id="btnGerarRelatorioPeriodo" class="btn btn-primary" style="width: 100%;">Gerar Relatório</button>
+              </div>
+
+              <div class="stat-card">
+                <h3 class="stat-title">Relatório de Clientes</h3>
+                <div class="form-group">
+                  <label class="form-label">Cliente (CPF)</label>
+                  <select id="relatorio-cliente-cpf" class="form-control">
+                    <option value="">Todos os Clientes</option>
+                    <!-- Opções de alunos serão carregadas aqui via JS -->
+                  </select>
+                </div>
+                <button id="btnGerarRelatorioCliente" class="btn btn-primary" style="width: 100%;">Gerar Relatório</button>
+              </div>
+            </div>
+
+            <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04); margin-top: 1.5rem;">
+              <h3 style="margin-bottom: 1rem;">Resultados do Relatório</h3>
+              <div id="relatorio-resultados">
+                <p style="text-align: center; color: var(--text-secondary);">Selecione um tipo de relatório e clique em "Gerar Relatório".</p>
+              </div>
             </div>
           </section>
 
@@ -1035,6 +1106,37 @@
                   </tr>
                 </tbody>
               </table>
+            </div>
+
+            <h2 class="page-title" style="margin-top: 2rem;">
+              <i class="fa-solid fa-handshake"></i>
+              Configurações de Vendedores
+            </h2>
+            <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);">
+              <form id="seller-cfg-form">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;">
+                  <div class="form-group">
+                    <label class="form-label">Vendedor</label>
+                    <select id="cfgVend" class="form-control">
+                      <option value="Ewerton">Ewerton</option>
+                      <option value="Darlan">Darlan</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Meta de Alunos</label>
+                    <input type="number" id="cfgMeta" class="form-control" value="0">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Comissão (%)</label>
+                    <input type="number" id="cfgComissao" class="form-control" step="0.01" value="0">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <button type="submit" id="btnSaveSellerCfg" class="btn btn-primary">
+                    <i class="fa-solid fa-save"></i> Salvar Configuração do Vendedor
+                  </button>
+                </div>
+              </form>
             </div>
           </section>
 
@@ -1161,6 +1263,8 @@
       if (entradaDataInput) entradaDataInput.value = today;
       const saidaDataInput = document.getElementById('saida-data');
       if (saidaDataInput) saidaDataInput.value = today;
+      const relatorioMensalMesAno = document.getElementById('relatorio-mensal-mesano');
+      if (relatorioMensalMesAno) relatorioMensalMesAno.value = new Date().toISOString().slice(0,7); // YYYY-MM
     });
   </script>
   
