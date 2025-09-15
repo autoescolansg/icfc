@@ -1,14 +1,25 @@
-
 #app.theme-deepseek, #app.theme-deepseek *, #app.theme-deepseek *::before, #app.theme-deepseek *::after { box-sizing: border-box; }
 #app.theme-deepseek .section{ display:none } #app.theme-deepseek .section.active{ display:block; width:100% }
+
+/* Definir uma variável para a margem direita do conteúdo */
+#app.theme-deepseek {
+  --content-margin-right: 1rem; /* 16px */
+}
+
 #app.theme-deepseek .content, #app.theme-deepseek .main, #app.theme-deepseek .content-wrapper, #app.theme-deepseek .dashboard-content{
-  margin-left: var(--sidebar-w, 280px); margin-right:16px; width: calc(100% - var(--sidebar-w, 280px) - 16px); max-width:none;
+  margin-left: var(--sidebar-w, 280px);
+  margin-right: var(--content-margin-right);
+  width: calc(100% - var(--sidebar-w, 280px) - var(--content-margin-right));
+  /* max-width:none; REMOVIDO para permitir que icfc-section-widths.css defina max-width */
 }
 #app.theme-deepseek .container, #app.theme-deepseek .container-fluid, #app.theme-deepseek .wrapper{ width:100%; max-width:none; padding:0 }
-#app.theme-deepseek .row{ display:flex; flex-wrap:wrap; gap:12px; margin:0; width:100% }
-#app.theme-deepseek [class*="col-"]{ flex:1 1 280px; max-width:100% }
+#app.theme-deepseek .row{ display:flex; flex-wrap:wrap; gap:0.75rem; margin:0; width:100% } /* Usar rem */
+#app.theme-deepseek [class*="col-"]{ flex:1 1 17.5rem; max-width:100% } /* Usar rem (280px) */
+
 @media (max-width: 1024px){
   #app.theme-deepseek .content, #app.theme-deepseek .main, #app.theme-deepseek .content-wrapper, #app.theme-deepseek .dashboard-content{
-    margin-left: 16px; width: calc(100% - 32px);
+    margin-left: 1rem; /* Usar rem (16px) */
+    margin-right: 1rem; /* Usar rem (16px) */
+    width: calc(100% - 2rem); /* Usar rem (32px) */
   }
 }
