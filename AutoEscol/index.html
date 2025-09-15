@@ -629,6 +629,9 @@
             <li class="nav-item" role="presentation">
               <button class="nav-link" id="clientes-tab" data-bs-toggle="tab" data-bs-target="#relatorio-clientes-pane" type="button" role="tab" aria-controls="relatorio-clientes-pane" aria-selected="false">Clientes</button>
             </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="vendedor-tab" data-bs-toggle="tab" data-bs-target="#relatorio-vendedor-pane" type="button" role="tab" aria-controls="relatorio-vendedor-pane" aria-selected="false">Vendedor</button>
+            </li>
           </ul>
           <div class="tab-content" id="relatorioTabsContent">
             <div class="tab-pane fade show active" id="relatorio-mensal-pane" role="tabpanel" aria-labelledby="mensal-tab">
@@ -665,6 +668,28 @@
                   </select>
                 </div>
                 <button id="btnGerarRelatorioCliente" class="btn btn-primary w-100">Gerar Relatório</button>
+              </div>
+            </div>
+            <!-- NOVO: Relatório por Vendedor -->
+            <div class="tab-pane fade" id="relatorio-vendedor-pane" role="tabpanel" aria-labelledby="vendedor-tab">
+              <div class="card">
+                <h3 class="card-title-text">Relatório por Vendedor</h3>
+                <div class="form-group">
+                  <label class="form-label">Vendedor</label>
+                  <select id="relatorio-vendedor-nome" class="form-control">
+                    <option value="">Selecione um Vendedor</option>
+                    <!-- Opções serão populadas via JS -->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Data Início</label>
+                  <input type="date" id="relatorio-vendedor-inicio" class="form-control">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Data Fim</label>
+                  <input type="date" id="relatorio-vendedor-fim" class="form-control">
+                </div>
+                <button id="btnGerarRelatorioVendedor" class="btn btn-primary w-100">Gerar Relatório</button>
               </div>
             </div>
           </div>
