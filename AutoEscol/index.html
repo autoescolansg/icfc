@@ -44,6 +44,7 @@
       color: var(--text-primary);
       margin: 0;
       min-height: 100vh;
+      scroll-behavior: smooth; /* Scroll suave */
     }
 
     .app-container {
@@ -51,136 +52,7 @@
       min-height: 100vh;
     }
 
-    .sidebar {
-      width: 280px;
-      background: var(--dark-bg);
-      color: white;
-      position: fixed;
-      height: 100vh;
-      left: 0;
-      top: 0;
-      z-index: 1000;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-      overflow-y: auto;
-    }
-
-    .sidebar-header {
-      padding: 1.5rem 1rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .sidebar-brand {
-      font-weight: 700;
-      font-size: 1.5rem;
-      color: white;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .sidebar-brand i {
-      color: var(--primary);
-      font-size: 1.8rem;
-    }
-
-    .sidebar-nav {
-      padding: 1rem 0;
-      height: calc(100vh - 100px);
-      overflow-y: auto;
-    }
-
-    .nav-item {
-      margin-bottom: 0.3rem;
-    }
-
-    .nav-link {
-      color: rgba(255, 255, 255, 0.8);
-      padding: 0.8rem 1.5rem;
-      border-left: 3px solid transparent;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    .nav-link:hover, .nav-link.active {
-      background: rgba(255, 255, 255, 0.05);
-      color: white;
-      border-left-color: var(--primary);
-    }
-
-    .nav-link i {
-      font-size: 1.2rem;
-      width: 24px;
-    }
-
-    .main-content {
-      flex: 1;
-      margin-left: 280px;
-    }
-
-    .top-header {
-      background: white;
-      padding: 1rem 2rem;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .search-bar {
-      width: 300px;
-      position: relative;
-    }
-
-    .search-bar input {
-      padding-left: 40px;
-      border-radius: 50px;
-      border: 1px solid var(--border);
-    }
-
-    .search-bar i {
-      position: absolute;
-      left: 15px;
-      top: 10px;
-      color: var(--text-secondary);
-    }
-
-    .user-menu {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .user-info {
-      text-align: right;
-    }
-
-    .user-name {
-      font-weight: 600;
-      margin-bottom: 0;
-    }
-
-    .user-role {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-    }
-
-    .user-avatar {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      background: var(--primary);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      font-size: 1.2rem;
-    }
+    /* Sidebar e Header já serão ajustados nos CSSs específicos */
 
     .dashboard-content {
       padding: 2rem;
@@ -207,10 +79,10 @@
     }
 
     .stat-card {
-      background: white;
+      background: var(--card-bg, white); /* Usar variável para tema */
       border-radius: 12px;
       padding: 1.5rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+      box-shadow: var(--card-shadow, 0 4px 6px rgba(0, 0, 0, 0.04));
     }
 
     .stat-header {
@@ -277,6 +149,13 @@
       border-radius: 8px;
       border: 1px solid var(--border);
       width: 100%;
+      background-color: var(--input-bg, white); /* Para tema */
+      color: var(--text-primary); /* Para tema */
+    }
+    .form-control:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
 
     .btn {
@@ -313,7 +192,7 @@
 
     .table td {
       padding: 1rem;
-      border-bottom: 1px solid #f3f4f6;
+      border-bottom: 1px solid var(--border-light, #f3f4f6); /* Para tema */
     }
 
     .login-container {
@@ -418,13 +297,181 @@
     .trend-indicator.negative { color: var(--danger); }
     .trend-indicator i { font-size: 0.75rem; }
 
-    /* Estilos para sub-navegação (opcional, se quiser botões dentro da aba Financeiro) */
+    /* Estilos para sub-navegação */
     .sub-nav-link {
       padding-left: 3rem !important; /* Ajuste para sub-itens */
       font-size: 0.95rem;
     }
     .sub-nav-link.active {
       background: rgba(255, 255, 255, 0.08) !important; /* Um pouco mais claro que o pai */
+    }
+
+    /* Estilos para abas (tabs) */
+    .nav-tabs {
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+    }
+    .nav-tabs .nav-link {
+      border: 1px solid transparent;
+      border-top-left-radius: 0.25rem;
+      border-top-right-radius: 0.25rem;
+      padding: 0.5rem 1rem;
+      color: var(--text-secondary);
+      background-color: transparent;
+      margin-bottom: -1px;
+      cursor: pointer;
+    }
+    .nav-tabs .nav-link:hover {
+      border-color: var(--border) var(--border) var(--border-light);
+    }
+    .nav-tabs .nav-link.active {
+      color: var(--primary);
+      background-color: var(--card-bg, white);
+      border-color: var(--border) var(--border) var(--card-bg, white);
+      border-bottom-color: var(--card-bg, white);
+    }
+    .tab-content > .tab-pane {
+      display: none;
+    }
+    .tab-content > .active {
+      display: block;
+    }
+
+    /* Estilos para validação de formulário */
+    .form-control.is-invalid {
+      border-color: var(--danger);
+      padding-right: calc(1.5em + 0.75rem);
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right calc(0.375em + 0.1875rem) center;
+      background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    }
+    .form-control.is-valid {
+      border-color: var(--success);
+      padding-right: calc(1.5em + 0.75rem);
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right calc(0.375em + 0.1875rem) center;
+      background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    }
+    .invalid-feedback {
+      color: var(--danger);
+      font-size: 0.875em;
+      margin-top: 0.25rem;
+    }
+
+    /* Estilo para o botão de alternar tema */
+    #btnTheme {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      margin-left: 1rem;
+    }
+    #btnTheme:hover {
+      color: var(--primary);
+    }
+
+    /* Responsividade da Sidebar */
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 80px; /* Sidebar colapsada */
+        overflow-x: hidden;
+      }
+      .sidebar-brand span, .sidebar .nav-link span {
+        display: none; /* Esconde texto */
+      }
+      .sidebar-brand i {
+        margin: 0 auto; /* Centraliza ícone */
+      }
+      .sidebar .nav-link {
+        justify-content: center; /* Centraliza ícone */
+        padding: 0.8rem 0;
+      }
+      .sidebar .nav-link i {
+        width: auto;
+      }
+      .main-content {
+        margin-left: 80px;
+      }
+      .top-header {
+        margin-left: 80px;
+      }
+      #btnToggleSidebar {
+        display: block; /* Mostra o botão de toggle */
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed;
+        left: -80px; /* Esconde completamente */
+        transition: left 0.3s ease-in-out;
+      }
+      .sidebar.active {
+        left: 0; /* Mostra quando ativo */
+      }
+      .main-content {
+        margin-left: 0; /* Conteúdo ocupa toda a largura */
+      }
+      .top-header {
+        margin-left: 0;
+      }
+      .top-header .search-bar {
+        width: 100%;
+        order: 2; /* Move search bar para baixo */
+        margin-top: 1rem;
+      }
+      .top-header .user-menu {
+        order: 1;
+      }
+      .top-header {
+        flex-wrap: wrap;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr; /* Uma coluna em telas muito pequenas */
+      }
+    }
+
+    /* Estilos para o botão de toggle da sidebar (hambúrguer) */
+    #btnToggleSidebar {
+      display: none; /* Escondido por padrão em telas grandes */
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 1.5rem;
+      cursor: pointer;
+      margin-right: 1rem;
+    }
+    @media (max-width: 992px) {
+      #btnToggleSidebar {
+        display: block;
+      }
+    }
+    @media (max-width: 768px) {
+      #btnToggleSidebar {
+        position: absolute;
+        left: 1rem;
+        top: 1rem;
+        z-index: 1001;
+        color: white; /* Para contrastar com o fundo do header */
+      }
+      .top-header {
+        padding-left: 4rem; /* Espaço para o botão */
+      }
+    }
+
+    /* Estilo para inputs de data */
+    input[type="date"] {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236b7280' class='bi bi-calendar' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      background-size: 1rem;
+      padding-right: 2.5rem;
     }
   </style>
 </head>
@@ -461,12 +508,13 @@
   <!-- Main Application -->
   <div id="app" style="display:none">
     <div class="app-container">
-      <div class="sidebar">
+      <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
           <a href="#" class="sidebar-brand">
             <i class="fa-solid fa-car-side"></i>
             <span>Autoescola NSG</span>
           </a>
+          <button id="btnToggleSidebar" class="d-lg-none"><i class="fas fa-times"></i></button>
         </div>
         
         <div class="sidebar-nav sidebar-menu">
@@ -528,7 +576,8 @@
       </div>
 
       <div class="main-content">
-        <header class="top-header">
+        <header class="top-header" id="top-header">
+          <button id="btnToggleSidebar" class="d-lg-none"><i class="fas fa-bars"></i></button>
           <div class="search-bar">
             <i class="fa-solid fa-search"></i>
             <input type="text" class="form-control" placeholder="Pesquisar..." id="headerSearchInput">
@@ -540,6 +589,7 @@
               <p class="user-role">Administrador</p>
             </div>
             <div class="user-avatar" id="userAvatar">U</div>
+            <button id="btnTheme" title="Alternar Tema"><i class="fas fa-moon"></i></button>
           </div>
         </header>
 
@@ -639,22 +689,25 @@
               <strong>Importante:</strong> Certifique-se de que a tabela 'alunos' existe no Supabase com as colunas corretas (id, cpf, data JSONB, updated_at).
             </div>
             
-            <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);">
-              <form id="cadastro-form">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div style="background: var(--card-bg, white); border-radius: 12px; padding: 1.5rem; box-shadow: var(--card-shadow, 0 4px 6px rgba(0, 0, 0, 0.04));">
+              <form id="cadastro-form" novalidate>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
                   <div class="form-group">
                     <label class="form-label">Nome Completo</label>
                     <input type="text" id="nome" class="form-control" placeholder="Nome completo do aluno" required>
+                    <div class="invalid-feedback">Por favor, insira o nome completo.</div>
                   </div>
                   
                   <div class="form-group">
                     <label class="form-label">CPF</label>
-                    <input type="text" id="cpf" class="form-control" placeholder="000.000.000-00" required>
+                    <input type="text" id="cpf" class="form-control" placeholder="000.000.000-00" required pattern="\d{3}\.?\d{3}\.?\d{3}-?\d{2}">
+                    <div class="invalid-feedback">Por favor, insira um CPF válido (11 dígitos).</div>
                   </div>
                   
                   <div class="form-group">
                     <label class="form-label">Telefone</label>
-                    <input type="text" id="telefone" class="form-control" placeholder="(00) 00000-0000" required>
+                    <input type="text" id="telefone" class="form-control" placeholder="(00) 00000-0000" required pattern="\$\d{2}\$\s\d{4,5}-\d{4}">
+                    <div class="invalid-feedback">Por favor, insira um telefone válido.</div>
                   </div>
                   
                   <div class="form-group">
@@ -665,11 +718,13 @@
                       <option value="B">B - Carro</option>
                       <option value="AB">AB - Carro e Motocicleta</option>
                     </select>
+                    <div class="invalid-feedback">Por favor, selecione uma categoria.</div>
                   </div>
                   
                   <div class="form-group">
                     <label class="form-label">Data de Matrícula</label>
                     <input type="date" id="data-cadastro" class="form-control" required>
+                    <div class="invalid-feedback">Por favor, insira a data de matrícula.</div>
                   </div>
                   
                   <div class="form-group">
@@ -679,6 +734,7 @@
                       <option value="Ewerton">Ewerton</option>
                       <option value="Darlan">Darlan</option>
                     </select>
+                    <div class="invalid-feedback">Por favor, selecione um vendedor.</div>
                   </div>
                 </div>
                 
@@ -697,53 +753,52 @@
               Lista de Alunos
             </h1>
             
-            <div style="background: white; border-radius: 12px; padding: 0; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);">
-              <div style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; border-bottom: 1px solid #f3f4f6;">
+            <div style="background: var(--card-bg, white); border-radius: 12px; padding: 0; box-shadow: var(--card-shadow, 0 4px 6px rgba(0, 0, 0, 0.04));">
+              <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 1.5rem; border-bottom: 1px solid var(--border-light, #f3f4f6);">
                 <h3 style="margin: 0; font-size: 1.2rem;">Alunos Cadastrados</h3>
-                <div class="search-bar">
-                  <i class="fa-solid fa-search"></i>
-                  <input type="text" class="form-control" placeholder="Buscar aluno..." id="alunosSearchInput">
-                </div>
-                <div class="filter-bar">
-                  <select id="sellerFilter" class="form-control">
+                <div class="filter-bar" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 1rem;">
+                  <input type="text" class="form-control" placeholder="Buscar aluno..." id="alunosSearchInput" style="flex: 1;">
+                  <select id="sellerFilter" class="form-control" style="flex: 0 0 150px;">
                     <option value="todos">Todos Vendedores</option>
                     <option value="Ewerton">Ewerton</option>
                     <option value="Darlan">Darlan</option>
                   </select>
-                  <select id="catFilter" class="form-control">
+                  <select id="catFilter" class="form-control" style="flex: 0 0 120px;">
                     <option value="todas">Todas Categorias</option>
                     <option value="A">A</option>
                     <option value="B">B</option>
                     <option value="AB">AB</option>
                   </select>
-                  <input type="date" id="dateStart" class="form-control">
-                  <input type="date" id="dateEnd" class="form-control">
+                  <input type="date" id="dateStart" class="form-control" style="flex: 0 0 150px;">
+                  <input type="date" id="dateEnd" class="form-control" style="flex: 0 0 150px;">
                   <button id="btnExport" class="btn btn-outline"><i class="fa-solid fa-file-export"></i> JSON</button>
                   <button id="btnExportCSV" class="btn btn-outline"><i class="fa-solid fa-file-csv"></i> CSV</button>
                   <button id="btnPDF" class="btn btn-outline"><i class="fa-solid fa-file-pdf"></i> PDF</button>
                 </div>
               </div>
               
-              <table class="table" id="alunosTable">
-                <thead>
-                  <tr>
-                    <th>Nome</th>
-                    <th>CPF</th>
-                    <th>Telefone</th>
-                    <th>Data Matrícula</th>
-                    <th>Vendedor</th>
-                    <th>Status/Etapas</th>
-                    <th>Ações</th>
-                  </tr>
-                </thead>
-                <tbody id="tabela-alunos">
-                  <tr>
-                    <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
-                      Carregando alunos...
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div style="overflow-x: auto;">
+                <table class="table" id="alunosTable">
+                  <thead>
+                    <tr>
+                      <th>Nome</th>
+                      <th>CPF</th>
+                      <th>Telefone</th>
+                      <th>Data Matrícula</th>
+                      <th>Vendedor</th>
+                      <th>Status/Etapas</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabela-alunos">
+                    <tr>
+                      <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                        Carregando alunos...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </section>
 
@@ -820,16 +875,18 @@
               Gestão de Entradas
             </h1>
 
-            <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04); margin-bottom: 1.5rem;">
-              <form id="entrada-form">
+            <div style="background: var(--card-bg, white); border-radius: 12px; padding: 1.5rem; box-shadow: var(--card-shadow, 0 4px 6px rgba(0, 0, 0, 0.04)); margin-bottom: 1.5rem;">
+              <form id="entrada-form" novalidate>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
                   <div class="form-group">
                     <label class="form-label">Descrição de Pagamento</label>
                     <input type="text" id="entrada-descricao" class="form-control" required>
+                    <div class="invalid-feedback">Por favor, insira uma descrição.</div>
                   </div>
                   <div class="form-group">
                     <label class="form-label">Valor</label>
-                    <input type="number" id="entrada-valor" class="form-control" step="0.01" required>
+                    <input type="number" id="entrada-valor" class="form-control" step="0.01" required min="0.01">
+                    <div class="invalid-feedback">Por favor, insira um valor válido.</div>
                   </div>
                   <div class="form-group">
                     <label class="form-label">Categoria</label>
@@ -838,6 +895,7 @@
                   <div class="form-group">
                     <label class="form-label">Data</label>
                     <input type="date" id="entrada-data" class="form-control" required>
+                    <div class="invalid-feedback">Por favor, insira a data.</div>
                   </div>
                   <div class="form-group">
                     <label class="form-label">Cliente (CPF do Aluno)</label>
@@ -855,34 +913,36 @@
               </form>
             </div>
 
-            <div style="background: white; border-radius: 12px; padding: 0; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);">
-              <div style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; border-bottom: 1px solid #f3f4f6;">
+            <div style="background: var(--card-bg, white); border-radius: 12px; padding: 0; box-shadow: var(--card-shadow, 0 4px 6px rgba(0, 0, 0, 0.04));">
+              <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 1.5rem; border-bottom: 1px solid var(--border-light, #f3f4f6);">
                 <h3 style="margin: 0; font-size: 1.2rem;">Entradas Recentes</h3>
-                <div class="filter-bar">
-                  <input type="date" id="entradaDateStart" class="form-control">
-                  <input type="date" id="entradaDateEnd" class="form-control">
+                <div class="filter-bar" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 1rem;">
+                  <input type="date" id="entradaDateStart" class="form-control" style="flex: 0 0 150px;">
+                  <input type="date" id="entradaDateEnd" class="form-control" style="flex: 0 0 150px;">
                 </div>
               </div>
               
-              <table class="table" id="entradasTable">
-                <thead>
-                  <tr>
-                    <th>Data</th>
-                    <th>Descrição</th>
-                    <th>Categoria</th>
-                    <th>Cliente</th>
-                    <th>Valor</th>
-                    <th>Ações</th>
-                  </tr>
-                </thead>
-                <tbody id="tabela-entradas">
-                  <tr>
-                    <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
-                      Nenhuma entrada registrada.
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div style="overflow-x: auto;">
+                <table class="table" id="entradasTable">
+                  <thead>
+                    <tr>
+                      <th>Data</th>
+                      <th>Descrição</th>
+                      <th>Categoria</th>
+                      <th>Cliente</th>
+                      <th>Valor</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabela-entradas">
+                    <tr>
+                      <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                        Nenhuma entrada registrada.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </section>
 
@@ -892,16 +952,18 @@
               Gestão de Saídas
             </h1>
 
-            <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04); margin-bottom: 1.5rem;">
-              <form id="saida-form">
+            <div style="background: var(--card-bg, white); border-radius: 12px; padding: 1.5rem; box-shadow: var(--card-shadow, 0 4px 6px rgba(0, 0, 0, 0.04)); margin-bottom: 1.5rem;">
+              <form id="saida-form" novalidate>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
                   <div class="form-group">
                     <label class="form-label">Descrição</label>
                     <input type="text" id="saida-descricao" class="form-control" required>
+                    <div class="invalid-feedback">Por favor, insira uma descrição.</div>
                   </div>
                   <div class="form-group">
                     <label class="form-label">Valor</label>
-                    <input type="number" id="saida-valor" class="form-control" step="0.01" required>
+                    <input type="number" id="saida-valor" class="form-control" step="0.01" required min="0.01">
+                    <div class="invalid-feedback">Por favor, insira um valor válido.</div>
                   </div>
                   <div class="form-group">
                     <label class="form-label">Categoria</label>
@@ -913,10 +975,12 @@
                       <option value="Impostos">Impostos</option>
                       <option value="Outros">Outros</option>
                     </select>
+                    <div class="invalid-feedback">Por favor, selecione uma categoria.</div>
                   </div>
                   <div class="form-group">
                     <label class="form-label">Data</label>
                     <input type="date" id="saida-data" class="form-control" required>
+                    <div class="invalid-feedback">Por favor, insira a data.</div>
                   </div>
                   <div class="form-group">
                     <label class="form-label">Conta</label>
@@ -928,6 +992,7 @@
                       <option value="Cartão de Crédito">Cartão de Crédito</option>
                       <option value="Outros">Outros</option>
                     </select>
+                    <div class="invalid-feedback">Por favor, selecione uma conta.</div>
                   </div>
                   <div class="form-group">
                     <label class="form-label">Forma de Pagamento</label>
@@ -941,6 +1006,7 @@
                       <option value="Cheque">Cheque</option>
                       <option value="Outros">Outros</option>
                     </select>
+                    <div class="invalid-feedback">Por favor, selecione a forma de pagamento.</div>
                   </div>
                   <div class="form-group">
                     <label class="form-label">Nome (Recebedor)</label>
@@ -955,36 +1021,38 @@
               </form>
             </div>
 
-            <div style="background: white; border-radius: 12px; padding: 0; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);">
-              <div style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; border-bottom: 1px solid #f3f4f6;">
+            <div style="background: var(--card-bg, white); border-radius: 12px; padding: 0; box-shadow: var(--card-shadow, 0 4px 6px rgba(0, 0, 0, 0.04));">
+              <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 1.5rem; border-bottom: 1px solid var(--border-light, #f3f4f6);">
                 <h3 style="margin: 0; font-size: 1.2rem;">Saídas Recentes</h3>
-                <div class="filter-bar">
-                  <input type="date" id="saidaDateStart" class="form-control">
-                  <input type="date" id="saidaDateEnd" class="form-control">
+                <div class="filter-bar" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 1rem;">
+                  <input type="date" id="saidaDateStart" class="form-control" style="flex: 0 0 150px;">
+                  <input type="date" id="saidaDateEnd" class="form-control" style="flex: 0 0 150px;">
                 </div>
               </div>
               
-              <table class="table" id="saidasTable">
-                <thead>
-                  <tr>
-                    <th>Data</th>
-                    <th>Descrição</th>
-                    <th>Categoria</th>
-                    <th>Conta</th>
-                    <th>Forma Pgto.</th>
-                    <th>Recebedor</th>
-                    <th>Valor</th>
-                    <th>Ações</th>
-                  </tr>
-                </thead>
-                <tbody id="tabela-saidas">
-                  <tr>
-                    <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
-                      Nenhuma saída registrada.
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div style="overflow-x: auto;">
+                <table class="table" id="saidasTable">
+                  <thead>
+                    <tr>
+                      <th>Data</th>
+                      <th>Descrição</th>
+                      <th>Categoria</th>
+                      <th>Conta</th>
+                      <th>Forma Pgto.</th>
+                      <th>Recebedor</th>
+                      <th>Valor</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabela-saidas">
+                    <tr>
+                      <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                        Nenhuma saída registrada.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </section>
 
@@ -994,43 +1062,58 @@
               Relatórios Financeiros
             </h1>
 
-            <div class="stats-grid">
-              <div class="stat-card">
-                <h3 class="stat-title">Relatório Mensal</h3>
-                <div class="form-group">
-                  <label class="form-label">Mês/Ano</label>
-                  <input type="month" id="relatorio-mensal-mesano" class="form-control">
+            <ul class="nav nav-tabs" id="relatorioTabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="mensal-tab" data-bs-toggle="tab" data-bs-target="#relatorio-mensal-pane" type="button" role="tab" aria-controls="relatorio-mensal-pane" aria-selected="true">Mensal</button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="periodo-tab" data-bs-toggle="tab" data-bs-target="#relatorio-periodo-pane" type="button" role="tab" aria-controls="relatorio-periodo-pane" aria-selected="false">Por Período</button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="clientes-tab" data-bs-toggle="tab" data-bs-target="#relatorio-clientes-pane" type="button" role="tab" aria-controls="relatorio-clientes-pane" aria-selected="false">Clientes</button>
+              </li>
+            </ul>
+            <div class="tab-content" id="relatorioTabsContent">
+              <div class="tab-pane fade show active" id="relatorio-mensal-pane" role="tabpanel" aria-labelledby="mensal-tab">
+                <div class="stat-card">
+                  <h3 class="stat-title">Relatório Mensal</h3>
+                  <div class="form-group">
+                    <label class="form-label">Mês/Ano</label>
+                    <input type="month" id="relatorio-mensal-mesano" class="form-control">
+                  </div>
+                  <button id="btnGerarRelatorioMensal" class="btn btn-primary" style="width: 100%;">Gerar Relatório</button>
                 </div>
-                <button id="btnGerarRelatorioMensal" class="btn btn-primary" style="width: 100%;">Gerar Relatório</button>
               </div>
-
-              <div class="stat-card">
-                <h3 class="stat-title">Relatório por Período</h3>
-                <div class="form-group">
-                  <label class="form-label">Data Início</label>
-                  <input type="date" id="relatorio-periodo-inicio" class="form-control">
+              <div class="tab-pane fade" id="relatorio-periodo-pane" role="tabpanel" aria-labelledby="periodo-tab">
+                <div class="stat-card">
+                  <h3 class="stat-title">Relatório por Período</h3>
+                  <div class="form-group">
+                    <label class="form-label">Data Início</label>
+                    <input type="date" id="relatorio-periodo-inicio" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Data Fim</label>
+                    <input type="date" id="relatorio-periodo-fim" class="form-control">
+                  </div>
+                  <button id="btnGerarRelatorioPeriodo" class="btn btn-primary" style="width: 100%;">Gerar Relatório</button>
                 </div>
-                <div class="form-group">
-                  <label class="form-label">Data Fim</label>
-                  <input type="date" id="relatorio-periodo-fim" class="form-control">
-                </div>
-                <button id="btnGerarRelatorioPeriodo" class="btn btn-primary" style="width: 100%;">Gerar Relatório</button>
               </div>
-
-              <div class="stat-card">
-                <h3 class="stat-title">Relatório de Clientes</h3>
-                <div class="form-group">
-                  <label class="form-label">Cliente (CPF)</label>
-                  <select id="relatorio-cliente-cpf" class="form-control">
-                    <option value="">Todos os Clientes</option>
-                    <!-- Opções de alunos serão carregadas aqui via JS -->
-                  </select>
+              <div class="tab-pane fade" id="relatorio-clientes-pane" role="tabpanel" aria-labelledby="clientes-tab">
+                <div class="stat-card">
+                  <h3 class="stat-title">Relatório de Clientes</h3>
+                  <div class="form-group">
+                    <label class="form-label">Cliente (CPF)</label>
+                    <select id="relatorio-cliente-cpf" class="form-control">
+                      <option value="">Todos os Clientes</option>
+                      <!-- Opções de alunos serão carregadas aqui via JS -->
+                    </select>
+                  </div>
+                  <button id="btnGerarRelatorioCliente" class="btn btn-primary" style="width: 100%;">Gerar Relatório</button>
                 </div>
-                <button id="btnGerarRelatorioCliente" class="btn btn-primary" style="width: 100%;">Gerar Relatório</button>
               </div>
             </div>
 
-            <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04); margin-top: 1.5rem;">
+            <div style="background: var(--card-bg, white); border-radius: 12px; padding: 1.5rem; box-shadow: var(--card-shadow, 0 4px 6px rgba(0, 0, 0, 0.04)); margin-top: 1.5rem;">
               <h3 style="margin-bottom: 1rem;">Resultados do Relatório</h3>
               <div id="relatorio-resultados">
                 <p style="text-align: center; color: var(--text-secondary);">Selecione um tipo de relatório e clique em "Gerar Relatório".</p>
@@ -1049,16 +1132,18 @@
               Gestão de Colaboradores
             </h2>
 
-            <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04); margin-bottom: 1.5rem;">
-              <form id="colaborador-form">
+            <div style="background: var(--card-bg, white); border-radius: 12px; padding: 1.5rem; box-shadow: var(--card-shadow, 0 4px 6px rgba(0, 0, 0, 0.04)); margin-bottom: 1.5rem;">
+              <form id="colaborador-form" novalidate>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
                   <div class="form-group">
                     <label class="form-label">Email</label>
                     <input type="email" id="colaborador-email" class="form-control" required>
+                    <div class="invalid-feedback">Por favor, insira um email válido.</div>
                   </div>
                   <div class="form-group">
                     <label class="form-label">Senha</label>
-                    <input type="password" id="colaborador-password" class="form-control" required>
+                    <input type="password" id="colaborador-password" class="form-control" required minlength="6">
+                    <div class="invalid-feedback">A senha deve ter no mínimo 6 caracteres.</div>
                   </div>
                   <div class="form-group">
                     <label class="form-label">Função</label>
@@ -1066,6 +1151,7 @@
                       <option value="colaborador">Colaborador</option>
                       <option value="admin">Administrador</option>
                     </select>
+                    <div class="invalid-feedback">Por favor, selecione uma função.</div>
                   </div>
                   <div class="form-group">
                     <label class="form-label">Vendedor Associado (se Colaborador)</label>
@@ -1074,6 +1160,7 @@
                       <option value="Ewerton">Ewerton</option>
                       <option value="Darlan">Darlan</option>
                     </select>
+                    <div class="invalid-feedback">Para colaboradores, o vendedor é obrigatório.</div>
                   </div>
                 </div>
                 <div class="form-group">
@@ -1084,35 +1171,37 @@
               </form>
             </div>
 
-            <div style="background: white; border-radius: 12px; padding: 0; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);">
-              <div style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; border-bottom: 1px solid #f3f4f6;">
+            <div style="background: var(--card-bg, white); border-radius: 12px; padding: 0; box-shadow: var(--card-shadow, 0 4px 6px rgba(0, 0, 0, 0.04));">
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; border-bottom: 1px solid var(--border-light, #f3f4f6);">
                 <h3 style="margin: 0; font-size: 1.2rem;">Colaboradores Cadastrados</h3>
               </div>
               
-              <table class="table" id="colaboradoresTable">
-                <thead>
-                  <tr>
-                    <th>Email</th>
-                    <th>Função</th>
-                    <th>Vendedor</th>
-                    <th>Ações</th>
-                  </tr>
-                </thead>
-                <tbody id="tabela-colaboradores">
-                  <tr>
-                    <td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
-                      Nenhum colaborador cadastrado.
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div style="overflow-x: auto;">
+                <table class="table" id="colaboradoresTable">
+                  <thead>
+                    <tr>
+                      <th>Email</th>
+                      <th>Função</th>
+                      <th>Vendedor</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabela-colaboradores">
+                    <tr>
+                      <td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                        Nenhum colaborador cadastrado.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
 
             <h2 class="page-title" style="margin-top: 2rem;">
               <i class="fa-solid fa-handshake"></i>
               Configurações de Vendedores
             </h2>
-            <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);">
+            <div style="background: var(--card-bg, white); border-radius: 12px; padding: 1.5rem; box-shadow: var(--card-shadow, 0 4px 6px rgba(0, 0, 0, 0.04));">
               <form id="seller-cfg-form">
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;">
                   <div class="form-group">
@@ -1147,10 +1236,10 @@
 
   <!-- Modal de Edição (Adicionado para funcionalidade de edição) -->
   <div id="editModal" class="modal" style="display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); align-items: center; justify-content: center;">
-    <div class="modal-content" style="background-color: #fefefe; margin: auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 600px; border-radius: 12px;">
-      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px;">
+    <div class="modal-content" style="background-color: var(--card-bg, #fefefe); margin: auto; padding: 20px; border: 1px solid var(--border); width: 80%; max-width: 600px; border-radius: 12px;">
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-light, #eee); padding-bottom: 10px; margin-bottom: 15px;">
         <h2 style="margin: 0;">Editar Aluno</h2>
-        <span class="close" id="btnCloseModal" style="color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+        <span class="close" id="btnCloseModal" style="color: var(--text-secondary); float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
       </div>
       <form id="editForm">
         <div class="form-group">
@@ -1250,8 +1339,8 @@
     // Em um ambiente de produção, estas chaves devem ser carregadas de forma segura
     // (ex: variáveis de ambiente do Netlify, que são injetadas no build).
     // NÃO COLOQUE CHAVES SENSÍVEIS DIRETAMENTE NO CÓDIGO FONTE EM REPOSITÓRIOS PÚBLICOS.
-    window.SUPABASE_URL = "https://pimyqqunvcwoqzqwqpvf.supabase.co"; // Substitua pela sua URL do Supabase
-    window.SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpbXlxcXVudmN3b3F6cXdxcHZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc1MDk0MzQsImV4cCI6MjA3MzA4NTQzNH0.O5FbB0ygMAMNAnxGEs5qAvRF1qSA2qYLbSV8ozlsVBs"; // Substitua pela sua Anon Key do Supabase
+    window.SUPABASE_URL = "https://your-supabase-url.supabase.co"; // Substitua pela sua URL do Supabase
+    window.SUPABASE_ANON_KEY = "your-supabase-anon-key"; // Substitua pela sua Anon Key do Supabase
     // --- FIM DA SEÇÃO DE CHAVES ---
 
     // Define a data padrão para hoje nos formulários
