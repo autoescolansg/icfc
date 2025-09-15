@@ -3,92 +3,101 @@
 #app.theme-deepseek{ --primary:#2563eb; --success:#10b981; --danger:#ef4444; --muted:#6b7280; }
 
 /* 1) Conteúdo com largura cheia e gutters, compensando a sidebar */
+/* REMOVIDO !important para permitir que icfc-layout-normalizer.css controle */
 #app.theme-deepseek .content,
 #app.theme-deepseek .main,
 #app.theme-deepseek .content-wrapper{
-  margin-left: 280px !important;
-  padding: 24px !important;
-  width: calc(100% - 280px) !important;
+  margin-left: var(--sidebar-w, 280px); /* Usar variável */
+  padding: 1.5rem; /* Usar rem */
+  width: calc(100% - var(--sidebar-w, 280px)); /* Usar variável */
 }
 
 /* 2) Título do dashboard */
 #app.theme-deepseek #dashboard .card > .card-title,
 #app.theme-deepseek #dashboard .page-title{
-  display:flex; align-items:center; gap:12px;
-  font-size: 28px; font-weight: 700; color:var(--text-primary); margin: 4px 0 16px;
+  display:flex; align-items:center; gap:0.75rem; /* Usar rem */
+  font-size: 1.75rem; /* Usar rem */
+  font-weight: 700; color:var(--text-primary); margin: 0.25rem 0 1rem; /* Usar rem */
 }
-#app.theme-deepseek #dashboard .page-title i{ color: var(--primary); font-size: 22px; }
+#app.theme-deepseek #dashboard .page-title i{ color: var(--primary); font-size: 1.375rem; /* Usar rem */ }
 
-/* 3) “3 KPIs” lado a lado
-   Seu #dashboard tem um .card que contém vários .card internos empilhados.
-   Transformamos esse container num grid de 3 colunas. */
+/* 3) “3 KPIs” lado a lado */
 #app.theme-deepseek #dashboard > .card{
-  background: transparent !important; border: 0 !important; box-shadow: none !important;
-  padding: 0 !important;
+  background: transparent; border: 0; box-shadow: none; /* Removido !important */
+  padding: 0; /* Removido !important */
 }
 #app.theme-deepseek #dashboard > .card > .card{
-  background: var(--card-bg) !important; border: 1px solid var(--border-color) !important; border-radius: 12px !important;
-  box-shadow: var(--card-shadow) !important;
-  padding: 20px !important; min-height: 130px;
+  background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 0.75rem; /* Usar rem */
+  box-shadow: var(--card-shadow);
+  padding: 1.25rem; /* Usar rem */
+  min-height: 130px;
 }
 #app.theme-deepseek #dashboard > .card{
-  display: grid !important; grid-template-columns: repeat(3, minmax(260px, 1fr)) !important;
-  gap: 16px !important; margin-bottom: 24px !important;
+  display: grid; grid-template-columns: repeat(3, minmax(260px, 1fr)); /* Removido !important */
+  gap: 1rem; /* Usar rem */
+  margin-bottom: 1.5rem; /* Usar rem */
 }
 @media (max-width: 992px){
-  #app.theme-deepseek #dashboard > .card{ grid-template-columns: 1fr !important; }
+  #app.theme-deepseek #dashboard > .card{ grid-template-columns: 1fr; /* Removido !important */ }
 }
 
 /* Icone do KPI em “bolha” */
 #app.theme-deepseek #dashboard > .card > .card .icon,
 #app.theme-deepseek #dashboard > .card > .card i{
-  width: 44px; height: 44px; display:inline-flex; align-items:center; justify-content:center;
-  border-radius: 12px; background: rgba(37,99,235,.10); color: var(--primary);
-  font-size: 18px; margin-bottom: 8px;
+  width: 2.75rem; height: 2.75rem; /* Usar rem */
+  display:inline-flex; align-items:center; justify-content:center;
+  border-radius: 0.75rem; /* Usar rem */
+  background: rgba(37,99,235,.10); color: var(--primary);
+  font-size: 1.125rem; /* Usar rem */
+  margin-bottom: 0.5rem; /* Usar rem */
 }
 
 /* Título/valor/tendência do KPI */
 #app.theme-deepseek #dashboard > .card > .card .card-title,
 #app.theme-deepseek #dashboard > .card > .card h4{
-  font-size: 14px; font-weight: 600; color: var(--muted); margin: 0 0 6px;
+  font-size: 0.875rem; /* Usar rem */
+  font-weight: 600; color: var(--muted); margin: 0 0 0.375rem; /* Usar rem */
 }
 #app.theme-deepseek #dashboard > .card > .card .value,
 #app.theme-deepseek #dashboard > .card > .card .total,
 #app.theme-deepseek #dashboard > .card > .card .number{
-  font-size: 28px; font-weight: 800; color:var(--text-primary); line-height: 1.2;
+  font-size: 1.75rem; /* Usar rem */
+  font-weight: 800; color:var(--text-primary); line-height: 1.2;
 }
 #app.theme-deepseek #dashboard > .card > .card .trend,
 #app.theme-deepseek #dashboard > .card > .card .subtitle{
-  font-size: 12px; color: #16a34a; display:flex; align-items:center; gap:6px;
+  font-size: 0.75rem; /* Usar rem */
+  color: #16a34a; display:flex; align-items:center; gap:0.375rem; /* Usar rem */
 }
 #app.theme-deepseek #dashboard > .card > .card .trend.neg,
 #app.theme-deepseek #dashboard > .card > .card .subtitle.neg{ color:#ef4444; }
 
 /* 4) Balanço mensal (gráfico) e Transações recentes — 2 colunas (2:1) */
 #app.theme-deepseek #dashboard .content-grid{
-  display: grid !important; grid-template-columns: 2fr 1fr !important; gap: 16px !important;
+  display: grid; grid-template-columns: 2fr 1fr; /* Removido !important */
+  gap: 1rem; /* Usar rem */
 }
 #app.theme-deepseek #dashboard .content-grid .card{
-  background:var(--card-bg) !important; border: 1px solid var(--border-color) !important; border-radius: 12px !important;
-  box-shadow: var(--card-shadow) !important; padding: 20px !important;
+  background:var(--card-bg); border: 1px solid var(--border-color); border-radius: 0.75rem; /* Usar rem */
+  box-shadow: var(--card-shadow); padding: 1.25rem; /* Usar rem */
 }
 
 /* Cabeçalho dos blocos */
 #app.theme-deepseek #dashboard .section-header{
-  display:flex; align-items:center; justify-content:space-between; margin-bottom: 12px;
+  display:flex; align-items:center; justify-content:space-between; margin-bottom: 0.75rem; /* Usar rem */
 }
-#app.theme-deepseek #dashboard .section-title{ font-size:16px; font-weight:700; color:var(--text-primary); }
-#app.theme-deepseek #dashboard .view-all{ font-size: 12px; color: var(--primary); text-decoration: none; }
+#app.theme-deepseek #dashboard .section-title{ font-size:1rem; font-weight:700; color:var(--text-primary); }
+#app.theme-deepseek #dashboard .view-all{ font-size: 0.75rem; color: var(--primary); text-decoration: none; }
 
 /* Transações recentes (lista) */
 #app.theme-deepseek #dashboard .transaction-item{
-  display:flex; align-items:center; justify-content:space-between; padding: 12px 0;
+  display:flex; align-items:center; justify-content:space-between; padding: 0.75rem 0; /* Usar rem */
   border-bottom: 1px solid var(--border-light);
 }
 #app.theme-deepseek #dashboard .transaction-item:last-child{ border-bottom: 0; }
-#app.theme-deepseek #dashboard .transaction-info{ display:flex; align-items:center; gap: 12px; }
+#app.theme-deepseek #dashboard .transaction-info{ display:flex; align-items:center; gap: 0.75rem; /* Usar rem */ }
 #app.theme-deepseek #dashboard .transaction-icon{
-  width: 36px; height: 36px; border-radius: 10px;
+  width: 2.25rem; height: 2.25rem; border-radius: 0.625rem; /* Usar rem */
   display:flex; align-items:center; justify-content:center;
   background: rgba(37,99,235,.08); color: var(--primary);
 }
@@ -98,7 +107,7 @@
 
 /* 5) Cards padrão (toda a aplicação) no estilo Deepseek */
 #app.theme-deepseek .card{
-  background:var(--card-bg); border: 1px solid var(--border-color); border-radius:12px; box-shadow:var(--card-shadow);
+  background:var(--card-bg); border: 1px solid var(--border-color); border-radius:0.75rem; box-shadow:var(--card-shadow); /* Usar rem */
 }
 #app.theme-deepseek .card-header{ background:transparent; border-bottom:1px solid var(--border-color); }
 
@@ -108,9 +117,9 @@
 
 /* 7) Header com busca “pill” (se você tiver um input de busca) */
 #app.theme-deepseek .top-header .search-bar input{
-  height: 40px; border-radius: 999px; padding-left: 40px; border:1px solid var(--border-color);
+  height: 2.5rem; border-radius: 999px; padding-left: 2.5rem; border:1px solid var(--border-color); /* Usar rem */
 }
-#app.theme-deepseek .top-header .search-bar i{ color:var(--text-secondary); position:absolute; left: 14px; top: 10px; }
+#app.theme-deepseek .top-header .search-bar i{ color:var(--text-secondary); position:absolute; left: 0.875rem; top: 0.625rem; /* Usar rem */ }
 
 /* Responsividade para tabelas */
 @media (max-width: 768px) {
