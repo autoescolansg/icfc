@@ -2,12 +2,10 @@
 import { loadAlunos, saveAlunos, loadSellerCfg } from './storage.js';
 import { currentUser } from './auth.js';
 import { pushLog } from './logs.js';
-import { showToast, calculateMonthlyTrend } from './ux.js';
+import { showToast, calculateMonthlyTrend, validateForm } from './ux.js'; // Adicionado validateForm
 import { authFetch } from '../utils/authFetch.js';
 
 let alunos = [];
-// REMOVIDO: Gráficos removidos, então não precisamos mais dessas variáveis
-// let chartVendedores = null, chartCategorias = null;
 let editingCPF = null;
 
 const STEPS = ['foto','aulas_teoricas','prova_teorica','aulas_praticas','baliza_carro','baliza_moto'];
@@ -26,7 +24,6 @@ function ensureEtapas(a){
 }
 function formatDate(ds){ if(!ds) return ''; const d=new Date(ds); return isNaN(d)? ds : new Date(ds).toLocaleDateString('pt-BR') }
 
-// EXPORTADO: formatCPF para ser usado em outros módulos
 export function formatCPF(c){
   if(!c) return '';
   const v=String(c).replace(/\D/g,'');
@@ -57,7 +54,10 @@ export async function initAlunos(){
   if (!Array.isArray(alunos)) alunos = [];
 
   document.getElementById('cadastro-form')?.addEventListener('submit', async (e)=>{
-    e.preventDefault(); await cadastrarAluno();
+    e.preventDefault();
+    if (validateForm(e.target)) { // Valida o formulário antes de cadastrar
+      await cadastrarAluno();
+    }
   });
 
   // Event listeners para filtros
@@ -78,7 +78,12 @@ export async function initAlunos(){
 
   document.getElementById('btnCloseModal')?.addEventListener('click', closeModal);
   document.getElementById('btnCancelEdit')?.addEventListener('click', closeModal);
-  document.getElementById('editForm')?.addEventListener('submit', onSaveEdit);
+  document.getElementById('editForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (validateForm(e.target)) { // Valida o formulário antes de salvar
+      await onSaveEdit();
+    }
+  });
 
   renderTabela();
   refreshDashboard();
@@ -95,14 +100,8 @@ async function cadastrarAluno(){
   const dataCadastro = document.getElementById('data-cadastro').value || new Date().toISOString().slice(0,10);
   const vendedor = document.getElementById('vendedor').value;
 
-  if (!nome){ showToast('Preencha o nome do aluno.', 'danger'); return; }
-  if (!cpf){ showToast('Preencha o CPF do aluno.', 'danger'); return; }
-  if (!/^\d{11}$/.test(cpf)){ showToast('CPF inválido. Deve conter 11 dígitos numéricos.', 'danger'); return; }
+  // Validações já feitas pelo validateForm, mas mantemos algumas para redundância ou lógica específica
   if (alunos.some(a => a.cpf === cpf)){ showToast('Já existe aluno com esse CPF.', 'danger'); return; }
-  if (!telefone){ showToast('Preencha o telefone do aluno.', 'danger'); return; }
-  if (!categoria){ showToast('Selecione a categoria.', 'danger'); return; }
-  if (!vendedor){ showToast('Selecione o vendedor.', 'danger'); return; }
-
 
   const novo = {
     nome, cpf, telefone, categoria, dataCadastro, vendedor,
@@ -177,8 +176,7 @@ function openEdit(cpf){
 }
 function closeModal(){ const m=document.getElementById('editModal'); if(m) m.style.display='none'; }
 
-async function onSaveEdit(e){
-  e.preventDefault();
+async function onSaveEdit(){
   if (!editingCPF) return;
   const aluno = alunos.find(x=>x.cpf===editingCPF); if(!aluno) return;
   if (currentUser?.role==='colaborador' && currentUser?.seller !== aluno.vendedor){ showToast('Sem permissão para editar este aluno.', 'danger'); return; }
@@ -336,11 +334,7 @@ export async function refreshDashboard(){
     const em = document.getElementById('ewerton-meta'); if (em) em.textContent = `Meta: ${cfg.Ewerton?.meta||0} | Comissão: ${cfg.Ewerton?.comissao||0}%`;
     const dm = document.getElementById('darlan-meta'); if (dm) dm.textContent = `Meta: ${cfg.Darlan?.meta||0} | Comissão: ${cfg.Darlan?.comissao||0}%`;
   }catch(e){ console.warn("Falha ao carregar seller cfg:", e); }
-
-  // REMOVIDO: updateCharts(data);
 }
-
-// REMOVIDO: function updateCharts(data){ /* Gráficos removidos */ }
 
 /* ---------- hook para realtime.js ---------- */
 export function renderAlunosFromList(list) {
