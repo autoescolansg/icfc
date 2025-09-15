@@ -1,22 +1,43 @@
+// assets/js/modules/theme.js
+const THEME_KEY = 'autoescolaTheme';
 
-const THEME_KEY='autoescolaTheme';
-function apply(mode){
-  const root = document.documentElement, body = document.body;
-  if (mode==='light'){ root.classList.add('theme-light'); body.classList.add('theme-light'); }
-  else { root.classList.remove('theme-light'); body.classList.remove('theme-light'); }
+function applyTheme(mode){
+  const app = document.getElementById('app');
+  if (!app) return;
+
+  if (mode === 'light'){ // Modo Escuro (Deepseek usa 'light' para o tema escuro)
+    app.classList.add('theme-light');
+    document.documentElement.classList.add('theme-light');
+    document.body.classList.add('theme-light');
+  } else { // Modo Claro
+    app.classList.remove('theme-light');
+    document.documentElement.classList.remove('theme-light');
+    document.body.classList.remove('theme-light');
+  }
   try{ localStorage.setItem(THEME_KEY, mode); }catch(_){}
+  updateThemeButtonIcon(mode);
 }
+
+function updateThemeButtonIcon(mode) {
+  const btn = document.getElementById('btnTheme');
+  if (btn) {
+    const icon = btn.querySelector('i');
+    if (icon) {
+      icon.className = 'fas ' + (mode === 'light' ? 'fa-sun' : 'fa-moon');
+    }
+  }
+}
+
 export function initTheme(){
-  const saved = localStorage.getItem(THEME_KEY) || 'dark';
-  apply(saved);
+  const saved = localStorage.getItem(THEME_KEY) || 'dark'; // Padrão para claro
+  applyTheme(saved);
+
   const btn = document.getElementById('btnTheme');
   if (btn){
     btn.addEventListener('click', ()=>{
-      const cur = document.documentElement.classList.contains('theme-light') ? 'light' : 'dark';
-      const next = cur==='light' ? 'dark' : 'light';
-      apply(next);
-      const icon = btn.querySelector('i');
-      if (icon) icon.className = 'fas ' + (next==='light' ? 'fa-sun' : 'fa-moon');
+      const currentMode = document.getElementById('app').classList.contains('theme-light') ? 'light' : 'dark';
+      const nextMode = currentMode === 'light' ? 'dark' : 'light';
+      applyTheme(nextMode);
     });
   }
 }
