@@ -71,4 +71,47 @@ export async function initAuth() {
   supa.auth.onAuthStateChange(async (_event, session) => {
     await setSessionUser(session);
   });
+
+// Dentro do export async function initAuth() { ... } após configuração do btnLogin e btnLogout
+
+const linkForgotPassword = document.getElementById('linkForgotPassword');
+const modalForgotPassword = document.getElementById('modalForgotPassword');
+const btnSendRecovery = document.getElementById('btnSendRecovery');
+const btnCancelRecovery = document.getElementById('btnCancelRecovery');
+
+if (linkForgotPassword && modalForgotPassword && btnSendRecovery && btnCancelRecovery) {
+  linkForgotPassword.addEventListener('click', (e) => {
+    e.preventDefault();
+    modalForgotPassword.style.display = 'flex';
+  });
+
+  btnCancelRecovery.addEventListener('click', () => {
+    modalForgotPassword.style.display = 'none';
+    document.getElementById('forgotEmail').value = '';
+  });
+
+  btnSendRecovery.addEventListener('click', async () => {
+    const email = document.getElementById('forgotEmail').value.trim();
+    if (!email) {
+      showToast('Informe um e-mail válido.', 'danger');
+      return;
+    }
+    try {
+      const { error } = await supa.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin // Opcional: URL para redirecionar após reset
+      });
+      if (error) {
+        showToast(error.message, 'danger');
+        return;
+      }
+      showToast('E-mail de recuperação enviado! Verifique sua caixa de entrada.', 'success');
+      modalForgotPassword.style.display = 'none';
+      document.getElementById('forgotEmail').value = '';
+    } catch (err) {
+      showToast('Erro ao enviar e-mail de recuperação.', 'danger');
+      console.error(err);
+    }
+  });
 }
+
+
